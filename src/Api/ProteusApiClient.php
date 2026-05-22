@@ -3,6 +3,8 @@
 namespace Ometra\Apollo\Proteus\Api;
 
 use Equidna\BeeHive\Tenancy\TenantContext;
+use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Ometra\Caronte\Exceptions\CaronteApiException;
@@ -41,17 +43,24 @@ class ProteusApiClient extends CaronteHttpClient
         array $payload = [],
         array $query = [],
     ): array {
-        $headers = [
-            'X-Application-Token' => $this->makeApplicationToken(),
-            'X-User-Token' => Caronte::getToken()->toString(),
-        ];
+        return $this->request($method, $endpoint, $payload, $query, $this->userHeaders());
+    }
 
-        $tenantId = $this->tenantId();
-        if ($tenantId !== null) {
-            $headers['X-Tenant-Id'] = $tenantId;
-        }
-
-        return $this->request($method, $endpoint, $payload, $query, $headers);
+    /**
+     * Realiza una petición autenticada como usuario y devuelve la respuesta HTTP cruda.
+     *
+     * @param  string  $method    Método HTTP (GET, POST, PUT, PATCH, DELETE).
+     * @param  string  $endpoint  Ruta relativa del endpoint (sin barra inicial).
+     * @param  array<string, mixed>  $payload  Cuerpo de la petición.
+     * @param  array<string, mixed>  $query    Parámetros de query string.
+     */
+    public function userRawRequest(
+        string $method,
+        string $endpoint,
+        array $payload = [],
+        array $query = [],
+    ): Response {
+        return $this->requestRaw($method, $endpoint, $payload, $query, $this->userHeaders());
     }
 
     /**
@@ -96,11 +105,82 @@ class ProteusApiClient extends CaronteHttpClient
         array $query,
         array $headers,
     ): array {
+        $response = $this->requestRaw(
+            $method,
+            $endpoint,
+            $payload,
+            $query,
+            $headers,
+            acceptJson: true,
+        );
+
+        return $this->parseResponse($response);
+    }
+
+    /**
+     * Ejecuta la petición HTTP y devuelve la respuesta sin parsear.
+     *
+     * @param  string  $method    Método HTTP en minúsculas o mayúsculas.
+     * @param  string  $endpoint  Ruta relativa del endpoint.
+     * @param  array<string, mixed>  $payload  Cuerpo de la petición.
+     * @param  array<string, mixed>  $query    Parámetros de query string.
+     * @param  array<string, string>  $headers  Cabeceras HTTP adicionales.
+     *
+     * @throws CaronteApiException Si el método HTTP no está soportado.
+     */
+    protected function requestRaw(
+        string $method,
+        string $endpoint,
+        array $payload,
+        array $query,
+        array $headers,
+        bool $acceptJson = false,
+    ): Response {
         $url = rtrim($this->getBaseUrl(), '/') . '/' . ltrim($endpoint, '/');
         $urlWithQuery = $query !== [] ? $url . '?' . http_build_query($query) : $url;
         $method = strtolower($method);
 
-        $request = Http::acceptJson()
+        $request = $this->httpRequest($headers, $acceptJson);
+
+        if ($this->shouldUseMultipart($payload)) {
+            $request = $request->asMultipart();
+            $payload = $this->toMultipart($payload);
+        }
+
+        return match ($method) {
+            'get' => $request->get($url, $query),
+            'delete' => $request->delete($url, $payload !== [] ? $payload : $query),
+            'post' => $request->post($urlWithQuery, $payload),
+            'put' => $request->put($urlWithQuery, $payload),
+            'patch' => $request->patch($urlWithQuery, $payload),
+            default => throw new CaronteApiException("Unsupported HTTP method [{$method}].", 500),
+        };
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function userHeaders(): array
+    {
+        $headers = [
+            'X-Application-Token' => $this->makeApplicationToken(),
+            'X-User-Token' => Caronte::getToken()->toString(),
+        ];
+
+        $tenantId = $this->tenantId();
+        if ($tenantId !== null) {
+            $headers['X-Tenant-Id'] = $tenantId;
+        }
+
+        return $headers;
+    }
+
+    /**
+     * @param  array<string, string>  $headers
+     */
+    private function httpRequest(array $headers, bool $acceptJson): PendingRequest
+    {
+        $request = Http::accept($acceptJson ? 'application/json' : '*/*')
             ->withOptions([
                 'verify' => (bool) config('caronte.tls_verify', true),
             ])
@@ -111,21 +191,7 @@ class ProteusApiClient extends CaronteHttpClient
             )
             ->withHeaders($headers);
 
-        if ($this->shouldUseMultipart($payload)) {
-            $request = $request->asMultipart();
-            $payload = $this->toMultipart($payload);
-        }
-
-        $response = match ($method) {
-            'get' => $request->get($url, $query),
-            'delete' => $request->delete($url, $payload !== [] ? $payload : $query),
-            'post' => $request->post($urlWithQuery, $payload),
-            'put' => $request->put($urlWithQuery, $payload),
-            'patch' => $request->patch($urlWithQuery, $payload),
-            default => throw new CaronteApiException("Unsupported HTTP method [{$method}].", 500),
-        };
-
-        return $this->parseResponse($response);
+        return $request;
     }
 
     /**

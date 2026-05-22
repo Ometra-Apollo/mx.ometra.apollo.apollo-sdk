@@ -2,6 +2,8 @@
 
 namespace Ometra\Apollo\Proteus\Api;
 
+use Illuminate\Http\Client\Response;
+
 /**
  * Wrapper para los endpoints de media de la API de Proteus.
  *
@@ -192,11 +194,11 @@ class MediaApi
      *
      * @param  string       $id   UUID del recurso.
      * @param  string|null  $ext  Extensión del formato a descargar.
-     * @return array<string, mixed>
+     * @return Response
      */
-    public function mediaDownload(string $id, ?string $ext = null): array
+    public function mediaDownload(string $id, ?string $ext = null): Response
     {
-        return $this->client->userRequest(
+        return $this->client->userRawRequest(
             'GET',
             'media/' . $id . '/download',
             query: array_filter(['ext' => $ext])
@@ -208,9 +210,9 @@ class MediaApi
      *
      * @param  string  $id   UUID del recurso.
      * @param  string  $ext  Extensión del formato a descargar.
-     * @return array<string, mixed>
+     * @return Response
      */
-    public function saveMediaLocal(string $id, string $ext): array
+    public function saveMediaLocal(string $id, string $ext): Response
     {
         return $this->mediaDownload($id, $ext);
     }
