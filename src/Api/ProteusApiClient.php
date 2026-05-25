@@ -167,6 +167,11 @@ class ProteusApiClient extends CaronteHttpClient
             'X-User-Token' => Caronte::getToken()->toString(),
         ];
 
+        $groupToken = $this->makeGroupToken();
+        if (is_string($groupToken) && $groupToken !== '') {
+            $headers['X-Group-Token'] = $groupToken;
+        }
+
         $tenantId = $this->tenantId();
         if ($tenantId !== null) {
             $headers['X-Tenant-Id'] = $tenantId;
