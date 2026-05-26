@@ -1,40 +1,40 @@
 {
-  "name": "ometra/proteus-client",
-  "description": "Proteus API adapter",
-  "type": "library",
-  "license": "MIT",
-  "require": {
-    "php": "^8.2",
-    "league/flysystem-aws-s3-v3": "^3.0",
-    "illuminate/database": "^12.0",
-    "illuminate/http": "^12.0",
-    "illuminate/routing": "^12.0",
-    "illuminate/support": "^12.0",
-    "guzzlehttp/guzzle": "^7.9",
-    "ometra/caronte-sdk": "^4.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "Ometra\\Apollo\\Proteus\\": "src/"
+    "name": "ometra/apollo-sdk",
+    "description": "Proteus API adapter",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "illuminate/database": "^12.0",
+        "illuminate/http": "^12.0",
+        "illuminate/routing": "^12.0",
+        "illuminate/support": "^12.0",
+        "guzzlehttp/guzzle": "^7.9",
+        "ometra/caronte-sdk": "^4.4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ometra\\Apollo\\Sdk\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ometra\\Apollo\\Sdk\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [],
+        "test": "phpunit"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ometra\\Apollo\\Sdk\\Providers\\ApolloServiceProvider"
+            ]
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "11.5.55"
     }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Ometra\\Apollo\\Proteus\\Tests\\": "tests/"
-    }
-  },
-  "scripts": {
-    "post-autoload-dump": [],
-    "test": "phpunit"
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Ometra\\Apollo\\Proteus\\Providers\\ProteusServiceProvider"
-      ]
-    }
-  },
-  "require-dev": {
-    "phpunit/phpunit": "11.5.55"
-  }
 }

@@ -1,76 +1,45 @@
 # Breaking Changes
 
-## v2.0.0 "Helios"
+## Apollo SDK migration
 
-This release is a complete architectural rewrite. All consumers of v1.x must follow
-the migration steps below before upgrading.
+This release completes the clean-cut migration to `ometra/apollo-sdk`. All consumers must use `config/apollo.php` and the modular API.
 
----
+Required module URL variables:
 
-### 1. `BaseApiService` removed
+- `PROTEUS_BASE_URL`
+- `PULSE_BASE_URL`
+- `FLARE_BASE_URL`
+- `IGNIS_BASE_URL`
 
-**Before (v1.x)**
-
-```php
-use Ometra\Apollo\Proteus\BaseApiService;
-
-class MyService extends BaseApiService
-{
-    // custom methods using $this->client, $this->tenantId, etc.
-}
-```
-
-**After (v2.0.0)**
-
-Inject the relevant `*Api` class directly or use the `Proteus` facade:
+Example:
 
 ```php
-use Ometra\Apollo\Proteus\Api\MediaApi;
+use Ometra\Apollo\Sdk\Facades\Apollo;
 
-class MyService
-{
-    public function __construct(private readonly MediaApi $media) {}
-
-    public function listImages(): array
-    {
-        return $this->media->mediaIndex(['type' => 'image']);
-    }
-}
+$media = Apollo::proteus()->media()->index(['type' => 'image']);
 ```
 
 ---
 
-### 2. `ProteusClient` replaced by `ProteusApiClient`
+### 1. Flat API removed
 
-The old `ProteusClient` class is gone. `ProteusApiClient` (namespace
-`Ometra\Apollo\Proteus\Api`) is not a drop-in replacement — it extends
-`CaronteHttpClient` and has a different public surface.
-
-Direct usage of the underlying HTTP client is rarely needed; prefer the typed
-`*Api` wrappers or the `Proteus` facade.
+Root resource methods are gone. Use `Apollo::proteus()->{resource}()->{action}()`.
 
 ---
 
-### 3. Authentication environment variables changed
+### 2. Legacy wrapper classes removed
 
-| v1.x variable       | v2.0.0 equivalent                                                       |
-| ------------------- | ----------------------------------------------------------------------- |
-| `PROTEUS_APP_NAME`  | Not needed — handled by Caronte SDK (`CARONTE_APP_CN`).                 |
-| `PROTEUS_APP_TOKEN` | Not needed — `CaronteApplicationToken::make()` is called automatically. |
-| `uri_user`          | Not used — user identity comes from `Caronte::getToken()`.              |
-
-The only Proteus-specific variable required is:
-
-```env
-PROTEUS_BASE_URL=https://proteus.example.com/api
-```
-
-Caronte credentials (`CARONTE_APP_CN`, `CARONTE_APP_SECRET`, etc.) must be
-configured separately in the Caronte SDK.
+The old root entrypoint, facade, service provider, config file, API wrapper classes, and exception class are removed. Direct usage of the underlying HTTP client is rarely needed; prefer the module resources.
 
 ---
 
-### 4. Tenant context is now mandatory for user-authenticated calls
+### 3. Authentication remains Caronte-owned
+
+Apollo does not define authentication config. Caronte remains configured in its own SDK and Apollo reuses its HTTP helpers for application, group, user, and tenant headers.
+
+---
+
+### 4. Tenant context
 
 The SDK reads the tenant ID from `Equidna\BeeHive\Tenancy\TenantContext` at
 request time. **You must set a tenant before calling any user-authenticated endpoint.**
@@ -81,7 +50,7 @@ use Equidna\BeeHive\Tenancy\TenantContext;
 app(TenantContext::class)->set('your-tenant-id');
 ```
 
-Application-authenticated endpoints (`CategoriesApi`) also include `X-Tenant-Id`
+Application-authenticated endpoints also include `X-Tenant-Id`
 when a tenant is active; they work without one but will be tenant-scoped when
 provided.
 
@@ -95,23 +64,12 @@ remove those migrations from your project manually.
 
 ---
 
-### 6. Config structure simplified
+### 6. Config structure
 
-**Before (v1.x)** — `config/proteus.php` had multiple keys for application
-management, token handling, resolver classes, etc.
-
-**After (v2.0.0)** — a single key:
-
-```php
-return [
-    'base_url' => env('PROTEUS_BASE_URL'),
-];
-```
-
-All other keys are ignored. Re-publish the config after upgrading:
+`config/apollo.php` contains only module URL configuration. Re-publish the config after upgrading:
 
 ```bash
-php artisan vendor:publish --tag=proteus-config --force
+php artisan vendor:publish --tag=apollo-config --force
 ```
 
 ---
@@ -119,7 +77,7 @@ php artisan vendor:publish --tag=proteus-config --force
 ### 7. Partials (`DownloadMedia`, `PayloadFormatting`) removed
 
 These were internal helpers. Multipart formatting and download handling are now
-implemented inside `ProteusApiClient` and are not part of the public API.
+implemented inside Apollo module resources and are not part of the public API.
 
 ---
 

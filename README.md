@@ -1,59 +1,47 @@
-# Proteus SDK
+# Apollo SDK
 
-Cliente Laravel/PHP para consumir la API de Proteus usando la autenticacion de Caronte.
+Cliente Laravel/PHP modular para consumir Proteus y futuros modulos Pulse, Flare e Ignis con autenticacion compartida de Caronte.
 
 ## Instalacion
 
 ```bash
-composer require ometra/proteus-client
+composer require ometra/apollo-sdk
 ```
 
-Publica la configuracion si necesitas sobrescribirla:
+Publica la configuracion si necesitas sobrescribir las URLs de modulos:
 
 ```bash
-php artisan vendor:publish --tag=proteus-config
+php artisan vendor:publish --tag=apollo-config
 ```
+
+El archivo publicado es `config/apollo.php`.
 
 ## Configuracion
 
+Apollo solo configura URLs por modulo; la autenticacion sigue viviendo en el SDK de Caronte.
+
 ```env
 PROTEUS_BASE_URL=https://proteus.example.com/api
-CARONTE_APP_CN=mi-aplicacion
-CARONTE_APP_SECRET=...
+PULSE_BASE_URL=https://pulse.example.com/api
+FLARE_BASE_URL=https://flare.example.com/api
+IGNIS_BASE_URL=https://ignis.example.com/api
 ```
 
-El SDK genera `X-Application-Token` con `caronte-sdk`. No usa `PROTEUS_APP_TOKEN`,
-Bearer tokens ni `uri_user`.
-
-Proteus requiere tenant en API. Antes de llamar al SDK, debe existir un
-`TenantContext` activo:
-
-```php
-use Equidna\BeeHive\Tenancy\TenantContext;
-
-$tenantContext = app(TenantContext::class);
-$tenantContext->set('tenant-id');
-```
-
-Las llamadas de usuario usan `Caronte::getToken()` y envian:
+Las llamadas HTTP usan el contrato de Caronte y agregan, segun el tipo de request:
 
 - `X-Application-Token`
-- `X-User-Token`
-- `X-Tenant-Id`
+- `X-Group-Token` cuando existe
+- `X-User-Token` en llamadas de usuario
+- `X-Tenant-Id` desde `TenantContext` cuando existe
 
-Las llamadas de aplicacion envian:
-
-- `X-Application-Token`
-- `X-Tenant-Id`
-
-## Uso
+## Uso modular
 
 ```php
-use Ometra\Apollo\Proteus\Facades\Proteus;
+use Ometra\Apollo\Sdk\Facades\Apollo;
 
-$directories = Proteus::directoriesIndex();
+$directories = Apollo::proteus()->directories()->index();
 
-$media = Proteus::mediaUpload([
+$media = Apollo::proteus()->media()->upload([
     'type' => 'image',
     'directory_id' => $directoryId,
     'media' => [$request->file('image')],
@@ -62,35 +50,31 @@ $media = Proteus::mediaUpload([
     ],
 ]);
 
-Proteus::mediaSetMetadata($mediaId, [
+Apollo::proteus()->media()->setMetadata($mediaId, [
     'metadata' => [
         'title' => 'Hero image',
     ],
 ]);
+
+$images = Apollo::proteus()->media()->index(['type' => 'image']);
 ```
 
-Tambien puedes inyectar el cliente principal:
+Tambien puedes inyectar el entrypoint principal:
 
 ```php
-use Ometra\Apollo\Proteus\Proteus;
+use Ometra\Apollo\Sdk\Apollo;
 
-public function __invoke(Proteus $proteus): array
+public function __invoke(Apollo $apollo): array
 {
-    return $proteus->media()->mediaIndex(['type' => 'image']);
+    return $apollo->proteus()->media()->index(['type' => 'image']);
 }
 ```
 
+Pulse, Flare e Ignis existen como modulos instanciables hasta que sus contratos de endpoints esten definidos.
+
 ## API
 
-El contrato completo de wrappers esta en [docs/api-contract.md](docs/api-contract.md).
-
-Dominios cubiertos:
-
-- Categories
-- Directories
-- Presets
-- Media
-- Metadata
+El contrato completo esta en [docs/api-contract.md](docs/api-contract.md).
 
 ## Pruebas
 
@@ -98,5 +82,4 @@ Dominios cubiertos:
 composer test
 ```
 
-La suite valida que los wrappers apunten a las rutas correctas y que el cliente
-envie los headers de Caronte, tenant y multipart para uploads.
+La suite valida identidad Apollo, configuracion modular, autenticacion Caronte, rutas Proteus, ausencia de API flat y limpieza legacy.

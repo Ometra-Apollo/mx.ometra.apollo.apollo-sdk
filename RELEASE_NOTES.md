@@ -1,35 +1,29 @@
-# Release v2.0.0 "Helios"
+# Release v3.0.0 "Apollo"
 
 **Date:** 2026-05-08
 **Branch:** `remake` → `main`
-**Package:** `ometra/proteus-client`
+**Package:** `ometra/apollo-sdk`
 
 ---
 
 ## Summary
 
-Helios is a complete ground-up rewrite of the Proteus SDK. The old architecture — built around
-a monolithic `BaseApiService` with DB migrations, partials, and manual token management — has
-been replaced with a clean, focused HTTP-client layer that delegates authentication entirely
-to `caronte-sdk`.
+Apollo is the clean-cut modular SDK migration. The package now uses `config/apollo.php`, exposes the Apollo entrypoint, and delegates authentication to `caronte-sdk`.
 
-Every Proteus API domain (Media, Metadata, Categories, Directories, Presets) is now covered by
-a dedicated typed class. A `Proteus` facade provides ergonomic static access. All 36 wrappers
-are fully tested.
+Proteus API domains are available through contextual module resources, for example `Apollo::proteus()->media()->index(...)`. Pulse, Flare, and Ignis are placeholders until their endpoint contracts are defined.
 
 ---
 
 ## Highlights
 
-- **Full API coverage** – 36 wrappers across 5 domains with zero missing endpoints.
+- **Full Proteus coverage** – 36 actions across 5 domains with zero missing endpoints.
 - **Caronte-native auth** – `X-Application-Token`, `X-User-Token`, and `X-Tenant-Id` are
   assembled automatically from `caronte-sdk`; no more manual token configuration.
 - **Multipart auto-detection** – payloads containing `UploadedFile` instances are
   transparently converted to multipart requests.
 - **BeeHive tenant resolution** – `TenantContext` is resolved at request time; no static
   config required.
-- **PHPUnit test suite** – `RecordingProteusApiClient` test double captures requests for
-  assertion without hitting the network.
+- **PHPUnit test suite** – module test doubles capture requests for assertion without hitting the network.
 - **Zero DB footprint** – migrations removed; the SDK is now a pure HTTP client.
 - **PHP 8.2+ and Laravel 12** – modern baseline with strict types throughout.
 
@@ -37,24 +31,24 @@ are fully tested.
 
 ## Added
 
-- `ProteusApiClient` — low-level HTTP client (extends `CaronteHttpClient`).
-- `MediaApi`, `MetadataApi`, `CategoriesApi`, `DirectoriesApi`, `PresetsApi` — typed API wrappers.
-- `Proteus` main class with magic delegation and typed accessors.
-- `Facades\Proteus` static facade.
-- `ProteusServiceProvider` (singleton registration, config publishing).
+- `ApolloHttpClient` — low-level HTTP client (extends `CaronteHttpClient`).
+- Proteus module resources: media, metadata, categories, directories, presets.
+- Apollo main class with module accessors: `proteus()`, `pulse()`, `flare()`, `ignis()`.
+- `Facades\Apollo` static facade.
+- `ApolloServiceProvider` (singleton registration, config publishing).
 - `docs/api-contract.md` — endpoint contract reference.
 - Full PHPUnit test suite under `tests/`.
 - PHPDoc on all public and protected API methods.
 
 ## Changed
 
-- `composer.json` — updated dependencies (PHP 8.2, Laravel 12, Guzzle 7.9, Caronte SDK 3.2).
-- `config/proteus.php` — simplified to `base_url` only.
+- `composer.json` — updated dependencies (PHP 8.2, Laravel 12, Guzzle 7.9, Caronte SDK 4.0).
+- `config/apollo.php` — module URL configuration for `PROTEUS_BASE_URL`, `PULSE_BASE_URL`, `FLARE_BASE_URL`, and `IGNIS_BASE_URL`.
 - `README.md` — rewritten with installation, configuration, auth, and usage sections.
 
 ## Removed
 
-- `BaseApiService`, `DownloadMedia`, `PayloadFormatting` partials.
+- Legacy root entrypoint, facade, provider, config, API wrappers, exception, `BaseApiService`, `DownloadMedia`, `PayloadFormatting` partials.
 - DB migrations.
 - Old guides (`IMPLEMENTATION_GUIDE.md`, `PROTEUS_APPS_GUIDE.md`).
 
