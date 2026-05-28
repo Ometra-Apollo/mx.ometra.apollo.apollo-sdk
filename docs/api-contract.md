@@ -3,7 +3,7 @@
 Package: `ometra/apollo-sdk`. Configuration file: `config/apollo.php`.
 
 Apollo exposes modules through `Apollo::proteus()`, `Apollo::pulse()`, `Apollo::flare()`, and `Apollo::ignis()`.
-Proteus is the only module with concrete resources in this release; Pulse, Flare, and Ignis are instantiable placeholders.
+Proteus, Pulse, Flare, and Ignis ship concrete resources in this release.
 
 Required module URL environment variables:
 
@@ -43,6 +43,10 @@ Uploads with `UploadedFile` payloads are sent as multipart requests.
 | Presets | 5 | 5 | None |
 | Media | 13 | 13 | None |
 | Metadata | 7 | 7 | None |
+| Flare stations | 2 | 2 | None |
+| Pulse groups | 1 | 1 | None |
+| Ignis campaigns | 1 | 1 | None |
+| Ignis content hits | 1 | 1 | None |
 
 ## Categories
 
@@ -104,6 +108,31 @@ Uploads with `UploadedFile` payloads are sent as multipart requests.
 | `Apollo::proteus()->metadata()->update(string $mediaId, array $data)` | `PUT` | `/api/media/{id}/metadata` | App + user | Requires `WRITE`. |
 | `Apollo::proteus()->metadata()->show(string $mediaId, string $key)` | `GET` | `/api/media/{id}/metadata/{key}` | App + user | Requires `READ`. |
 | `Apollo::proteus()->metadata()->delete(string $mediaId, string $key)` | `DELETE` | `/api/media/{id}/metadata/{key}` | App + user | Requires `WRITE`. |
+
+## Flare Stations
+
+| Apollo resource action | HTTP method | URI | Auth | Notes |
+| --- | --- | --- | --- | --- |
+| `Apollo::flare()->stations()->index(array $query = [])` | `GET` | `/api/stations` | App | Query passthrough. |
+| `Apollo::flare()->stations()->show(string $id)` | `GET` | `/api/stations/{id}` | App | Station detail lookup. |
+
+## Pulse Groups
+
+| Apollo resource action | HTTP method | URI | Auth | Notes |
+| --- | --- | --- | --- | --- |
+| `Apollo::pulse()->groups()->index(array $query = [])` | `GET` | `/api/ignis/groups` | App | Bridge endpoint exposed from Pulse module by product requirement. |
+
+## Ignis Campaigns
+
+| Apollo resource action | HTTP method | URI | Auth | Notes |
+| --- | --- | --- | --- | --- |
+| `Apollo::ignis()->campaigns()->byExternalGroup(string $externalGroupId)` | `GET` | `/api/external-groups/{externalGroupId}/campaigns` | App | Migrated from `getCampaignsByExternalGroup(...)` in `ometra-ignis-client`. |
+
+## Ignis Content Hits
+
+| Apollo resource action | HTTP method | URI | Auth | Notes |
+| --- | --- | --- | --- | --- |
+| `Apollo::ignis()->contentHits()->report(array $report)` | `POST` | `/api/content-hits` | App | Migrated from `hitReport(...)` in `ometra-ignis-client`. |
 
 ## SDK HTTP Client
 

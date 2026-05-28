@@ -1,6 +1,6 @@
 # Apollo SDK
 
-Cliente Laravel/PHP modular para consumir Proteus y futuros modulos Pulse, Flare e Ignis con autenticacion compartida de Caronte.
+Cliente Laravel/PHP modular para consumir Proteus, Pulse, Flare e Ignis con autenticacion compartida de Caronte.
 
 ## Instalacion
 
@@ -57,6 +57,16 @@ Apollo::proteus()->media()->setMetadata($mediaId, [
 ]);
 
 $images = Apollo::proteus()->media()->index(['type' => 'image']);
+
+$stations = Apollo::flare()->stations()->index(['country' => 'mx']);
+
+$campaigns = Apollo::ignis()->campaigns()->byGroup('group-1');
+
+Apollo::ignis()->contentHits()->report([
+    ['content_id' => 'content-1', 'hits' => 10],
+]);
+
+$groups = Apollo::pulse()->groups()->index();
 ```
 
 Tambien puedes inyectar el entrypoint principal:
@@ -70,7 +80,7 @@ public function __invoke(Apollo $apollo): array
 }
 ```
 
-Pulse, Flare e Ignis existen como modulos instanciables hasta que sus contratos de endpoints esten definidos.
+Pulse expone `groups()->index()` sobre el endpoint `ignis/groups`.
 
 ## API
 

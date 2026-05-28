@@ -5,7 +5,15 @@ declare(strict_types=1);
 namespace Ometra\Apollo\Sdk\Modules\Flare;
 
 use Ometra\Apollo\Sdk\Core\Config\ModuleConfigResolver;
+use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
+use Ometra\Apollo\Sdk\Modules\Flare\Resources\StationsResource;
 
+/**
+ * Flare module entrypoint.
+ *
+ * Exposed resources:
+ * - stations()
+ */
 final class FlareModule
 {
     public function __construct(private readonly ModuleConfigResolver $configResolver)
@@ -18,5 +26,15 @@ final class FlareModule
     public function config(): array
     {
         return $this->configResolver->resolve('flare');
+    }
+
+    public function stations(): StationsResource
+    {
+        return new StationsResource($this->client());
+    }
+
+    private function client(): ApolloHttpClient
+    {
+        return new ApolloHttpClient($this->config()['base_url']);
     }
 }
