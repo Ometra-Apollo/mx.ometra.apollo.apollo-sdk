@@ -53,11 +53,12 @@ final class ProteusResourceRoutesTest extends TestCase
     public static function resourceRoutes(): array
     {
         return [
-            'categories index' => [CategoriesResource::class, 'index', [['filter' => 'img']], 'application', 'GET', 'categories', [], ['filter' => 'img']],
-            'categories store' => [CategoriesResource::class, 'store', [['name' => 'Images']], 'application', 'POST', 'categories', ['name' => 'Images']],
-            'categories show' => [CategoriesResource::class, 'show', ['cat-1'], 'application', 'GET', 'categories/cat-1'],
-            'categories update' => [CategoriesResource::class, 'update', ['cat-1', ['name' => 'Media']], 'application', 'PUT', 'categories/cat-1', ['name' => 'Media']],
-            'categories delete' => [CategoriesResource::class, 'delete', ['cat-1'], 'application', 'DELETE', 'categories/cat-1'],
+            'categories index' => [CategoriesResource::class, 'index', [['filter' => 'img']], 'application', 'GET', 'configuration/categories', [], ['filter' => 'img']],
+            'categories store' => [CategoriesResource::class, 'store', [['name' => 'Images']], 'application', 'POST', 'configuration/categories', ['name' => 'Images']],
+            'categories show' => [CategoriesResource::class, 'show', ['cat-1'], 'application', 'GET', 'configuration/categories/cat-1'],
+            'categories update' => [CategoriesResource::class, 'update', ['cat-1', ['name' => 'Media']], 'application', 'PUT', 'configuration/categories/cat-1', ['name' => 'Media']],
+            'categories delete' => [CategoriesResource::class, 'delete', ['cat-1'], 'application', 'DELETE', 'configuration/categories/cat-1'],
+            'categories set default' => [CategoriesResource::class, 'setDefault', ['cat-1'], 'application', 'PATCH', 'configuration/categories/cat-1/default'],
 
             'directories index' => [DirectoriesResource::class, 'index', [['page' => 2]], 'user', 'GET', 'directories', [], ['page' => 2]],
             'directories create root' => [DirectoriesResource::class, 'create', [], 'user', 'GET', 'directories/create'],
