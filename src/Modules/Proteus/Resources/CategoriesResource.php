@@ -8,9 +8,7 @@ use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
 
 final class CategoriesResource
 {
-    public function __construct(private readonly ApolloHttpClient $client)
-    {
-    }
+    public function __construct(private readonly ApolloHttpClient $client) {}
 
     /** @param array<string, mixed> $data */
     public function index(array $data = []): array
@@ -21,22 +19,27 @@ final class CategoriesResource
     /** @param array<string, mixed> $data */
     public function store(array $data): array
     {
-        return $this->client->applicationRequest('POST', 'categories', payload: $data);
+        return $this->client->applicationRequest('POST', 'configuration/categories', payload: $data);
     }
 
     public function show(string $id): array
     {
-        return $this->client->applicationRequest('GET', 'categories/' . $id);
+        return $this->client->applicationRequest('GET', 'configuration/categories/' . $id);
     }
 
     /** @param array<string, mixed> $data */
     public function update(string $id, array $data): array
     {
-        return $this->client->applicationRequest('PUT', 'categories/' . $id, payload: $data);
+        return $this->client->applicationRequest('PUT', 'configuration/categories/' . $id, payload: $data);
     }
 
     public function delete(string $id): ?array
     {
-        return $this->client->applicationRequest('DELETE', 'categories/' . $id);
+        return $this->client->applicationRequest('DELETE', 'configuration/categories/' . $id);
+    }
+
+    public function setDefault(string $id): array
+    {
+        return $this->client->applicationRequest('PATCH', 'configuration/categories/' . $id . '/default');
     }
 }
