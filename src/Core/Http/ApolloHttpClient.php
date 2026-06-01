@@ -17,7 +17,7 @@ use RuntimeException;
 
 class ApolloHttpClient extends CaronteHttpClient
 {
-    public function __construct(private readonly string $baseUrl)
+    public function __construct(private readonly string $baseUrl) 
     {
     }
 
@@ -149,6 +149,7 @@ class ApolloHttpClient extends CaronteHttpClient
         $headers = [
             'X-Application-Token' => $this->makeApplicationToken(),
             'X-User-Token' => Caronte::getToken()->toString(),
+            'Authorization' => 'Bearer ' . Caronte::getToken()->toString(),
         ];
 
         return $this->withOptionalCaronteHeaders($headers);
