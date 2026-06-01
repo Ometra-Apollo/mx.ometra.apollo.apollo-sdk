@@ -34,6 +34,19 @@ Every request must be application-authenticated through Caronte:
 User-authenticated SDK calls send `X-Tenant-Id` from the active BeeHive `TenantContext`.
 Uploads with `UploadedFile` payloads are sent as multipart requests.
 
+### Application-only mode
+
+Some endpoints (e.g. `Categories`, `Metadata keys/values`, `Flare stations`) already use application-only authentication and never send `X-User-Token`. Other endpoints normally run as the current user, which requires an active Caronte session.
+
+When you need to call user-scoped endpoints from a background job or any context without a user session, switch the module to application-only mode with `asApplication()`:
+
+```php
+$proteus = Apollo::proteus()->asApplication();
+$proteus->media()->index(['type' => 'audio']);
+```
+
+In this mode, every call that would normally use `userRequest()` is transparently downgraded to `applicationRequest()`. The module instance is immutable: `asApplication()` returns a clone and leaves the original untouched.
+
 ## SDK Coverage
 
 | Domain | Active routes | Current SDK coverage | Missing wrappers |

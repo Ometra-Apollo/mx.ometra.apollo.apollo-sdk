@@ -69,6 +69,18 @@ Apollo::ignis()->contentHits()->report([
 $groups = Apollo::pulse()->groups()->index();
 ```
 
+### Uso en jobs y contextos sin usuario
+
+Cuando necesites hacer llamadas desde un job, un comando o cualquier contexto donde no haya sesion de usuario activa, usa `asApplication()`. Esto fuerza a todas las operaciones del modulo a usar autenticacion de aplicacion (sin `X-User-Token`) en lugar de autenticacion de usuario:
+
+```php
+// En un job — sin sesion HTTP, sin token de usuario
+$proteus = Apollo::proteus()->asApplication();
+
+$proteus->media()->index(['type' => 'audio']);
+$proteus->directories()->show($directoryId);
+```
+
 Tambien puedes inyectar el entrypoint principal:
 
 ```php

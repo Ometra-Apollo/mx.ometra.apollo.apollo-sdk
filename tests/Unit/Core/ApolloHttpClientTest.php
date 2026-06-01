@@ -126,7 +126,21 @@ final class ApolloHttpClientTest extends TestCase
         Http::assertSent(fn (Request $request): bool => $request->url() === 'https://proteus.test/api/categories'
             && $request->hasHeader('X-Application-Token')
             && $request->hasHeader('X-Group-Token')
-            && !$request->hasHeader('X-User-Token')
+            && ! $request->hasHeader('X-User-Token')
+            && $request->hasHeader('X-Tenant-Id', 'tenant-42'));
+    }
+
+    public function testUserRequestWithAsApplicationFlagOmitsUserTokenButKeepsApplicationGroupAndTenantHeaders(): void
+    {
+        $client = new ApolloHttpClient('https://proteus.test/api', asApplication: true);
+
+        $response = $client->userRequest('GET', 'media', query: ['type' => 'image']);
+
+        self::assertSame(['accepted' => true], $response['data']);
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://proteus.test/api/media?type=image'
+            && $request->hasHeader('X-Application-Token')
+            && $request->hasHeader('X-Group-Token')
+            && ! $request->hasHeader('X-User-Token')
             && $request->hasHeader('X-Tenant-Id', 'tenant-42'));
     }
 }

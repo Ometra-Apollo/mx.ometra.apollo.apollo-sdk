@@ -14,8 +14,21 @@ use Ometra\Apollo\Sdk\Modules\Proteus\Resources\PresetsResource;
 
 final class ProteusModule
 {
+    private ?ApolloHttpClient $client = null;
+
+    private bool $asApplication = false;
+
     public function __construct(private readonly ModuleConfigResolver $configResolver)
     {
+    }
+
+    public function asApplication(): static
+    {
+        $clone = clone $this;
+        $clone->asApplication = true;
+        $clone->client = null;
+
+        return $clone;
     }
 
     /**
@@ -53,6 +66,13 @@ final class ProteusModule
 
     private function client(): ApolloHttpClient
     {
-        return new ApolloHttpClient($this->config()['base_url']);
+        if ($this->client === null) {
+            $this->client = new ApolloHttpClient(
+                $this->config()['base_url'],
+                $this->asApplication,
+            );
+        }
+
+        return $this->client;
     }
 }

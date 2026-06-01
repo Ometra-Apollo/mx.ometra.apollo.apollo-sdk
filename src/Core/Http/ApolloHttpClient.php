@@ -17,8 +17,10 @@ use RuntimeException;
 
 class ApolloHttpClient extends CaronteHttpClient
 {
-    public function __construct(private readonly string $baseUrl) 
-    {
+    public function __construct(
+        private readonly string $baseUrl,
+        private readonly bool $asApplication = false,
+    ) {
     }
 
     /**
@@ -46,6 +48,10 @@ class ApolloHttpClient extends CaronteHttpClient
         array $payload = [],
         array $query = [],
     ): array {
+        if ($this->asApplication) {
+            return $this->applicationRequest($method, $endpoint, $payload, $query);
+        }
+
         return $this->request($method, $endpoint, $payload, $query, $this->userHeaders());
     }
 
