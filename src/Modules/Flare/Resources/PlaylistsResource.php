@@ -15,4 +15,8 @@ final class PlaylistsResource
     {
         return $this->client->userRequest('GET', 'playlists/' . $id);
     }
+       public function items(string $id): array
+    {
+        return $this->client->userRequest('GET', 'playlists/' . $id . '/items');
+    }
 }

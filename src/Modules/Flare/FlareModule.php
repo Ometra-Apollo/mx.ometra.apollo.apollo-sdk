@@ -14,13 +14,24 @@ use Ometra\Apollo\Sdk\Modules\Flare\Resources\PlaylistsResource;
  *
  * Exposed resources:
  * - stations()
+ * - playlists()
  */
 final class FlareModule
 {
-    public function __construct(private readonly ModuleConfigResolver $configResolver) 
-    {
-    }
+    private ?ApolloHttpClient $client = null;
 
+    private bool $asApplication = false;
+
+    public function __construct(private readonly ModuleConfigResolver $configResolver) {}
+
+    public function asApplication(): static
+    {
+        $clone = clone $this;
+        $clone->asApplication = true;
+        $clone->client = null;
+
+        return $clone;
+    }
     /**
      * @return array{base_url_env: string, base_url: string}
      */
@@ -41,6 +52,13 @@ final class FlareModule
 
     private function client(): ApolloHttpClient
     {
-        return new ApolloHttpClient($this->config()['base_url']);
+        if ($this->client === null) {
+            $this->client = new ApolloHttpClient(
+                $this->config()['base_url'],
+                $this->asApplication,
+            );
+        }
+
+        return $this->client;
     }
 }

@@ -64,6 +64,11 @@ class ApolloHttpClient extends CaronteHttpClient
         array $payload = [],
         array $query = [],
     ): Response {
+        
+         if ($this->asApplication) {
+            return $this->requestRaw($method, $endpoint, $payload, $query, $this->applicationHeaders());
+        }
+        
         return $this->requestRaw($method, $endpoint, $payload, $query, $this->userHeaders());
     }
 
