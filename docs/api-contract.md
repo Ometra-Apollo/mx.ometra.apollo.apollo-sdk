@@ -140,6 +140,7 @@ In this mode, every call that would normally use `userRequest()` is transparentl
 | Apollo resource action | HTTP method | URI | Auth | Notes |
 | --- | --- | --- | --- | --- |
 | `Apollo::ignis()->campaigns()->byExternalGroup(string $externalGroupId)` | `GET` | `/api/external-groups/{externalGroupId}/campaigns` | App | Migrated from `getCampaignsByExternalGroup(...)` in `ometra-ignis-client`. |
+| `Apollo::ignis()->campaigns()->show(string $id)` | `GET` | `/api/campaigns/{id}` | App | Campaign detail lookup for Pulse IoT campaign detail endpoint. |
 
 ## Ignis Content Hits
 

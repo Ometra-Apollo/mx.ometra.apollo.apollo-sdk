@@ -27,6 +27,23 @@ final class IgnisResourceRoutesTest extends TestCase
         ], $client->lastRequest);
     }
 
+    public function testCampaignShowUsesExpectedEndpoint(): void
+    {
+        $client = new RecordingApolloHttpClient();
+        $resource = new CampaignsResource($client);
+
+        $resource->show('campaign-1');
+
+        self::assertSame([
+            'auth' => 'application',
+            'method' => 'GET',
+            'endpoint' => 'campaigns/campaign-1',
+            'payload' => [],
+            'query' => [],
+            'raw' => false,
+        ], $client->lastRequest);
+    }
+
     public function testContentHitsReportUsesExpectedEndpoint(): void
     {
         $client = new RecordingApolloHttpClient();

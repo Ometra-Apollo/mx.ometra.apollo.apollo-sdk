@@ -14,4 +14,14 @@ final class CampaignsResource
     {
         return $this->client->applicationRequest('GET', 'external-groups/' . $externalGroupId . '/campaigns');
     }
+
+    public function byExternalGroup(string $externalGroupId): array
+    {
+        return $this->byGroup($externalGroupId);
+    }
+
+    public function show(string $id): array
+    {
+        return $this->client->applicationRequest('GET', 'campaigns/' . $id);
+    }
 }
