@@ -32,8 +32,15 @@ class ApolloHttpClient extends CaronteHttpClient
         string $endpoint,
         array $payload = [],
         array $query = [],
+        ?string $userToken = null,
     ): array {
-        return $this->request($method, $endpoint, $payload, $query, $this->applicationHeaders());
+        $headers = $this->applicationHeaders();
+
+        if (is_string($userToken) && trim($userToken) !== '') {
+            $headers['X-User-Token'] = trim($userToken);
+        }
+
+        return $this->request($method, $endpoint, $payload, $query, $headers);
     }
 
     /**
@@ -64,11 +71,11 @@ class ApolloHttpClient extends CaronteHttpClient
         array $payload = [],
         array $query = [],
     ): Response {
-        
-         if ($this->asApplication) {
+
+        if ($this->asApplication) {
             return $this->requestRaw($method, $endpoint, $payload, $query, $this->applicationHeaders());
         }
-        
+
         return $this->requestRaw($method, $endpoint, $payload, $query, $this->userHeaders());
     }
 

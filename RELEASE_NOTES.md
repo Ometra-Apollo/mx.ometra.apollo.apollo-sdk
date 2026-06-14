@@ -1,50 +1,40 @@
-# Release v3.3.0 "Artemis"
+# Release v3.4.0 "Hermes"
 
-**Date:** 2026-06-13  
+**Date:** 2026-06-14  
 **Branch:** `main`  
 **Package:** `ometra/apollo-sdk`
 
 ## Summary
 
-This release adds direct campaign detail retrieval in the Ignis module and updates
-the SDK contract documentation accordingly. It is a backward-compatible feature
-release focused on route completeness and test-backed behavior. Configuration
-continues to be driven by `config/apollo.php` for module base URLs.
+This release introduces delegated user-token support for application-scoped
+requests in the Apollo HTTP client. The change is backward compatible and keeps
+existing behavior unchanged when no user token is provided.
+
+"Hermes" represents this release focus: fast and reliable request delegation
+across service boundaries.
 
 ## Highlights
 
-- Added `Apollo::ignis()->campaigns()->show($id)` for campaign detail lookup.
-- Expanded route-level unit coverage for Ignis campaign endpoints.
-- Updated the public API contract to reflect the new campaign detail route.
-
-Module URLs remain configured through `config/apollo.php` using:
-
-- `PROTEUS_BASE_URL`
-- `PULSE_BASE_URL`
-- `FLARE_BASE_URL`
-- `IGNIS_BASE_URL`
+- Added optional delegated user token support in
+  `ApolloHttpClient::applicationRequest()`.
+- Preserved existing default behavior for application-authenticated requests.
+- Added dedicated unit coverage for delegated `X-User-Token` forwarding.
 
 ## Added
 
-- `CampaignsResource::show(string $id)`:
-  calls `GET /api/campaigns/{id}` using application authentication.
-- `IgnisResourceRoutesTest::testCampaignShowUsesExpectedEndpoint()` to validate
-  route mapping and request shape.
-
-Contextual resource usage remains unchanged, for example:
-
-```php
-$images = Apollo::proteus()->media()->index(['type' => 'image']);
-```
+- Optional `?string $userToken = null` parameter in
+  `ApolloHttpClient::applicationRequest()`.
+- `ApolloHttpClientTest::testApplicationRequestCanIncludeExplicitUserTokenWhenProvided()`
+  to validate delegated header behavior.
 
 ## Changed
 
-- `docs/api-contract.md` now documents the campaign detail endpoint under
-  Ignis Campaigns.
+- `RecordingApolloHttpClient::applicationRequest()` now mirrors the production
+  signature with the optional user token parameter.
 
 ## Fixed
 
-- No explicit bug fix changes in this release.
+- Minor formatting cleanup in `ApolloHttpClient::userRawRequest()`.
 
 ## Removed
 
@@ -60,10 +50,9 @@ $images = Apollo::proteus()->media()->index(['type' => 'image']);
 
 ## Breaking Changes
 
-None in this version. For complete migration history, see
+None in this version. For migration history and breakage details, see
 [BREAKING_CHANGES.md](BREAKING_CHANGES.md).
 
 ## Full History
 
-For full project history and canonical release details, see
-[CHANGELOG.md](CHANGELOG.md).
+For the complete canonical history, see [CHANGELOG.md](CHANGELOG.md).

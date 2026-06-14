@@ -28,6 +28,7 @@ final class RecordingApolloHttpClient extends ApolloHttpClient
         string $endpoint,
         array $payload = [],
         array $query = [],
+        ?string $userToken = null,
     ): array {
         return $this->record('application', $method, $endpoint, $payload, $query, raw: false);
     }

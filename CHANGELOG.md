@@ -11,6 +11,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [v3.4.0] - 2026-06-14 "Hermes"
+
+Compatibility feature release focused on delegated authentication for
+application-scoped requests while preserving existing request contracts.
+
+### Added
+
+- `ApolloHttpClient::applicationRequest()` now accepts an optional
+  `?string $userToken` argument. When provided, the client forwards it as
+  `X-User-Token` alongside application headers.
+- Unit coverage in `ApolloHttpClientTest` validating explicit delegated
+  `X-User-Token` injection in application requests.
+
+### Changed
+
+- `RecordingApolloHttpClient::applicationRequest()` test double signature now
+  mirrors the production client method, including `?string $userToken = null`.
+
+### Fixed
+
+- Internal formatting cleanup in `ApolloHttpClient::userRawRequest()`.
+
+### Removed
+
+- Nothing removed.
+
+### Deprecated
+
+- Nothing deprecated.
+
+### Security
+
+- No security changes.
+
+### Breaking Changes
+
+- None in `v3.4.0`.
+
 ## [v3.3.0] - 2026-06-13 "Artemis"
 
 Focused feature release that extends Ignis campaign access with a campaign

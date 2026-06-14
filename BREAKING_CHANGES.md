@@ -1,5 +1,9 @@
 # Breaking Changes
 
+## v3.4.0
+
+No breaking changes were introduced in this release.
+
 ## v3.3.0
 
 No breaking changes were introduced in this release.
