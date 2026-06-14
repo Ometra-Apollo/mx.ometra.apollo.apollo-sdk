@@ -1,66 +1,69 @@
-# Release v3.0.0 "Apollo"
+# Release v3.3.0 "Artemis"
 
-**Date:** 2026-05-08
-**Branch:** `remake` → `main`
+**Date:** 2026-06-13  
+**Branch:** `main`  
 **Package:** `ometra/apollo-sdk`
-
----
 
 ## Summary
 
-Apollo is the clean-cut modular SDK migration. The package now uses `config/apollo.php`, exposes the Apollo entrypoint, and delegates authentication to `caronte-sdk`.
-
-Proteus API domains are available through contextual module resources, for example `Apollo::proteus()->media()->index(...)`. Pulse, Flare, and Ignis are placeholders until their endpoint contracts are defined.
-
----
+This release adds direct campaign detail retrieval in the Ignis module and updates
+the SDK contract documentation accordingly. It is a backward-compatible feature
+release focused on route completeness and test-backed behavior. Configuration
+continues to be driven by `config/apollo.php` for module base URLs.
 
 ## Highlights
 
-- **Full Proteus coverage** – 36 actions across 5 domains with zero missing endpoints.
-- **Caronte-native auth** – `X-Application-Token`, `X-User-Token`, and `X-Tenant-Id` are
-  assembled automatically from `caronte-sdk`; no more manual token configuration.
-- **Multipart auto-detection** – payloads containing `UploadedFile` instances are
-  transparently converted to multipart requests.
-- **BeeHive tenant resolution** – `TenantContext` is resolved at request time; no static
-  config required.
-- **PHPUnit test suite** – module test doubles capture requests for assertion without hitting the network.
-- **Zero DB footprint** – migrations removed; the SDK is now a pure HTTP client.
-- **PHP 8.2+ and Laravel 12** – modern baseline with strict types throughout.
+- Added `Apollo::ignis()->campaigns()->show($id)` for campaign detail lookup.
+- Expanded route-level unit coverage for Ignis campaign endpoints.
+- Updated the public API contract to reflect the new campaign detail route.
 
----
+Module URLs remain configured through `config/apollo.php` using:
+
+- `PROTEUS_BASE_URL`
+- `PULSE_BASE_URL`
+- `FLARE_BASE_URL`
+- `IGNIS_BASE_URL`
 
 ## Added
 
-- `ApolloHttpClient` — low-level HTTP client (extends `CaronteHttpClient`).
-- Proteus module resources: media, metadata, categories, directories, presets.
-- Apollo main class with module accessors: `proteus()`, `pulse()`, `flare()`, `ignis()`.
-- `Facades\Apollo` static facade.
-- `ApolloServiceProvider` (singleton registration, config publishing).
-- `docs/api-contract.md` — endpoint contract reference.
-- Full PHPUnit test suite under `tests/`.
-- PHPDoc on all public and protected API methods.
+- `CampaignsResource::show(string $id)`:
+  calls `GET /api/campaigns/{id}` using application authentication.
+- `IgnisResourceRoutesTest::testCampaignShowUsesExpectedEndpoint()` to validate
+  route mapping and request shape.
+
+Contextual resource usage remains unchanged, for example:
+
+```php
+$images = Apollo::proteus()->media()->index(['type' => 'image']);
+```
 
 ## Changed
 
-- `composer.json` — updated dependencies (PHP 8.2, Laravel 12, Guzzle 7.9, Caronte SDK 4.0).
-- `config/apollo.php` — module URL configuration for `PROTEUS_BASE_URL`, `PULSE_BASE_URL`, `FLARE_BASE_URL`, and `IGNIS_BASE_URL`.
-- `README.md` — rewritten with installation, configuration, auth, and usage sections.
+- `docs/api-contract.md` now documents the campaign detail endpoint under
+  Ignis Campaigns.
+
+## Fixed
+
+- No explicit bug fix changes in this release.
 
 ## Removed
 
-- Legacy root entrypoint, facade, provider, config, API wrappers, exception, `BaseApiService`, `DownloadMedia`, `PayloadFormatting` partials.
-- DB migrations.
-- Old guides (`IMPLEMENTATION_GUIDE.md`, `PROTEUS_APPS_GUIDE.md`).
+- Nothing removed.
 
----
+## Deprecated
+
+- Nothing deprecated.
+
+## Security
+
+- No security-related changes.
 
 ## Breaking Changes
 
-This is a **major version** bump. Consumers of v1.x must migrate. See
-[BREAKING_CHANGES.md](BREAKING_CHANGES.md) for step-by-step migration guidance.
-
----
+None in this version. For complete migration history, see
+[BREAKING_CHANGES.md](BREAKING_CHANGES.md).
 
 ## Full History
 
-See [CHANGELOG.md](CHANGELOG.md) for the complete project history.
+For full project history and canonical release details, see
+[CHANGELOG.md](CHANGELOG.md).

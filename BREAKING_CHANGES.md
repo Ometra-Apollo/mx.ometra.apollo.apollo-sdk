@@ -1,5 +1,11 @@
 # Breaking Changes
 
+## v3.3.0
+
+No breaking changes were introduced in this release.
+
+---
+
 ## Apollo SDK migration
 
 This release completes the clean-cut migration to `ometra/apollo-sdk`. All consumers must use `config/apollo.php` and the modular API.

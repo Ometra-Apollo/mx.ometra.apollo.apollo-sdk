@@ -6,10 +6,47 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 > **This file is the single source of truth for project history.**
-> Every future release — whether produced by a human or an AI agent — must update this file
+> Every future release - whether produced by a human or an AI agent - must update this file
 > before merging to `main`.
 
 ---
+
+## [v3.3.0] - 2026-06-13 "Artemis"
+
+Focused feature release that extends Ignis campaign access with a campaign
+detail endpoint and validates route behavior through dedicated unit coverage.
+
+### Added
+
+- `CampaignsResource::show(string $id)` in Ignis for campaign detail retrieval
+  via `GET /api/campaigns/{id}`.
+- Route test coverage for the new campaign detail endpoint in
+  `IgnisResourceRoutesTest`.
+
+### Changed
+
+- `docs/api-contract.md` updated to include the new Ignis campaign detail route
+  in the SDK coverage contract.
+
+### Fixed
+
+- No functional regressions fixed in this release.
+
+### Removed
+
+- Nothing removed.
+
+### Deprecated
+
+- Nothing deprecated.
+
+### Security
+
+- No security changes.
+
+### Breaking Changes
+
+- None in `v3.3.0`.
 
 ## [v2.0.0] - 2026-05-08 "Helios"
 
@@ -45,7 +82,7 @@ HTTP-client layer built on top of `caronte-sdk`'s `CaronteHttpClient`.
 
 - `composer.json` updated to `ometra/apollo-sdk`; requires `php ^8.2`,
   `illuminate/{database,http,routing,support} ^12.0`,
-   `guzzlehttp/guzzle ^7.9`, `ometra/caronte-sdk ^4.0`,
+  `guzzlehttp/guzzle ^7.9`, `ometra/caronte-sdk ^4.0`,
   `league/flysystem-aws-s3-v3 ^3.0`.
 - `config/apollo.php` owns module base URLs for Proteus, Pulse, Flare, and Ignis.
 - `README.md` rewritten in Spanish; documents installation, configuration,
