@@ -94,6 +94,80 @@ public function __invoke(Apollo $apollo): array
 
 Pulse expone `groups()->index()` sobre el endpoint `ignis/groups`.
 
+## Exposicion de grupos Ignis (inbound, opt-in)
+
+Apollo es solo outbound por defecto. Cuando lo habilitas, el SDK registra una ruta inbound `GET /{prefix}/groups` en la app host para que clientes externos (incluido Pulse) puedan descubrir los grupos de la app. No agrega llamadas HTTP hacia Ignis.
+
+### Habilitar la ruta
+
+La ruta esta deshabilitada por defecto. Habilitala con una variable de entorno:
+
+```env
+APOLLO_IGNIS_GROUPS_ENABLED=true
+```
+
+O publica la configuracion y edita `config/apollo.php`:
+
+```php
+'ignis_groups' => [
+    'enabled' => true,
+    'implementation' => \Ometra\Apollo\Sdk\Test\DummyGroup::class,
+    'route_prefix' => 'api/ignis',
+    'middleware' => ['caronte.application:tenant_required'],
+],
+```
+
+Con `enabled=false` (por defecto) no se registra ninguna ruta y `GET /api/ignis/groups` devuelve `404`.
+
+### Proveer la implementacion del contrato
+
+El SDK trae `Ometra\Apollo\Sdk\Test\DummyGroup` como implementacion runnable que devuelve un grupo de prueba. Para exponer grupos reales, crea una clase que implemente `Ometra\Apollo\Sdk\Contracts\IgnisGroupContract` y apunta `implementation` a ella:
+
+```php
+namespace App\Services;
+
+use Ometra\Apollo\Sdk\Contracts\IgnisGroupContract;
+use Ometra\Apollo\Sdk\DTO\ExternalGroupDTO;
+
+final class HostGroupProvider implements IgnisGroupContract
+{
+    public function getGroups(): array
+    {
+        return [
+            ExternalGroupDTO::fromArray([
+                'name' => 'Mi grupo',
+                'external_id' => 'grupo-1',
+                'media_type' => ['video', 'audio'],
+                'play_modifiers' => ['frequency' => 2],
+            ]),
+        ];
+    }
+}
+```
+
+```php
+// config/apollo.php (override del host)
+'ignis_groups' => [
+    'enabled' => true,
+    'implementation' => \App\Services\HostGroupProvider::class,
+],
+```
+
+Si `implementation` queda vacio o la clase no implementa el contrato, el provider lanza `RuntimeException` al arrancar.
+
+### Prefijo de ruta y middleware
+
+El prefijo por defecto es `api/ignis` (la ruta queda en `GET /api/ignis/groups`). Cambialo con `route_prefix`:
+
+```php
+'ignis_groups' => [
+    'enabled' => true,
+    'route_prefix' => 'api/custom/ignis', // GET /api/custom/ignis/groups
+],
+```
+
+La ruta esta protegida por el middleware `caronte.application:tenant_required`. Las peticiones sin contexto de tenant valido son rechazadas por Caronte (401/403) antes de llegar al controlador. Puedes overridear la pila de middleware con la clave `middleware`.
+
 ## API
 
 El contrato completo esta en [docs/api-contract.md](docs/api-contract.md).

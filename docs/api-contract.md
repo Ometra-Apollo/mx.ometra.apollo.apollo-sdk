@@ -5,6 +5,8 @@ Package: `ometra/apollo-sdk`. Configuration file: `config/apollo.php`.
 Apollo exposes modules through `Apollo::proteus()`, `Apollo::pulse()`, `Apollo::flare()`, and `Apollo::ignis()`.
 Proteus, Pulse, Flare, and Ignis ship concrete resources in this release.
 
+Apollo is outbound-only by default. When the host opts in via `apollo.ignis_groups.enabled`, the SDK also EXPOSES an inbound `GET /{prefix}/groups` route on the host application so external clients (including Pulse) can discover the host's groups. See [Ignis Groups Exposure (Inbound)](#ignis-groups-exposure-inbound).
+
 Required module URL environment variables:
 
 - `PROTEUS_BASE_URL`
@@ -147,6 +149,90 @@ In this mode, every call that would normally use `userRequest()` is transparentl
 | Apollo resource action | HTTP method | URI | Auth | Notes |
 | --- | --- | --- | --- | --- |
 | `Apollo::ignis()->contentHits()->report(array $report)` | `POST` | `/api/content-hits` | App | Migrated from `hitReport(...)` in `ometra-ignis-client`. |
+
+## Ignis Groups Exposure (Inbound)
+
+Apollo SDK is outbound-only by default. When the host enables the opt-in `ignis_groups` config block, the SDK registers an INBOUND route on the host application that exposes the host's groups to external clients (including Pulse's outbound `groups()->index()`). No outbound HTTP to Ignis is added by this surface.
+
+### Route
+
+| HTTP method | URI (default) | Configurable prefix | Auth | Enabled by default |
+| --- | --- | --- | --- | --- |
+| `GET` | `/api/ignis/groups` | `apollo.ignis_groups.route_prefix` | `caronte.application:tenant_required` | No (`apollo.ignis_groups.enabled` defaults to `false`) |
+
+The route is registered only when `apollo.ignis_groups.enabled` is `true`. With the default config (`false`), no groups route is registered and `GET /api/ignis/groups` returns `404`.
+
+### Response
+
+The response body is a raw JSON array (no wrapper) of `ExternalGroupDTO::toArray()` shapes. `play_modifiers` is omitted from each entry when `null`.
+
+```json
+[
+    {
+        "name": "Test Group",
+        "external_id": "test_external_id",
+        "media_type": ["video"],
+        "provider_id": "my-app"
+    }
+]
+```
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `name` | string | Group display name. |
+| `external_id` | string | Host-external group identifier. |
+| `media_type` | string[] | Normalized to `MediaTypeEnum` values (`video`, `audio`, `image`). |
+| `provider_id` | string | Auto-set to `Str::slug(config('app.name'))`. |
+| `play_modifiers` | object\|null | Optional playback modifiers. Absent when `null`. |
+
+### Authentication
+
+The route is protected by the `caronte.application:tenant_required` middleware alias. Requests without valid tenant credentials are rejected by Caronte (typically `401`/`403` per Caronte behavior) before reaching the controller.
+
+### Configuration
+
+All keys live under `apollo.ignis_groups` in `config/apollo.php`:
+
+| Key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `enabled` | bool | `env('APOLLO_IGNIS_GROUPS_ENABLED', false)` | Enables the inbound groups route. `false` = no route registered. |
+| `implementation` | class-string | `\Ometra\Apollo\Sdk\Test\DummyGroup::class` | Concrete `IgnisGroupContract` implementation. Must implement the contract or the provider throws `RuntimeException` at boot. |
+| `route_prefix` | string | `api/ignis` | URI prefix for the route. Override to mount under a custom path (e.g. `api/custom/ignis`). |
+| `middleware` | string[] | `['caronte.application:tenant_required']` | Route middleware stack. Override to add/remove middleware. |
+
+### Host Responsibility
+
+The host MUST provide a concrete implementation of `Ometra\Apollo\Sdk\Contracts\IgnisGroupContract` and set `apollo.ignis_groups.implementation` to its class string. The SDK ships `Ometra\Apollo\Sdk\Test\DummyGroup` as a runnable default that returns one test group; override it in the host config to expose real groups.
+
+```php
+// config/apollo.php (host override)
+'ignis_groups' => [
+    'enabled' => true,
+    'implementation' => \App\Services\HostGroupProvider::class,
+],
+```
+
+```php
+namespace App\Services;
+
+use Ometra\Apollo\Sdk\Contracts\IgnisGroupContract;
+use Ometra\Apollo\Sdk\DTO\ExternalGroupDTO;
+
+final class HostGroupProvider implements IgnisGroupContract
+{
+    public function getGroups(): array
+    {
+        return [
+            ExternalGroupDTO::fromArray([
+                'name' => 'Host group',
+                'external_id' => 'host-1',
+                'media_type' => ['video', 'audio'],
+                'play_modifiers' => ['frequency' => 2],
+            ]),
+        ];
+    }
+}
+```
 
 ## SDK HTTP Client
 

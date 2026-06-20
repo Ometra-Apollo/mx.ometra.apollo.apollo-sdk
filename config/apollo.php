@@ -23,4 +23,27 @@ return [
             'base_url' => $env('IGNIS_BASE_URL'),
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ignis Groups Exposure (opt-in inbound route)
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, the SDK registers an inbound `GET /{prefix}/groups` route on
+    | the host application. The route resolves a host-provided
+    | `Ometra\Apollo\Sdk\Contracts\IgnisGroupContract` implementation from the
+    | container and returns standardized `ExternalGroupDTO[]` JSON. The route is
+    | protected by the `caronte.application:tenant_required` middleware alias.
+    |
+    | Note: the middleware alias is intentionally lowercase. Do not introduce
+    | any uppercase Caronte-prefixed env vars in this file.
+    |
+    */
+
+    'ignis_groups' => [
+        'enabled' => env('APOLLO_IGNIS_GROUPS_ENABLED', false),
+        'implementation' => \Ometra\Apollo\Sdk\Test\DummyGroup::class,
+        'route_prefix' => 'api/ignis',
+        'middleware' => ['caronte.application:tenant_required'],
+    ],
 ];
