@@ -196,13 +196,13 @@ All keys live under `apollo.ignis_groups` in `config/apollo.php`:
 | Key | Type | Default | Description |
 | --- | --- | --- | --- |
 | `enabled` | bool | `env('APOLLO_IGNIS_GROUPS_ENABLED', false)` | Enables the inbound groups route. `false` = no route registered. |
-| `implementation` | class-string | `\Ometra\Apollo\Sdk\Test\DummyGroup::class` | Concrete `IgnisGroupContract` implementation. Must implement the contract or the provider throws `RuntimeException` at boot. |
+| `implementation` | class-string | `env('APOLLO_IGNIS_GROUPS_IMPLEMENTATION', \Ometra\Apollo\Sdk\Test\DummyGroup::class)` | Concrete `IgnisGroupContract` implementation. Must implement the contract or the provider throws `RuntimeException` at boot. |
 | `route_prefix` | string | `api/ignis` | URI prefix for the route. Override to mount under a custom path (e.g. `api/custom/ignis`). |
 | `middleware` | string[] | `['caronte.application:tenant_required']` | Route middleware stack. Override to add/remove middleware. |
 
 ### Host Responsibility
 
-The host MUST provide a concrete implementation of `Ometra\Apollo\Sdk\Contracts\IgnisGroupContract` and set `apollo.ignis_groups.implementation` to its class string. The SDK ships `Ometra\Apollo\Sdk\Test\DummyGroup` as a runnable default that returns one test group; override it in the host config to expose real groups.
+The host MUST provide a concrete implementation of `Ometra\Apollo\Sdk\Contracts\IgnisGroupContract` and set `apollo.ignis_groups.implementation` to its class string. The SDK ships `Ometra\Apollo\Sdk\Test\DummyGroup` as a runnable default that returns one test group; override it via the `APOLLO_IGNIS_GROUPS_IMPLEMENTATION` env var or in the host config to expose real groups.
 
 ```php
 // config/apollo.php (host override)

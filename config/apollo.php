@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-$env = static fn (string $key, ?string $default = null): ?string => $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key) ?: $default;
+$env = static fn(string $key, ?string $default = null): ?string => $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key) ?: $default;
 
 return [
     'modules' => [
@@ -42,7 +42,7 @@ return [
 
     'ignis_groups' => [
         'enabled' => env('APOLLO_IGNIS_GROUPS_ENABLED', false),
-        'implementation' => \Ometra\Apollo\Sdk\Test\DummyGroup::class,
+        'implementation' => env('APOLLO_IGNIS_GROUPS_IMPLEMENTATION', \Ometra\Apollo\Sdk\Test\DummyGroup::class),
         'route_prefix' => 'api/ignis',
         'middleware' => ['caronte.application:tenant_required'],
     ],

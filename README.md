@@ -121,7 +121,7 @@ Con `enabled=false` (por defecto) no se registra ninguna ruta y `GET /api/ignis/
 
 ### Proveer la implementacion del contrato
 
-El SDK trae `Ometra\Apollo\Sdk\Test\DummyGroup` como implementacion runnable que devuelve un grupo de prueba. Para exponer grupos reales, crea una clase que implemente `Ometra\Apollo\Sdk\Contracts\IgnisGroupContract` y apunta `implementation` a ella:
+El SDK trae `Ometra\Apollo\Sdk\Test\DummyGroup` como implementacion runnable que devuelve un grupo de prueba. Para exponer grupos reales, crea una clase que implemente `Ometra\Apollo\Sdk\Contracts\IgnisGroupContract`:
 
 ```php
 namespace App\Services;
@@ -144,6 +144,14 @@ final class HostGroupProvider implements IgnisGroupContract
     }
 }
 ```
+
+Apunta `implementation` a tu clase via variable de entorno (sin necesidad de publicar la config):
+
+```env
+APOLLO_IGNIS_GROUPS_IMPLEMENTATION=\App\Services\HostGroupProvider
+```
+
+O publica la configuracion y edita `config/apollo.php`:
 
 ```php
 // config/apollo.php (override del host)
