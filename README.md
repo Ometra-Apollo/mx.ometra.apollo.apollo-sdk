@@ -16,6 +16,31 @@ php artisan vendor:publish --tag=apollo-config
 
 El archivo publicado es `config/apollo.php`.
 
+## Paginas de error
+
+Apollo registra automaticamente paginas HTML para los errores HTTP comunes de
+Laravel (`401`, `403`, `404`, `419`, `429`, `500`, `503`). El SDK agrega sus
+vistas como fallback, por lo que cualquier archivo local en
+`resources/views/errors` mantiene prioridad.
+
+Para deshabilitar este fallback:
+
+```env
+APOLLO_ERROR_PAGES_ENABLED=false
+```
+
+Si necesitas personalizar las vistas dentro de la app host, publicalas con:
+
+```bash
+php artisan vendor:publish --tag=apollo-error-pages
+```
+
+Tambien puedes publicar configuracion y paginas de error juntas:
+
+```bash
+php artisan vendor:publish --tag=apollo
+```
+
 ## Configuracion
 
 Apollo solo configura URLs por modulo; la autenticacion sigue viviendo en el SDK de Caronte.

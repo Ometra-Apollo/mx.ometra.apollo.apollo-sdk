@@ -17,6 +17,7 @@ use RuntimeException;
 final class ApolloServiceProvider extends ServiceProvider
 {
     private const CONFIG_PATH = __DIR__ . '/../../config/apollo.php';
+    private const VIEWS_PATH = __DIR__ . '/../../resources/views';
 
     public function register(): void
     {
@@ -48,9 +49,52 @@ final class ApolloServiceProvider extends ServiceProvider
             self::CONFIG_PATH => config_path('apollo.php'),
         ], 'apollo-config');
 
+        $this->publishes([
+            self::viewsPath() . '/errors' => resource_path('views/errors'),
+        ], 'apollo-error-pages');
+
+        $this->publishes([
+            self::CONFIG_PATH => config_path('apollo.php'),
+            self::viewsPath() . '/errors' => resource_path('views/errors'),
+        ], 'apollo');
+
+        $this->registerErrorPageViewFallback();
+
         if ((bool) config('apollo.ignis_groups.enabled', false)) {
             $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
         }
+    }
+
+    /**
+     * Let host applications resolve SDK error pages without publishing files.
+     *
+     * Laravel looks for HTTP error pages under the configured view paths as
+     * `errors/{status}.blade.php`. App paths stay first so local overrides keep
+     * priority, while Apollo views act as a package fallback.
+     */
+    private function registerErrorPageViewFallback(): void
+    {
+        if (!(bool) config('apollo.error_pages.enabled', true)) {
+            return;
+        }
+
+        /** @var \Illuminate\Contracts\Config\Repository $config */
+        $config = $this->app['config'];
+        $paths = (array) $config->get('view.paths', []);
+        $viewsPath = self::viewsPath();
+
+        if (in_array($viewsPath, $paths, true)) {
+            return;
+        }
+
+        $paths[] = $viewsPath;
+
+        $config->set('view.paths', $paths);
+    }
+
+    private static function viewsPath(): string
+    {
+        return (string) realpath(self::VIEWS_PATH) ?: self::VIEWS_PATH;
     }
 
     /**

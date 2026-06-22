@@ -4,6 +4,10 @@
 **Branch:** `main`  
 **Package:** `ometra/apollo-sdk`
 
+Configuration file: `config/apollo.php`. Module URL variables:
+`PROTEUS_BASE_URL`, `PULSE_BASE_URL`, `FLARE_BASE_URL`, and `IGNIS_BASE_URL`.
+Typical usage remains `Apollo::proteus()->media()->index(...)`.
+
 ## Summary
 
 This release introduces delegated user-token support for application-scoped
@@ -19,6 +23,12 @@ across service boundaries.
   `ApolloHttpClient::applicationRequest()`.
 - Preserved existing default behavior for application-authenticated requests.
 - Added dedicated unit coverage for delegated `X-User-Token` forwarding.
+
+## Unreleased Notes
+
+- Apollo now ships suite-styled Laravel HTTP error pages as an automatic
+  fallback. Hosts can disable them with `APOLLO_ERROR_PAGES_ENABLED=false` or
+  publish copies with `php artisan vendor:publish --tag=apollo-error-pages`.
 
 ## Added
 

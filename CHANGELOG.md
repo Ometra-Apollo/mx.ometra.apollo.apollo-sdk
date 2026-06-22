@@ -11,6 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- Suite-styled Laravel HTTP error pages for `401`, `403`, `404`, `419`, `429`,
+  `500`, and `503`.
+- Automatic error-page fallback registration through the Apollo service
+  provider, with `APOLLO_ERROR_PAGES_ENABLED=false` as an opt-out.
+- `apollo-error-pages` publish tag for customizable host copies, plus aggregate
+  `apollo` publishing for config and error pages.
+
 ## [v3.4.0] - 2026-06-14 "Hermes"
 
 Compatibility feature release focused on delegated authentication for

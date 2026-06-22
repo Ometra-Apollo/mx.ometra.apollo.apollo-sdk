@@ -26,6 +26,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Error Pages
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, Apollo adds its bundled `resources/views` directory as a
+    | fallback view path so Laravel can render suite-styled HTTP error pages
+    | from `errors/{status}.blade.php` without publishing files. Host
+    | `resources/views/errors` files keep priority and can override any page.
+    |
+    */
+
+    'error_pages' => [
+        'enabled' => env('APOLLO_ERROR_PAGES_ENABLED', true),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Ignis Groups Exposure (opt-in inbound route)
     |--------------------------------------------------------------------------
     |

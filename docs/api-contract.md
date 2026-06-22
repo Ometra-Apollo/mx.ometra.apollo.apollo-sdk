@@ -22,6 +22,29 @@ use Ometra\Apollo\Sdk\Facades\Apollo;
 $media = Apollo::proteus()->media()->index(['type' => 'image']);
 ```
 
+## Error Pages
+
+Apollo registers suite-styled HTML fallback pages for Laravel HTTP errors
+`401`, `403`, `404`, `419`, `429`, `500`, and `503`. The SDK appends its
+`resources/views` directory after the host app view paths, so
+`resources/views/errors/{status}.blade.php` in the host application always
+wins.
+
+Disable the fallback with:
+
+```env
+APOLLO_ERROR_PAGES_ENABLED=false
+```
+
+Publish customizable copies with:
+
+```bash
+php artisan vendor:publish --tag=apollo-error-pages
+```
+
+The aggregate `apollo` publish tag includes both `config/apollo.php` and the
+error pages.
+
 ## Authentication
 
 Every request must be application-authenticated through Caronte:

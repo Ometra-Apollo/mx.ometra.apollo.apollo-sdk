@@ -31,6 +31,17 @@ final class DocumentationExamplesTest extends TestCase
         }
     }
 
+    public function testDocumentationMentionsAutomaticErrorPages(): void
+    {
+        $readme = self::readProjectFile('README.md');
+        $contract = self::readProjectFile('docs/api-contract.md');
+
+        foreach ([$readme, $contract] as $contents) {
+            self::assertStringContainsString('apollo-error-pages', $contents);
+            self::assertStringContainsString('APOLLO_ERROR_PAGES_ENABLED', $contents);
+        }
+    }
+
     /**
      * @return array<string, array{0: string}>
      */
