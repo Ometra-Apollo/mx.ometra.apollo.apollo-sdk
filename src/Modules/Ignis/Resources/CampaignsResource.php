@@ -10,9 +10,9 @@ final class CampaignsResource
 {
     public function __construct(private readonly ApolloHttpClient $client) {}
 
-    public function byGroup(string $externalGroupId): array
+    public function byGroup(string $id_externalGroup): array
     {
-        return $this->client->applicationRequest('GET', 'external-groups/' . $externalGroupId . '/campaigns');
+        return $this->client->applicationRequest('GET', 'external-groups/' . $id_externalGroup . '/campaigns');
     }
 
     public function byExternalGroup(string $externalGroupId): array
@@ -20,8 +20,8 @@ final class CampaignsResource
         return $this->byGroup($externalGroupId);
     }
 
-    public function show(string $id): array
+    public function show(string $id_externalGroup): array
     {
-        return $this->client->applicationRequest('GET', 'campaigns/' . $id);
+        return $this->client->applicationRequest('GET', 'external-groups/' . $id_externalGroup . '/campaigns/' . $id_externalGroup);
     }
 }
