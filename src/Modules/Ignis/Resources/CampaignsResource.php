@@ -20,8 +20,8 @@ final class CampaignsResource
         return $this->byGroup($externalGroupId);
     }
 
-    public function show(string $id_externalGroup): array
+    public function show(string $id_externalGroup, string $id_campaign): array
     {
-        return $this->client->applicationRequest('GET', 'external-groups/' . $id_externalGroup . '/campaigns/' . $id_externalGroup);
+        return $this->client->applicationRequest('GET', 'external-groups/' . $id_externalGroup . '/campaigns/' . $id_campaign);
     }
 }
