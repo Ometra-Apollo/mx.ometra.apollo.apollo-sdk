@@ -16,8 +16,13 @@ final class StationsResource
         return $this->client->userRequest('GET', 'stations', query: $query);
     }
 
-    public function show(string $id): array
+    public function show(string $id, bool $nameStation = false): array
     {
-        return $this->client->userRequest('GET', 'stations/' . $id);
+        return $this->client->userRequest(
+            'GET',
+            'stations/' . $id,
+            [],
+            ['nameStation' => $nameStation]
+        );
     }
 }
