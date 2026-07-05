@@ -136,6 +136,36 @@ In this mode, every call that would normally use `userRequest()` is transparentl
 | `Apollo::proteus()->media()->setMetadata(string $id, array $data)` | `POST` | `/api/media/{id}/set-metadata` | App + user | Requires `WRITE`. |
 | `Apollo::proteus()->media()->storeTags(string $id, array $data)` | `POST` | `/api/media/{id}/tags/store` | App + user | Requires `WRITE`. |
 
+### LightPath media URLs
+
+`lightPathUrl()` asks Proteus to mint an opaque CDN URL for a media asset:
+
+```php
+$response = Apollo::proteus()->media()->lightPathUrl($mediaId, [
+    'ext' => 'mp4',
+    'url_ttl_seconds' => 3600,
+]);
+```
+
+Payload fields:
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `ext` | `string|null` | No | Requested completed format. When omitted, Proteus uses the media default format. |
+| `url_ttl_seconds` | `int|null` | No | URL access TTL. Proteus applies its configured default and maximum. |
+
+Response data:
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `url` | `string` | Public URL, usually `https://lightpath.example.com/m/{token}`. |
+| `url_expires_at` | `string` | Access expiration for the opaque token. |
+| `media_id` | `string` | Proteus media id. |
+| `format` | `string` | Resolved delivery format. |
+
+The SDK does not expose LightPath node APIs. Nodes validate tokens and fetch
+origin bytes directly from Proteus.
+
 ## Metadata
 
 | Apollo resource action | HTTP method | URI | Auth | Permission |

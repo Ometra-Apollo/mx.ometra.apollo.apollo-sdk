@@ -99,6 +99,30 @@ Apollo::ignis()->contentHits()->report([
 $groups = Apollo::pulse()->groups()->index();
 ```
 
+### URLs LightPath para media
+
+LightPath se integra desde el recurso de media de Proteus porque Proteus es la
+autoridad de permisos y formatos. El SDK solo solicita una URL temporal; no
+valida tokens ni habla con nodos LightPath.
+
+```php
+$response = Apollo::proteus()->media()->lightPathUrl($mediaId, [
+    'ext' => 'mp4',
+    'url_ttl_seconds' => 3600,
+]);
+
+$url = $response['data']['url'];
+```
+
+Opciones:
+
+- `ext`: formato a entregar. Si se omite, Proteus usa el formato default.
+- `url_ttl_seconds`: vigencia de la URL. Proteus aplica su maximo configurado.
+
+La URL generada tiene forma `https://lightpath.example.com/m/{token}`. El token
+opaco es la unica credencial y quien tenga la URL puede consumirla hasta
+`url_expires_at`.
+
 ### Uso en jobs y contextos sin usuario
 
 Cuando necesites hacer llamadas desde un job, un comando o cualquier contexto donde no haya sesion de usuario activa, usa `asApplication()`. Esto fuerza a todas las operaciones del modulo a usar autenticacion de aplicacion (sin `X-User-Token`) en lugar de autenticacion de usuario:
