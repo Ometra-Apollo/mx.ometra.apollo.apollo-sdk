@@ -83,6 +83,11 @@ Apollo::proteus()->media()->setMetadata($mediaId, [
 
 $images = Apollo::proteus()->media()->index(['type' => 'image']);
 
+$lightPath = Apollo::proteus()->media()->lightPathUrl($mediaId, [
+    'ext' => 'mp4',
+    'url_ttl_seconds' => 3600,
+]);
+
 $stations = Apollo::flare()->stations()->index(['country' => 'mx']);
 
 $campaigns = Apollo::ignis()->campaigns()->byGroup('group-1');

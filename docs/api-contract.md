@@ -79,7 +79,7 @@ In this mode, every call that would normally use `userRequest()` is transparentl
 | Categories | 5 | 5 | None |
 | Directories | 6 | 6 | None |
 | Presets | 5 | 5 | None |
-| Media | 13 | 13 | None |
+| Media | 14 | 14 | None |
 | Metadata | 7 | 7 | None |
 | Flare stations | 2 | 2 | None |
 | Pulse groups | 1 | 1 | None |
@@ -130,6 +130,7 @@ In this mode, every call that would normally use `userRequest()` is transparentl
 | `Apollo::proteus()->media()->availableFormats(string $id)` | `GET` | `/api/media/{id}/available-formats` | App + user | Requires `READ`. |
 | `Apollo::proteus()->media()->setDefaultFormat(string $id, array $data)` | `POST` | `/api/media/{id}/available-formats` | App + user | Requires `WRITE`. |
 | `Apollo::proteus()->media()->download(string $id, ?string $ext = null)` | `GET` | `/api/media/{id}/download` | App + user | Requires `READ`. |
+| `Apollo::proteus()->media()->lightPathUrl(string $id, array $options = [])` | `POST` | `/api/media/{id}/lightpath-url` | App + user | Requires `READ`; payload: `ext`, `url_ttl_seconds`. |
 | `Apollo::proteus()->media()->transformationOptions(string $id)` | `GET` | `/api/media/{id}/request-transformations` | App + user | Requires `READ`. |
 | `Apollo::proteus()->media()->requestTransformations(string $id, array $data)` | `POST` | `/api/media/{id}/request-transformations` | App + user | Requires `WRITE`. |
 | `Apollo::proteus()->media()->setMetadata(string $id, array $data)` | `POST` | `/api/media/{id}/set-metadata` | App + user | Requires `WRITE`. |

@@ -92,4 +92,14 @@ final class MediaResource
     {
         return $this->download($id, $ext);
     }
+
+    /** @param array<string, mixed> $options */
+    public function lightPathUrl(string $id, array $options = []): array
+    {
+        return $this->client->userRequest(
+            'POST',
+            'media/' . $id . '/lightpath-url',
+            payload: $options,
+        );
+    }
 }
