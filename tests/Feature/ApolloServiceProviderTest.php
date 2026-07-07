@@ -124,6 +124,64 @@ final class ApolloServiceProviderTest extends TestCase
         Container::setInstance(null);
     }
 
+    public function testProviderPublishesSharedAppMenu(): void
+    {
+        $app = self::makeApplicationContainer();
+        $app->instance('config', new Repository([
+            'apollo' => array_replace_recursive(require __DIR__ . '/../../config/apollo.php', [
+                'ignis_groups' => ['enabled' => false],
+            ]),
+            'view' => [
+                'paths' => [],
+            ],
+        ]));
+        Container::setInstance($app);
+
+        $provider = new \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider($app);
+        $provider->boot();
+
+        $paths = ServiceProvider::pathsToPublish(
+            \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider::class,
+            'apollo-app-menu',
+        );
+        $appMenuPath = (string) realpath(dirname(__DIR__, 2) . '/resources/js/shared/AppMenu');
+
+        self::assertSame([
+            $appMenuPath => resource_path('js/shared/AppMenu'),
+        ], $paths);
+
+        Container::setInstance(null);
+    }
+
+    public function testProviderPublishesSharedDirectoryTree(): void
+    {
+        $app = self::makeApplicationContainer();
+        $app->instance('config', new Repository([
+            'apollo' => array_replace_recursive(require __DIR__ . '/../../config/apollo.php', [
+                'ignis_groups' => ['enabled' => false],
+            ]),
+            'view' => [
+                'paths' => [],
+            ],
+        ]));
+        Container::setInstance($app);
+
+        $provider = new \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider($app);
+        $provider->boot();
+
+        $paths = ServiceProvider::pathsToPublish(
+            \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider::class,
+            'apollo-directory-tree',
+        );
+        $directoryTreePath = (string) realpath(dirname(__DIR__, 2) . '/resources/js/shared/DirectoryTree');
+
+        self::assertSame([
+            $directoryTreePath => resource_path('js/shared/DirectoryTree'),
+        ], $paths);
+
+        Container::setInstance(null);
+    }
+
     public function testApolloErrorPageViewsExist(): void
     {
         $viewsPath = dirname(__DIR__, 2) . '/resources/views/errors';
@@ -149,6 +207,53 @@ final class ApolloServiceProviderTest extends TestCase
 
         Facade::clearResolvedInstances();
         Facade::setFacadeApplication(null);
+        Container::setInstance(null);
+    }
+
+    public function testProviderRequiresIgnisGroupsBindingWhenRouteIsEnabled(): void
+    {
+        $app = new Container();
+        Container::setInstance($app);
+        $app->instance('config', new Repository([
+            'apollo' => array_replace_recursive(require __DIR__ . '/../../config/apollo.php', [
+                'ignis_groups' => ['enabled' => true],
+            ]),
+            'view' => ['paths' => []],
+        ]));
+
+        $provider = new \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider($app);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(
+            'APOLLO_IGNIS_GROUPS_ENABLED=true requires a host binding for '
+            . \Ometra\Apollo\Sdk\Contracts\IgnisGroupContract::class
+        );
+
+        try {
+            $provider->boot();
+        } finally {
+            Container::setInstance(null);
+        }
+    }
+
+    public function testProviderKeepsHostIgnisGroupsBinding(): void
+    {
+        $app = new Container();
+        Container::setInstance($app);
+        $app->instance('config', new Repository(['apollo' => require __DIR__ . '/../../config/apollo.php']));
+        $hostGroups = new class implements \Ometra\Apollo\Sdk\Contracts\IgnisGroupContract {
+            public function getGroups(): array
+            {
+                return [];
+            }
+        };
+        $app->instance(\Ometra\Apollo\Sdk\Contracts\IgnisGroupContract::class, $hostGroups);
+
+        $provider = new \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider($app);
+        $provider->register();
+
+        self::assertSame($hostGroups, $app->make(\Ometra\Apollo\Sdk\Contracts\IgnisGroupContract::class));
+
         Container::setInstance(null);
     }
 

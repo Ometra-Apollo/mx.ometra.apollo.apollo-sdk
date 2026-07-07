@@ -17,6 +17,8 @@ use RuntimeException;
 final class ApolloServiceProvider extends ServiceProvider
 {
     private const CONFIG_PATH = __DIR__ . '/../../config/apollo.php';
+    private const APP_MENU_PATH = __DIR__ . '/../../resources/js/shared/AppMenu';
+    private const DIRECTORY_TREE_PATH = __DIR__ . '/../../resources/js/shared/DirectoryTree';
     private const VIEWS_PATH = __DIR__ . '/../../resources/views';
 
     public function register(): void
@@ -39,8 +41,6 @@ final class ApolloServiceProvider extends ServiceProvider
         });
 
         $this->app->alias(Apollo::class, 'apollo');
-
-        $this->registerIgnisGroupsBinding();
     }
 
     public function boot(): void
@@ -54,14 +54,29 @@ final class ApolloServiceProvider extends ServiceProvider
         ], 'apollo-error-pages');
 
         $this->publishes([
+            self::appMenuPath() => resource_path('js/shared/AppMenu'),
+        ], 'apollo-app-menu');
+
+        $this->publishes([
+            self::directoryTreePath() => resource_path('js/shared/DirectoryTree'),
+        ], 'apollo-directory-tree');
+
+        $this->publishes([
             self::CONFIG_PATH => config_path('apollo.php'),
+            self::appMenuPath() => resource_path('js/shared/AppMenu'),
+            self::directoryTreePath() => resource_path('js/shared/DirectoryTree'),
             self::viewsPath() . '/errors' => resource_path('views/errors'),
         ], 'apollo');
 
         $this->registerErrorPageViewFallback();
 
-        if ((bool) config('apollo.ignis_groups.enabled', false)) {
+        if (method_exists($this->app, 'routesAreCached')) {
             $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
+            $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+        }
+
+        if ((bool) config('apollo.ignis_groups.enabled', false)) {
+            $this->ensureIgnisGroupsBinding();
         }
     }
 
@@ -97,25 +112,24 @@ final class ApolloServiceProvider extends ServiceProvider
         return (string) realpath(self::VIEWS_PATH) ?: self::VIEWS_PATH;
     }
 
-    /**
-     * Bind {@see IgnisGroupContract} to the configured host implementation.
-     *
-     * Uses `bind` (not `singleton`) so host implementations carrying
-     * request-scoped dependencies are not shared across requests. Throws
-     * eagerly when the implementation is empty or does not implement the
-     * contract, so misconfiguration fails at boot rather than at first request.
-     */
-    private function registerIgnisGroupsBinding(): void
+    private static function appMenuPath(): string
     {
-        $implementation = (string) config('apollo.ignis_groups.implementation', '');
+        return (string) realpath(self::APP_MENU_PATH) ?: self::APP_MENU_PATH;
+    }
 
-        if ($implementation === '' || !is_a($implementation, IgnisGroupContract::class, true)) {
-            throw new RuntimeException(
-                'apollo.ignis_groups.implementation must be a non-empty class string implementing '
-                . IgnisGroupContract::class . '.'
-            );
+    private static function directoryTreePath(): string
+    {
+        return (string) realpath(self::DIRECTORY_TREE_PATH) ?: self::DIRECTORY_TREE_PATH;
+    }
+
+    private function ensureIgnisGroupsBinding(): void
+    {
+        if ($this->app->bound(IgnisGroupContract::class)) {
+            return;
         }
 
-        $this->app->bind(IgnisGroupContract::class, $implementation);
+        throw new RuntimeException(
+            'APOLLO_IGNIS_GROUPS_ENABLED=true requires a host binding for ' . IgnisGroupContract::class . '.'
+        );
     }
 }

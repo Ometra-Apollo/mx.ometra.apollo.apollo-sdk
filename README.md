@@ -41,6 +41,28 @@ Tambien puedes publicar configuracion y paginas de error juntas:
 php artisan vendor:publish --tag=apollo
 ```
 
+## AppMenu compartido
+
+El SDK incluye el menu compartido de la suite en `resources/js/shared/AppMenu`.
+Publicalo en una app host con:
+
+```bash
+php artisan vendor:publish --tag=apollo-app-menu
+```
+
+Tambien se publica con el tag agregado `apollo`.
+
+## DirectoryTree compartido
+
+El SDK incluye el arbol de directorios en `resources/js/shared/DirectoryTree`.
+Publicalo en una app host con:
+
+```bash
+php artisan vendor:publish --tag=apollo-directory-tree
+```
+
+Tambien se publica con el tag agregado `apollo`.
+
 ## Configuracion
 
 Apollo solo configura URLs por modulo; la autenticacion sigue viviendo en el SDK de Caronte.
@@ -165,7 +187,6 @@ O publica la configuracion y edita `config/apollo.php`:
 ```php
 'ignis_groups' => [
     'enabled' => true,
-    'implementation' => \Ometra\Apollo\Sdk\Test\DummyGroup::class,
     'route_prefix' => 'api/ignis',
     'middleware' => ['caronte.application:tenant_required'],
 ],
@@ -175,7 +196,7 @@ Con `enabled=false` (por defecto) no se registra ninguna ruta y `GET /api/ignis/
 
 ### Proveer la implementacion del contrato
 
-El SDK trae `Ometra\Apollo\Sdk\Test\DummyGroup` como implementacion runnable que devuelve un grupo de prueba. Para exponer grupos reales, crea una clase que implemente `Ometra\Apollo\Sdk\Contracts\IgnisGroupContract`:
+Para exponer grupos reales, crea una clase que implemente `Ometra\Apollo\Sdk\Contracts\IgnisGroupContract`:
 
 ```php
 namespace App\Services;
@@ -199,23 +220,16 @@ final class HostGroupProvider implements IgnisGroupContract
 }
 ```
 
-Apunta `implementation` a tu clase via variable de entorno (sin necesidad de publicar la config):
-
-```env
-APOLLO_IGNIS_GROUPS_IMPLEMENTATION=\App\Services\HostGroupProvider
-```
-
-O publica la configuracion y edita `config/apollo.php`:
+Registra esa clase en un service provider de la app host:
 
 ```php
-// config/apollo.php (override del host)
-'ignis_groups' => [
-    'enabled' => true,
-    'implementation' => \App\Services\HostGroupProvider::class,
-],
+use App\Services\HostGroupProvider;
+use Ometra\Apollo\Sdk\Contracts\IgnisGroupContract;
+
+$this->app->bind(IgnisGroupContract::class, HostGroupProvider::class);
 ```
 
-Si `implementation` queda vacio o la clase no implementa el contrato, el provider lanza `RuntimeException` al arrancar.
+Si `APOLLO_IGNIS_GROUPS_ENABLED=true` y la app host no registra el contrato, el SDK falla al arrancar para no exponer datos dummy por accidente.
 
 ### Prefijo de ruta y middleware
 
