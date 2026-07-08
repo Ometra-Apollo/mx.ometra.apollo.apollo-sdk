@@ -195,8 +195,8 @@ origin bytes directly from Proteus.
 
 | Apollo resource action | HTTP method | URI | Auth | Notes |
 | --- | --- | --- | --- | --- |
-| `Apollo::ignis()->campaigns()->byExternalGroup(string $externalGroupId)` | `GET` | `/api/external-groups/{externalGroupId}/campaigns` | App | Migrated from `getCampaignsByExternalGroup(...)` in `ometra-ignis-client`. |
-| `Apollo::ignis()->campaigns()->show(string $id)` | `GET` | `/api/campaigns/{id}` | App | Campaign detail lookup for Pulse IoT campaign detail endpoint. |
+| `Apollo::ignis()->campaigns()->byExternalGroup(string $externalGroupId)` | `GET` | `/api/external-groups/{externalGroupId}/campaigns` | App | Returns the unwrapped `data` array from Ignis, without the `status/message/errors` envelope. |
+| `Apollo::ignis()->campaigns()->show(string $externalGroupId, int $campaignId)` | `GET` | `/api/external-groups/{externalGroupId}/campaigns/{campaignId}` | App | Returns the unwrapped campaign detail from Ignis, without the `status/message/errors` envelope. |
 
 ## Ignis Content Hits
 

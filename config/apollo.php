@@ -62,7 +62,7 @@ return [
     */
 
     'ignis_groups' => [
-        'enabled' => env('APOLLO_IGNIS_GROUPS_ENABLED', true),
+        'enabled' => env('APOLLO_IGNIS_GROUPS_ENABLED', false),
         'route_prefix' => 'api/ignis',
         'middleware' => ['caronte.application:tenant_required'],
     ],

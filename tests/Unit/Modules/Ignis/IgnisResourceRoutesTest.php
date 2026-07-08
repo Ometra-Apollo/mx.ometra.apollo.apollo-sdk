@@ -32,12 +32,12 @@ final class IgnisResourceRoutesTest extends TestCase
         $client = new RecordingApolloHttpClient();
         $resource = new CampaignsResource($client);
 
-        $resource->show('campaign-1');
+        $resource->show('group-1', 11);
 
         self::assertSame([
             'auth' => 'application',
             'method' => 'GET',
-            'endpoint' => 'campaigns/campaign-1',
+            'endpoint' => 'external-groups/group-1/campaigns/11',
             'payload' => [],
             'query' => [],
             'raw' => false,

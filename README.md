@@ -113,6 +113,7 @@ $lightPath = Apollo::proteus()->media()->lightPathUrl($mediaId, [
 $stations = Apollo::flare()->stations()->index(['country' => 'mx']);
 
 $campaigns = Apollo::ignis()->campaigns()->byGroup('group-1');
+$campaign = Apollo::ignis()->campaigns()->show('group-1', 11);
 
 Apollo::ignis()->contentHits()->report([
     ['content_id' => 'content-1', 'hits' => 10],
