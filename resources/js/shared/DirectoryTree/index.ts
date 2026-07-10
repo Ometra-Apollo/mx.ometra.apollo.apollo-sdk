@@ -1,6 +1,10 @@
 export { default as DirectoryTree } from './DirectoryTree';
 export type {
     DirectoryTreeDirectory,
+    DirectoryTreeProps,
     DirectoryTreeMedia,
     DirectoryTreeSelectableType,
-} from './DirectoryTree';
+    DirectoryTreeVirtualDirectory,
+    DirectoryTreePersistedDirectory,
+    VirtualDirectoryId,
+} from './types';

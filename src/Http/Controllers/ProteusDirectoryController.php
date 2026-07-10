@@ -23,4 +23,16 @@ final class ProteusDirectoryController
 
         return response()->json(Apollo::proteus()->directories()->index($query));
     }
+
+    public function store(Request $request): JsonResponse
+    {
+        $payload = $request->validate([
+            'name' => ['required', 'string'],
+            'parent_id' => ['nullable', 'string'],
+        ]);
+
+        return response()->json(
+            Apollo::proteus()->directories()->store($payload)
+        );
+    }
 }

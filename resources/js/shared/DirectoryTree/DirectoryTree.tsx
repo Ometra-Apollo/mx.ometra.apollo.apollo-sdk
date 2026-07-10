@@ -1,352 +1,60 @@
 import { useEffect, useMemo, useState } from "react";
+import { FolderUp, LoaderCircle, X } from "./Icons";
+import DirectoryItem from "./DirectoryItem";
+import type {
+    DirectoryTreeDirectory,
+    DirectoryTreeProps,
+} from "./types";
 import {
-    AudioFileIcon,
-    ChevronDown,
-    ChevronRight,
-    DiscIcon,
-    FileIcon,
-    FolderSolidIcon,
-    FolderUp,
-    ImageFileIcon,
-    LoaderCircle,
-    PersonalFolderIcon,
-    SharedFolderIcon,
-    VideoFileIcon,
-    X,
-} from "./Icons";
+    buildUrl,
+    findDirectoryName,
+    findDirectoryPath,
+    findDirectoryPathNames,
+    findRootDirectories,
+    getDirectoryId,
+    getDirectoryFromResponse,
+    insertDirectoryChild,
+} from "./utils";
 
-export type DirectoryTreeMedia = {
-    id: string;
-    name: string;
-    type?: string | null;
-};
-
-export type DirectoryTreeDirectory = {
-    id: string;
-    name: string;
-    parent_id?: string | null;
-    children?: DirectoryTreeDirectory[];
-    children_recursive?: DirectoryTreeDirectory[];
-    media?: DirectoryTreeMedia[];
-    node_type?:
-        | "user_root"
-        | "personal_root"
-        | "shared_root"
-        | "normal"
-        | string;
-};
-
-export type DirectoryTreeSelectableType = "directory" | "media";
-
-type DirectoryTreeProps = {
-    directories?: DirectoryTreeDirectory;
-    directoriesEndpoint?: string;
-    directoriesQuery?: Record<
-        string,
-        string | number | boolean | null | undefined
-    >;
-    onSelect?: (id: string, name: string, recursive: boolean) => void;
-    selectedName?: string;
-    selectedId?: string | null;
-    recursive?: boolean;
-    onRecursiveChange?: (value: boolean) => void;
-    showRecursiveToggle?: boolean;
-    compactSelectedView?: boolean;
-    onExplorerOpenChange?: (open: boolean) => void;
-    treeOnly?: boolean;
-    selectableRootId?: string | null;
-    selectableItemType?: DirectoryTreeSelectableType;
-    isLoading?: boolean;
-    translateName?: (name: string) => string;
-};
-
-type DirectoryItemProps = {
-    directory: DirectoryTreeDirectory;
-    level: number;
-    selectedId: string | null;
-    expandedIds: string[];
-    selectableRootId?: string | null;
-    selectableItemType: DirectoryTreeSelectableType;
-    rootDirectory: DirectoryTreeDirectory;
-    translateName: (name: string) => string;
-    onSelect: (id: string, name: string) => void;
-    onToggle: (id: string) => void;
-};
-
-function getDirectoryChildren(
-    directory: DirectoryTreeDirectory,
-): DirectoryTreeDirectory[] {
-    if ((directory.children?.length ?? 0) > 0) {
-        return directory.children ?? [];
-    }
-
-    return directory.children_recursive ?? [];
-}
-
-function findDirectoryPath(
-    directory: DirectoryTreeDirectory,
-    targetId: string,
-    path: string[] = [],
-): string[] | null {
-    if (directory.id === targetId) {
-        return [...path, directory.id];
-    }
-
-    for (const child of directory.children ?? []) {
-        const result = findDirectoryPath(child, targetId, [
-            ...path,
-            directory.id,
-        ]);
-        if (result) return result;
-    }
-
-    for (const child of directory.children_recursive ?? []) {
-        const result = findDirectoryPath(child, targetId, [
-            ...path,
-            directory.id,
-        ]);
-        if (result) return result;
-    }
-
-    return null;
-}
-
-function findDirectoryName(
-    directory: DirectoryTreeDirectory,
-    targetId: string,
-): string | null {
-    if (directory.id === targetId) return directory.name;
-
-    for (const child of directory.children ?? []) {
-        const result = findDirectoryName(child, targetId);
-        if (result) return result;
-    }
-
-    for (const child of directory.children_recursive ?? []) {
-        const result = findDirectoryName(child, targetId);
-        if (result) return result;
-    }
-
-    return null;
-}
-
-function findDirectoryPathNames(
-    directory: DirectoryTreeDirectory,
-    targetId: string,
-    translateName: (name: string) => string,
-    path: string[] = [],
-): string[] | null {
-    const nextPath = [...path, translateName(directory.name)];
-
-    if (directory.id === targetId) {
-        return nextPath;
-    }
-
-    for (const child of directory.children ?? []) {
-        const result = findDirectoryPathNames(
-            child,
-            targetId,
-            translateName,
-            nextPath,
-        );
-        if (result) return result;
-    }
-
-    for (const child of directory.children_recursive ?? []) {
-        const result = findDirectoryPathNames(
-            child,
-            targetId,
-            translateName,
-            nextPath,
-        );
-        if (result) return result;
-    }
-
-    return null;
-}
-
-function findRootDirectories(
-    directory: DirectoryTreeDirectory,
-    roots: string[] = [],
-): string[] {
-    if (directory.parent_id === null || directory.parent_id === undefined) {
-        roots.push(directory.id);
-    }
-
-    for (const child of directory.children ?? []) {
-        findRootDirectories(child, roots);
-    }
-
-    for (const child of directory.children_recursive ?? []) {
-        findRootDirectories(child, roots);
-    }
-
-    return roots;
-}
-
-function getDirectoryIcon(directory: DirectoryTreeDirectory) {
-    switch (directory.node_type) {
-        case "user_root":
-            return <DiscIcon className="h-5 w-5" />;
-        case "personal_root":
-            return <PersonalFolderIcon className="h-5 w-5" />;
-        case "shared_root":
-            return <SharedFolderIcon className="h-5 w-5" />;
-        default:
-            return <FolderSolidIcon className="h-5 w-5 text-gray-700" />;
-    }
-}
-
-function getMediaIcon(media: DirectoryTreeMedia) {
-    switch (media.type?.toLowerCase()) {
-        case "image":
-            return <ImageFileIcon className="h-5 w-5 text-gray-700" />;
-        case "video":
-            return <VideoFileIcon className="h-5 w-5 text-gray-700" />;
-        case "audio":
-            return <AudioFileIcon className="h-5 w-5 text-gray-700" />;
-        default:
-            return <FileIcon className="h-5 w-5 text-gray-700" />;
-    }
-}
-
-function buildUrl(
-    endpoint: string,
-    query: DirectoryTreeProps["directoriesQuery"],
-): string {
-    const params = new URLSearchParams();
-
-    Object.entries(query ?? {}).forEach(([key, value]) => {
-        if (value !== null && value !== undefined && value !== "") {
-            params.set(key, String(value));
-        }
-    });
-
-    const queryString = params.toString();
-    return queryString ? `${endpoint}?${queryString}` : endpoint;
-}
-
-function getDirectoryFromResponse(payload: any): DirectoryTreeDirectory | null {
+function RecursiveToggle({
+    checked,
+    onChange,
+}: {
+    checked: boolean;
+    onChange: (value: boolean) => void;
+}) {
     return (
-        payload?.data?.directory ?? payload?.directory ?? payload?.data ?? null
+        <label className="flex cursor-pointer items-center gap-2.5 text-sm font-medium text-gray-700">
+            <input
+                type="checkbox"
+                checked={checked}
+                onChange={(event) => onChange(event.target.checked)}
+                className="h-4 w-4"
+            />
+            Incluir subcarpetas
+        </label>
     );
 }
 
-function DirectoryItem({
-    directory,
-    level,
-    selectedId,
-    expandedIds,
-    selectableRootId,
-    selectableItemType,
-    rootDirectory,
-    translateName,
-    onSelect,
-    onToggle,
-}: DirectoryItemProps) {
-    const children = getDirectoryChildren(directory);
-    const media = selectableItemType === "media" ? (directory.media ?? []) : [];
-    const hasChildren = children.length > 0 || media.length > 0;
-    const isExpanded = expandedIds.includes(directory.id);
-    const isSelected = selectedId === directory.id;
-    const isWithinSelectableRoot =
-        !selectableRootId ||
-        findDirectoryPath(rootDirectory, directory.id)?.includes(
-            selectableRootId,
-        );
-    const isSelectable =
-        selectableItemType === "directory" && isWithinSelectableRoot;
-    const canToggle = hasChildren && isWithinSelectableRoot;
+function getCsrfToken(): string | null {
+    if (typeof document === "undefined") {
+        return null;
+    }
 
-    return (
-        <div>
-            <div
-                className={`flex h-7 items-center gap-2 pr-3 text-base transition-colors ${isWithinSelectableRoot ? `${isSelectable || canToggle ? "cursor-pointer" : "cursor-default"} ${isSelected ? "bg-gray-100" : "hover:bg-gray-50"}` : "cursor-not-allowed opacity-45"}`}
-                style={{ paddingLeft: `${level * 0.5 + 1}rem` }}
-                onClick={() => {
-                    if (isSelectable) {
-                        onSelect(directory.id, directory.name);
-                    } else if (canToggle) {
-                        onToggle(directory.id);
-                    }
-                }}
-            >
-                <button
-                    type="button"
-                    onClick={(event) => {
-                        event.stopPropagation();
-                        if (canToggle) {
-                            onToggle(directory.id);
-                        }
-                    }}
-                    className="flex h-4 w-4 shrink-0 items-center justify-center text-foreground"
-                    aria-label={
-                        hasChildren
-                            ? isExpanded
-                                ? "Contraer carpeta"
-                                : "Expandir carpeta"
-                            : "Sin subcarpetas"
-                    }
-                >
-                    {hasChildren ? (
-                        isExpanded ? (
-                            <ChevronDown className="h-3.5 w-3.5" />
-                        ) : (
-                            <ChevronRight className="h-3.5 w-3.5" />
-                        )
-                    ) : (
-                        <span className="block h-3.5 w-3.5" />
-                    )}
-                </button>
+    const metaToken = document
+        .querySelector('meta[name="csrf-token"]')
+        ?.getAttribute("content");
 
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center">
-                    {getDirectoryIcon(directory)}
-                </span>
+    if (metaToken) {
+        return metaToken;
+    }
 
-                <span className="truncate font-medium text-gray-700">
-                    {translateName(directory.name)}
-                </span>
-            </div>
+    const xsrfCookie = document.cookie
+        .split("; ")
+        .find((item) => item.startsWith("XSRF-TOKEN="))
+        ?.split("=")[1];
 
-            {hasChildren && isExpanded && (
-                <div>
-                    {children.map((child) => (
-                        <DirectoryItem
-                            key={child.id}
-                            directory={child}
-                            level={level + 1}
-                            selectedId={selectedId}
-                            expandedIds={expandedIds}
-                            selectableRootId={selectableRootId}
-                            selectableItemType={selectableItemType}
-                            rootDirectory={rootDirectory}
-                            translateName={translateName}
-                            onSelect={onSelect}
-                            onToggle={onToggle}
-                        />
-                    ))}
-                    {media.map((item) => (
-                        <div
-                            key={item.id}
-                            className={`flex h-7 cursor-pointer items-center gap-2 pr-3 text-base transition-colors ${selectedId === item.id ? "bg-gray-100" : "hover:bg-gray-50"}`}
-                            style={{
-                                paddingLeft: `${(level + 1) * 0.5 + 1}rem`,
-                            }}
-                            onClick={() => onSelect(item.id, item.name)}
-                        >
-                            <span className="block h-3.5 w-3.5 shrink-0" />
-                            <span className="flex h-5 w-5 shrink-0 items-center justify-center">
-                                {getMediaIcon(item)}
-                            </span>
-                            <span className="truncate font-medium text-gray-700">
-                                {item.name}
-                            </span>
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
-    );
+    return xsrfCookie ? decodeURIComponent(xsrfCookie) : null;
 }
 
 export default function DirectoryTree({
@@ -366,6 +74,9 @@ export default function DirectoryTree({
     selectableItemType = "directory",
     isLoading = false,
     translateName = (name) => name,
+    createDirectoryEndpoint = "/_apollo/proteus/directories",
+    onCreateFolder,
+    createFolderLabel = "Crear carpeta",
 }: DirectoryTreeProps) {
     const [loadedDirectories, setLoadedDirectories] =
         useState<DirectoryTreeDirectory | null>(directories ?? null);
@@ -382,11 +93,21 @@ export default function DirectoryTree({
     const [pendingDirectoryName, setPendingDirectoryName] = useState<string>(
         selectedName ?? "",
     );
+    const [activeDirectoryId, setActiveDirectoryId] = useState<string | null>(
+        selectedId ?? null,
+    );
     const [expandedIds, setExpandedIds] = useState<string[]>([]);
     const [isRecursive, setIsRecursive] = useState<boolean>(recursive ?? false);
     const [isExplorerOpen, setIsExplorerOpen] = useState<boolean>(false);
+    const [creatingFolderParentId, setCreatingFolderParentId] = useState<
+        string | null
+    >(null);
+    const [creatingFolderName, setCreatingFolderName] =
+        useState<string>("Nueva carpeta");
+    const [isSubmittingFolder, setIsSubmittingFolder] =
+        useState<boolean>(false);
     const directoriesQueryKey = JSON.stringify(directoriesQuery ?? {});
-    const activeDirectories = directories ?? loadedDirectories;
+    const activeDirectories = loadedDirectories;
     const isBusy = isLoading || isFetchingDirectories;
 
     useEffect(() => {
@@ -402,6 +123,7 @@ export default function DirectoryTree({
 
         fetch(buildUrl(directoriesEndpoint, directoriesQuery), {
             signal: controller.signal,
+            credentials: "same-origin",
             headers: { Accept: "application/json" },
         })
             .then((response) => response.json())
@@ -439,6 +161,7 @@ export default function DirectoryTree({
     useEffect(() => {
         setConfirmedDirectoryId(selectedId ?? null);
         setPendingDirectoryId(selectedId ?? null);
+        setActiveDirectoryId(selectedId ?? null);
 
         if (!activeDirectories) {
             return;
@@ -483,6 +206,11 @@ export default function DirectoryTree({
         translateName,
     ]);
 
+    const handleRecursiveChange = (value: boolean) => {
+        setIsRecursive(value);
+        onRecursiveChange?.(value);
+    };
+
     const handleToggleDirectory = (id: string) => {
         setExpandedIds((current) =>
             current.includes(id)
@@ -495,15 +223,29 @@ export default function DirectoryTree({
         if (confirmedDirectoryId) {
             setPendingDirectoryId(confirmedDirectoryId);
             setPendingDirectoryName(confirmedDirectoryName);
+            setActiveDirectoryId(confirmedDirectoryId);
         }
 
+        setCreatingFolderParentId(null);
+        setCreatingFolderName("Nueva carpeta");
         setIsExplorerOpen(true);
         onExplorerOpenChange?.(true);
     };
 
-    const handlePreviewDirectory = (id: string, name: string) => {
-        setPendingDirectoryId(id);
-        setPendingDirectoryName(name);
+    const handlePreviewDirectory = (
+        id: string,
+        name: string,
+        isVirtual = false,
+    ) => {
+        setActiveDirectoryId(id);
+
+        if (isVirtual) {
+            setPendingDirectoryId(null);
+            setPendingDirectoryName("");
+        } else {
+            setPendingDirectoryId(id);
+            setPendingDirectoryName(name);
+        }
 
         if (treeOnly && selectableItemType === "media") {
             setConfirmedDirectoryId(id);
@@ -538,6 +280,9 @@ export default function DirectoryTree({
     const handleCancelExplorer = () => {
         setPendingDirectoryId(confirmedDirectoryId);
         setPendingDirectoryName(confirmedDirectoryName);
+        setActiveDirectoryId(confirmedDirectoryId);
+        setCreatingFolderParentId(null);
+        setCreatingFolderName("Nueva carpeta");
         setIsExplorerOpen(false);
         onExplorerOpenChange?.(false);
     };
@@ -547,32 +292,123 @@ export default function DirectoryTree({
         setConfirmedDirectoryName("");
         setPendingDirectoryId(null);
         setPendingDirectoryName("");
+        setActiveDirectoryId(null);
+        setCreatingFolderParentId(null);
+        setCreatingFolderName("Nueva carpeta");
         setIsExplorerOpen(false);
         onExplorerOpenChange?.(false);
         onSelect?.("", "", isRecursive);
     };
 
-    const renderRecursiveCheckbox = () => (
-        <label className="flex cursor-pointer items-center gap-2.5 text-sm font-medium text-gray-700">
-            <input
-                type="checkbox"
-                checked={isRecursive}
-                onChange={(event) => {
-                    const value = event.target.checked;
-                    setIsRecursive(value);
-                    onRecursiveChange?.(value);
-                }}
-                className="h-4 w-4"
-            />
-            Incluir subcarpetas
-        </label>
+    const handleStartCreateFolder = () => {
+        if (!activeDirectoryId) {
+            return;
+        }
+
+        setCreatingFolderParentId(activeDirectoryId);
+        setCreatingFolderName("Nueva carpeta");
+        setExpandedIds((current) =>
+            current.includes(activeDirectoryId)
+                ? current
+                : [...current, activeDirectoryId],
+        );
+    };
+
+    const handleCancelCreateFolder = () => {
+        setCreatingFolderParentId(null);
+        setCreatingFolderName("Nueva carpeta");
+        setIsSubmittingFolder(false);
+    };
+
+    const handleConfirmCreateFolder = async () => {
+        if (!creatingFolderParentId) {
+            return;
+        }
+
+        const folderName = creatingFolderName.trim();
+
+        if (!folderName) {
+            return;
+        }
+
+        setIsSubmittingFolder(true);
+
+        try {
+            if (onCreateFolder) {
+                await onCreateFolder({
+                    parentId: creatingFolderParentId,
+                    name: folderName,
+                });
+            } else {
+                const response = await fetch(createDirectoryEndpoint, {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                        "X-Requested-With": "XMLHttpRequest",
+                        ...(getCsrfToken()
+                            ? { "X-CSRF-TOKEN": getCsrfToken() as string }
+                            : {}),
+                    },
+                    body: JSON.stringify({
+                        parent_id: creatingFolderParentId,
+                        name: folderName,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("No se pudo crear la carpeta.");
+                }
+
+                const payload = await response.json();
+                const createdDirectory = getDirectoryFromResponse(payload);
+
+                if (createdDirectory && activeDirectories) {
+                    setLoadedDirectories(
+                        insertDirectoryChild(
+                            activeDirectories,
+                            creatingFolderParentId,
+                            createdDirectory,
+                        ),
+                    );
+
+                    const createdDirectoryId = getDirectoryId(createdDirectory);
+
+                    setExpandedIds((current) =>
+                        Array.from(
+                            new Set([
+                                ...current,
+                                creatingFolderParentId,
+                                createdDirectoryId,
+                            ]),
+                        ),
+                    );
+                    setActiveDirectoryId(createdDirectoryId);
+                    setPendingDirectoryId(createdDirectoryId);
+                    setPendingDirectoryName(createdDirectory.name);
+                }
+            }
+        } catch {
+        } finally {
+            setCreatingFolderParentId(null);
+            setCreatingFolderName("Nueva carpeta");
+            setIsSubmittingFolder(false);
+        }
+    };
+
+    const renderRecursiveToggle = () => (
+        <RecursiveToggle
+            checked={isRecursive}
+            onChange={handleRecursiveChange}
+        />
     );
 
     const renderTree = () => (
         <DirectoryItem
             directory={activeDirectories as DirectoryTreeDirectory}
             level={0}
-            selectedId={pendingDirectoryId}
+            selectedId={activeDirectoryId}
             expandedIds={expandedIds}
             selectableRootId={selectableRootId}
             selectableItemType={selectableItemType}
@@ -580,6 +416,12 @@ export default function DirectoryTree({
             translateName={translateName}
             onSelect={handlePreviewDirectory}
             onToggle={handleToggleDirectory}
+            creatingFolderParentId={creatingFolderParentId}
+            creatingFolderName={creatingFolderName}
+            isSubmittingFolder={isSubmittingFolder}
+            onCreateFolderNameChange={setCreatingFolderName}
+            onConfirmCreateFolder={handleConfirmCreateFolder}
+            onCancelCreateFolder={handleCancelCreateFolder}
         />
     );
 
@@ -648,14 +490,14 @@ export default function DirectoryTree({
 
                     {showRecursiveToggle &&
                         !compactSelectedView &&
-                        renderRecursiveCheckbox()}
+                        renderRecursiveToggle()}
                 </div>
             )}
 
             {showRecursiveToggle &&
                 !confirmedDirectoryId &&
                 !compactSelectedView && (
-                    <div className="mt-4">{renderRecursiveCheckbox()}</div>
+                    <div className="mt-4">{renderRecursiveToggle()}</div>
                 )}
 
             {isBusy && (
@@ -670,11 +512,25 @@ export default function DirectoryTree({
     );
 
     const explorerContent = (
-        <div>
+        <div className="bg-white">
             <div className="px-6 pt-6 pb-0">
-                <h2 className="text-sm font-medium text-foreground">
-                    Seleccionar carpeta
-                </h2>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <h2 className="text-sm font-medium text-foreground">
+                        Seleccionar carpeta
+                    </h2>
+
+                    {selectableItemType === "directory" &&
+                        (onCreateFolder || createDirectoryEndpoint) && (
+                        <button
+                            type="button"
+                            onClick={handleStartCreateFolder}
+                            disabled={isBusy || !activeDirectoryId}
+                            className="inline-flex h-10 items-center justify-center rounded-full bg-orange-400 px-5 text-sm font-medium text-gray-900 transition hover:bg-orange-500 disabled:cursor-wait disabled:opacity-60"
+                        >
+                            {createFolderLabel}
+                        </button>
+                        )}
+                </div>
 
                 <div className="mt-3 overflow-hidden rounded-none bg-white shadow-none">
                     <div className="h-[312px] overflow-y-auto bg-white py-3">
@@ -684,7 +540,7 @@ export default function DirectoryTree({
             </div>
 
             <div className="flex w-full flex-col gap-4 bg-gray-100 px-6 py-6 md:flex-row md:items-center md:justify-between">
-                {showRecursiveToggle && renderRecursiveCheckbox()}
+                {showRecursiveToggle && renderRecursiveToggle()}
 
                 <div className="flex w-full gap-2 md:w-auto md:justify-end">
                     <button
@@ -724,7 +580,7 @@ export default function DirectoryTree({
     }
 
     return (
-        <div className="relative w-full">
+        <div className="relative w-full bg-white">
             {!isExplorerOpen && summaryPanel}
             {isExplorerOpen && !compactSelectedView && explorerContent}
         </div>
