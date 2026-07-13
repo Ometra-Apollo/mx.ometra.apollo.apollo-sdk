@@ -22,6 +22,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `apollo-error-pages` publish tag for customizable host copies, plus aggregate
   `apollo` publishing for config and error pages.
 
+## [v3.7.0] - 2026-07-13 "Astra"
+
+Enhancement release adding Proteus media thumbnail support and improving
+LightPath media URL documentation.
+
+### Added
+
+- `MediaResource::thumbnail(string $id)` helper for retrieving thumbnail images
+  from Proteus media assets.
+- `README.md` and `docs/api-contract.md` documentation clarifying LightPath URL
+  request payload and media thumbnail usage.
+
+### Changed
+
+- Updated `docs/api-contract.md` to document the `Apollo::proteus()->media()->lightPathUrl()`
+  payload, response fields, and usage notes.
+
+### Fixed
+
+- No bug fixes in this release.
+
+### Removed
+
+- Nothing removed.
+
+### Deprecated
+
+- Nothing deprecated.
+
+### Security
+
+- No security changes.
+
+### Breaking Changes
+
+- None in `v3.7.0`.
+
 ## [v3.4.0] - 2026-06-14 "Hermes"
 
 Compatibility feature release focused on delegated authentication for

@@ -88,6 +88,7 @@ final class ProteusResourceRoutesTest extends TestCase
             'media store tags' => [MediaResource::class, 'storeTags', ['media-1', ['tags' => ['a']]], 'user', 'POST', 'media/media-1/tags/store', ['tags' => ['a']]],
             'media lightpath url' => [MediaResource::class, 'lightPathUrl', ['media-1', ['ext' => 'mp4', 'url_ttl_seconds' => 3600]], 'user', 'POST', 'media/media-1/lightpath-url', ['ext' => 'mp4', 'url_ttl_seconds' => 3600]],
             'media download' => [MediaResource::class, 'download', ['media-1', 'jpg'], 'user', 'GET', 'media/media-1/download', [], ['ext' => 'jpg'], true],
+            'media thumbnail' => [MediaResource::class, 'thumbnail', ['media-1'], 'user', 'GET', 'media/media-1/download', [], ['ext' => 'thumb'], true],
             'media save local' => [MediaResource::class, 'saveLocal', ['media-1', 'webp'], 'user', 'GET', 'media/media-1/download', [], ['ext' => 'webp'], true],
 
             'metadata keys' => [MetadataResource::class, 'keys', ['author'], 'application', 'GET', 'media/metadata/author'],
