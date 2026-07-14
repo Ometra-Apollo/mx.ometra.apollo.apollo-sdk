@@ -63,6 +63,10 @@ php artisan vendor:publish --tag=apollo-directory-tree
 
 Tambien se publica con el tag agregado `apollo`.
 
+Documentacion detallada de componentes UI:
+
+- `docs/ui-components.md`
+
 ## Configuracion
 
 Apollo solo configura URLs por modulo; la autenticacion sigue viviendo en el SDK de Caronte.
