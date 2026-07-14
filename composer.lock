@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "68f1060353adfa30bbed083c647dd924",
+    "content-hash": "97dfe1a4d607fcdd9cfa50ef60a7d8db",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.388.5",
+            "version": "3.388.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "6104783c60d9134e7ceaeef03997767a547462b8"
+                "reference": "b89b2b0e0741900c9e25d12302ed8300fa50f22b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6104783c60d9134e7ceaeef03997767a547462b8",
-                "reference": "6104783c60d9134e7ceaeef03997767a547462b8",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b89b2b0e0741900c9e25d12302ed8300fa50f22b",
+                "reference": "b89b2b0e0741900c9e25d12302ed8300fa50f22b",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.388.5"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.388.6"
             },
-            "time": "2026-07-13T18:09:02+00:00"
+            "time": "2026-07-14T18:07:03+00:00"
         },
         {
             "name": "brick/math",
@@ -899,16 +899,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "7.14.1",
+            "version": "7.14.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "6b1d2429a2c312474c523aa9017fba0c07b5f4a0"
+                "reference": "fa88c57803501ad0770f5cddb1e60525d49da9a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/6b1d2429a2c312474c523aa9017fba0c07b5f4a0",
-                "reference": "6b1d2429a2c312474c523aa9017fba0c07b5f4a0",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/fa88c57803501ad0770f5cddb1e60525d49da9a1",
+                "reference": "fa88c57803501ad0770f5cddb1e60525d49da9a1",
                 "shasum": ""
             },
             "require": {
@@ -1007,7 +1007,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/guzzle/issues",
-                "source": "https://github.com/guzzle/guzzle/tree/7.14.1"
+                "source": "https://github.com/guzzle/guzzle/tree/7.14.2"
             },
             "funding": [
                 {
@@ -1023,7 +1023,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-07-13T01:32:54+00:00"
+            "time": "2026-07-14T18:15:01+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -1389,16 +1389,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v12.63.0",
+            "version": "v12.64.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "7adfddbf4738f2e6cae5419b0e6bc46d4cccfbcf"
+                "reference": "727a8ea2949c23ca8b5316b86a00984b6017b7a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/7adfddbf4738f2e6cae5419b0e6bc46d4cccfbcf",
-                "reference": "7adfddbf4738f2e6cae5419b0e6bc46d4cccfbcf",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/727a8ea2949c23ca8b5316b86a00984b6017b7a0",
+                "reference": "727a8ea2949c23ca8b5316b86a00984b6017b7a0",
                 "shasum": ""
             },
             "require": {
@@ -1607,7 +1607,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-07-07T14:16:35+00:00"
+            "time": "2026-07-14T14:25:37+00:00"
         },
         {
             "name": "laravel/helpers",
@@ -3058,16 +3058,16 @@
         },
         {
             "name": "ometra/caronte-sdk",
-            "version": "5.0.0",
+            "version": "6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ometra-Nyx/mx.ometra.caronte-sdk.git",
-                "reference": "5b1ede9c2d09b08bb3abc13b7b65f9df174bf160"
+                "reference": "470c98d83120347f35c856951f9583701154af80"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ometra-Nyx/mx.ometra.caronte-sdk/zipball/5b1ede9c2d09b08bb3abc13b7b65f9df174bf160",
-                "reference": "5b1ede9c2d09b08bb3abc13b7b65f9df174bf160",
+                "url": "https://api.github.com/repos/Ometra-Nyx/mx.ometra.caronte-sdk/zipball/470c98d83120347f35c856951f9583701154af80",
+                "reference": "470c98d83120347f35c856951f9583701154af80",
                 "shasum": ""
             },
             "require": {
@@ -3111,9 +3111,9 @@
             "description": "Caronte SDK",
             "support": {
                 "issues": "https://github.com/Ometra-Nyx/mx.ometra.caronte-sdk/issues",
-                "source": "https://github.com/Ometra-Nyx/mx.ometra.caronte-sdk/tree/5.0.0"
+                "source": "https://github.com/Ometra-Nyx/mx.ometra.caronte-sdk/tree/6.0.0"
             },
-            "time": "2026-06-26T23:06:29+00:00"
+            "time": "2026-07-14T17:15:23+00:00"
         },
         {
             "name": "phpoption/phpoption",
