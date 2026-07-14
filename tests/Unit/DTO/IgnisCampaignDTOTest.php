@@ -40,6 +40,8 @@ final class IgnisCampaignDTOTest extends TestCase
             'contents' => [[
                 'id_media' => '019f1506-363f-7005-a90c-248202fce00d',
                 'type' => 'video',
+                'media_type' => 'video',
+                'ext' => 'mp4',
                 'name' => 'Demo',
                 'size' => 123,
                 'content_schedules' => [[
@@ -60,6 +62,8 @@ final class IgnisCampaignDTOTest extends TestCase
             'contents' => [[
                 'id_media' => '019f1506-363f-7005-a90c-248202fce00d',
                 'type' => 'video',
+                'media_type' => 'video',
+                'ext' => 'mp4',
                 'name' => 'Demo',
                 'content_schedules' => [[
                     'dt_start' => '2026-06-29T06:00:00.000000Z',
