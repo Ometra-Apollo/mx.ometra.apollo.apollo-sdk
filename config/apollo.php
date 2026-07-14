@@ -40,16 +40,21 @@ return [
         'enabled' => env('APOLLO_ERROR_PAGES_ENABLED', true),
     ],
 
+    'frontend' => [
+        'route_prefix' => '_apollo',
+        'middleware' => ['web', 'caronte.session'],
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Ignis Groups Exposure (opt-in inbound route)
     |--------------------------------------------------------------------------
     |
     | When enabled, the SDK registers an inbound `GET /{prefix}/groups` route on
-    | the host application. The route resolves a host-provided
-    | `Ometra\Apollo\Sdk\Contracts\IgnisGroupContract` implementation from the
-    | container and returns standardized `ExternalGroupDTO[]` JSON. The route is
-    | protected by the `caronte.application:tenant_required` middleware alias.
+    | the host application. The route resolves
+    | `Ometra\Apollo\Sdk\Contracts\IgnisGroupContract` from the container and
+    | returns standardized `ExternalGroupDTO[]` JSON. The route is protected by
+    | the `caronte.application:tenant_required` middleware alias.
     |
     | Note: the middleware alias is intentionally lowercase. Do not introduce
     | any uppercase Caronte-prefixed env vars in this file.
@@ -58,7 +63,6 @@ return [
 
     'ignis_groups' => [
         'enabled' => env('APOLLO_IGNIS_GROUPS_ENABLED', false),
-        'implementation' => env('APOLLO_IGNIS_GROUPS_IMPLEMENTATION', \Ometra\Apollo\Sdk\Test\DummyGroup::class),
         'route_prefix' => 'api/ignis',
         'middleware' => ['caronte.application:tenant_required'],
     ],

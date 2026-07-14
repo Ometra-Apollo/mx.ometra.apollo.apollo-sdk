@@ -73,6 +73,12 @@ final class MediaResource
         return $this->client->userRequest('POST', 'media/' . $id . '/set-metadata', payload: $data);
     }
 
+    /** @param array<string, string> $visibility ('published', 'protected') */
+    public function setVisibility(string $id, bool $visibility): array
+    {
+        return $this->client->userRequest('POST', 'media/' . $id . '/set-visibility', payload: ['visibility' => $visibility]);
+    }
+
     /** @param array<string, mixed> $data */
     public function storeTags(string $id, array $data): array
     {
