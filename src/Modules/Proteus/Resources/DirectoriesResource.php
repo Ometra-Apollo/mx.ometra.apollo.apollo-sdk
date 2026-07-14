@@ -50,4 +50,9 @@ final class DirectoriesResource
     {
         return $this->client->userRequest('DELETE', 'directories/' . $id);
     }
+
+    public function setVisibility(string $id, string $visibility): array
+    {
+        return $this->client->userRequest('POST', 'directories/' . $id . '/set-visibility', payload: ['visibility' => $visibility]);
+    }
 }
