@@ -15,7 +15,7 @@ final class DirectoriesResource
     /** @param array<string, mixed> $data */
     public function index(array $data = []): array
     {
-        return $this->client->userRequest('GET', 'directories/tree', query: $data);
+        return $this->client->userRequest('GET', 'directories', query: $data);
     }
 
     public function create(?string $parentId = null): array
