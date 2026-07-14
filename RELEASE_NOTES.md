@@ -1,50 +1,39 @@
-# Release v3.4.0 "Hermes"
+# Release v3.7.0 "Astra"
 
-**Date:** 2026-06-14  
+**Date:** 2026-07-13  
 **Branch:** `main`  
 **Package:** `ometra/apollo-sdk`
 
-Configuration file: `config/apollo.php`. Module URL variables:
-`PROTEUS_BASE_URL`, `PULSE_BASE_URL`, `FLARE_BASE_URL`, and `IGNIS_BASE_URL`.
-Typical usage remains `Apollo::proteus()->media()->index(...)`.
+Apollo SDK enhancement release adding Proteus media thumbnail access and
+clarifying LightPath media URL usage in the public contract.
 
 ## Summary
 
-This release introduces delegated user-token support for application-scoped
-requests in the Apollo HTTP client. The change is backward compatible and keeps
-existing behavior unchanged when no user token is provided.
-
-"Hermes" represents this release focus: fast and reliable request delegation
-across service boundaries.
+This release extends the Proteus media resource with direct thumbnail retrieval
+support and updates the public documentation so integrators can reliably
+request LightPath URLs for media assets.
 
 ## Highlights
 
-- Added optional delegated user token support in
-  `ApolloHttpClient::applicationRequest()`.
-- Preserved existing default behavior for application-authenticated requests.
-- Added dedicated unit coverage for delegated `X-User-Token` forwarding.
-
-## Unreleased Notes
-
-- Apollo now ships suite-styled Laravel HTTP error pages as an automatic
-  fallback. Hosts can disable them with `APOLLO_ERROR_PAGES_ENABLED=false` or
-  publish copies with `php artisan vendor:publish --tag=apollo-error-pages`.
+- Added `MediaResource::thumbnail(string $id)` for retrieving thumbnail images.
+- Documented `Apollo::proteus()->media()->lightPathUrl()` payload and response
+  contract in `docs/api-contract.md`.
+- Updated `README.md` with LightPath media URL usage examples.
 
 ## Added
 
-- Optional `?string $userToken = null` parameter in
-  `ApolloHttpClient::applicationRequest()`.
-- `ApolloHttpClientTest::testApplicationRequestCanIncludeExplicitUserTokenWhenProvided()`
-  to validate delegated header behavior.
+- `MediaResource::thumbnail(string $id)` helper.
+- LightPath media URL and thumbnail documentation in `README.md`.
+- API contract coverage for LightPath URL request payload and response fields in
+  `docs/api-contract.md`.
 
 ## Changed
 
-- `RecordingApolloHttpClient::applicationRequest()` now mirrors the production
-  signature with the optional user token parameter.
+- Expanded `docs/api-contract.md` to detail LightPath media URL behavior.
 
 ## Fixed
 
-- Minor formatting cleanup in `ApolloHttpClient::userRawRequest()`.
+- No bug fixes in this release.
 
 ## Removed
 
@@ -60,9 +49,9 @@ across service boundaries.
 
 ## Breaking Changes
 
-None in this version. For migration history and breakage details, see
-[BREAKING_CHANGES.md](BREAKING_CHANGES.md).
+None in this release.
 
-## Full History
+## Links
 
-For the complete canonical history, see [CHANGELOG.md](CHANGELOG.md).
+- Full history: `CHANGELOG.md`
+- Migration guidance: `BREAKING_CHANGES.md`

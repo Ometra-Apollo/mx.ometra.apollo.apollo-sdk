@@ -94,6 +94,15 @@ final class MediaResource
         );
     }
 
+     public function thumbnail(string $id): Response
+    {
+        return $this->client->userRawRequest(
+            'GET',
+            'media/' . $id . '/download',
+            query: array_filter(['ext' => 'thumb']),
+        );
+    }
+
     public function saveLocal(string $id, string $ext): Response
     {
         return $this->download($id, $ext);

@@ -49,11 +49,11 @@ error pages.
 
 Every request must be application-authenticated through Caronte:
 
-| Header | Required | Source |
-| --- | --- | --- |
-| `X-Application-Token` | Yes | `caronte-sdk` application token. |
-| `X-Tenant-Id` | Yes | Current BeeHive `TenantContext`. |
-| `X-User-Token` | Conditional | Current Caronte user token when the operation must run as a user. |
+| Header                | Required    | Source                                                            |
+| --------------------- | ----------- | ----------------------------------------------------------------- |
+| `X-Application-Token` | Yes         | `caronte-sdk` application token.                                  |
+| `X-Tenant-Id`         | Yes         | Current BeeHive `TenantContext`.                                  |
+| `X-User-Token`        | Conditional | Current Caronte user token when the operation must run as a user. |
 
 `uri_user` is not part of the API contract. Proteus ignores it as a request input.
 User-authenticated SDK calls send `X-Tenant-Id` from the active BeeHive `TenantContext`.
@@ -74,67 +74,68 @@ In this mode, every call that would normally use `userRequest()` is transparentl
 
 ## SDK Coverage
 
-| Domain | Active routes | Current SDK coverage | Missing wrappers |
-| --- | ---: | ---: | --- |
-| Categories | 5 | 5 | None |
-| Directories | 6 | 6 | None |
-| Presets | 5 | 5 | None |
-| Media | 14 | 14 | None |
-| Metadata | 7 | 7 | None |
-| Flare stations | 2 | 2 | None |
-| Pulse groups | 1 | 1 | None |
-| Ignis campaigns | 1 | 1 | None |
-| Ignis content hits | 1 | 1 | None |
+| Domain             | Active routes | Current SDK coverage | Missing wrappers |
+| ------------------ | ------------: | -------------------: | ---------------- |
+| Categories         |             5 |                    5 | None             |
+| Directories        |             6 |                    6 | None             |
+| Presets            |             5 |                    5 | None             |
+| Media              |            14 |                   14 | None             |
+| Metadata           |             7 |                    7 | None             |
+| Flare stations     |             2 |                    2 | None             |
+| Pulse groups       |             1 |                    1 | None             |
+| Ignis campaigns    |             1 |                    1 | None             |
+| Ignis content hits |             1 |                    1 | None             |
 
 ## Categories
 
-| Apollo resource action | HTTP method | URI | Auth | Notes |
-| --- | --- | --- | --- | --- |
-| `Apollo::proteus()->categories()->index(array $query = [])` | `GET` | `/api/categories` | App | Query: `filter`, `items_per_page`, `page`. |
-| `Apollo::proteus()->categories()->store(array $data)` | `POST` | `/api/categories` | App | Payload: `key`, `name`. |
-| `Apollo::proteus()->categories()->show(string $id)` | `GET` | `/api/categories/{id}` | App | Tenant-scoped. |
-| `Apollo::proteus()->categories()->update(string $id, array $data)` | `PUT` | `/api/categories/{id}` | App | Payload: `name`. |
-| `Apollo::proteus()->categories()->delete(string $id)` | `DELETE` | `/api/categories/{id}` | App | Fails if category has media. |
+| Apollo resource action                                             | HTTP method | URI                    | Auth | Notes                                      |
+| ------------------------------------------------------------------ | ----------- | ---------------------- | ---- | ------------------------------------------ |
+| `Apollo::proteus()->categories()->index(array $query = [])`        | `GET`       | `/api/categories`      | App  | Query: `filter`, `items_per_page`, `page`. |
+| `Apollo::proteus()->categories()->store(array $data)`              | `POST`      | `/api/categories`      | App  | Payload: `key`, `name`.                    |
+| `Apollo::proteus()->categories()->show(string $id)`                | `GET`       | `/api/categories/{id}` | App  | Tenant-scoped.                             |
+| `Apollo::proteus()->categories()->update(string $id, array $data)` | `PUT`       | `/api/categories/{id}` | App  | Payload: `name`.                           |
+| `Apollo::proteus()->categories()->delete(string $id)`              | `DELETE`    | `/api/categories/{id}` | App  | Fails if category has media.               |
 
 ## Directories
 
-| Apollo resource action | HTTP method | URI | Auth | Permission |
-| --- | --- | --- | --- | --- |
-| `Apollo::proteus()->directories()->index(array $query = [])` | `GET` | `/api/directories` | App + user | Current uploader context. |
-| `Apollo::proteus()->directories()->create(?string $parentId = null)` | `GET` | `/api/directories/create/{parent_id?}` | App + user | Metadata helper for create forms/API clients. |
-| `Apollo::proteus()->directories()->store(array $data)` | `POST` | `/api/directories` | App + user | Creates directory under current uploader or parent. |
-| `Apollo::proteus()->directories()->show(string $id)` | `GET` | `/api/directories/{id}` | App + user | Requires `READ`. |
-| `Apollo::proteus()->directories()->update(string $id, array $data)` | `PUT` | `/api/directories/{id}` | App + user | Requires `WRITE`. |
-| `Apollo::proteus()->directories()->delete(string $id)` | `DELETE` | `/api/directories/{id}` | App + user | Requires `DELETE`. |
+| Apollo resource action                                               | HTTP method | URI                                    | Auth       | Permission                                          |
+| -------------------------------------------------------------------- | ----------- | -------------------------------------- | ---------- | --------------------------------------------------- |
+| `Apollo::proteus()->directories()->index(array $query = [])`         | `GET`       | `/api/directories`                     | App + user | Current uploader context.                           |
+| `Apollo::proteus()->directories()->create(?string $parentId = null)` | `GET`       | `/api/directories/create/{parent_id?}` | App + user | Metadata helper for create forms/API clients.       |
+| `Apollo::proteus()->directories()->store(array $data)`               | `POST`      | `/api/directories`                     | App + user | Creates directory under current uploader or parent. |
+| `Apollo::proteus()->directories()->show(string $id)`                 | `GET`       | `/api/directories/{id}`                | App + user | Requires `READ`.                                    |
+| `Apollo::proteus()->directories()->update(string $id, array $data)`  | `PUT`       | `/api/directories/{id}`                | App + user | Requires `WRITE`.                                   |
+| `Apollo::proteus()->directories()->delete(string $id)`               | `DELETE`    | `/api/directories/{id}`                | App + user | Requires `DELETE`.                                  |
 
 ## Presets
 
-| Apollo resource action | HTTP method | URI | Auth | Permission |
-| --- | --- | --- | --- | --- |
-| `Apollo::proteus()->presets()->index(string $directoryId)` | `GET` | `/api/directories/{id}/presets` | App + user | Requires `READ`. |
-| `Apollo::proteus()->presets()->store(string $directoryId, array $data)` | `POST` | `/api/directories/{id}/presets` | App + user | Requires `WRITE`. |
-| `Apollo::proteus()->presets()->show(string $directoryId, string $presetId)` | `GET` | `/api/directories/{id}/presets/{preset_id}` | App + user | Requires `READ`. |
-| `Apollo::proteus()->presets()->update(string $directoryId, string $presetId, array $data)` | `PUT` | `/api/directories/{id}/presets/{preset_id}` | App + user | Requires `WRITE`. |
-| `Apollo::proteus()->presets()->delete(string $directoryId, string $presetId)` | `DELETE` | `/api/directories/{id}/presets/{preset_id}` | App + user | Requires `WRITE`. |
+| Apollo resource action                                                                     | HTTP method | URI                                         | Auth       | Permission        |
+| ------------------------------------------------------------------------------------------ | ----------- | ------------------------------------------- | ---------- | ----------------- |
+| `Apollo::proteus()->presets()->index(string $directoryId)`                                 | `GET`       | `/api/directories/{id}/presets`             | App + user | Requires `READ`.  |
+| `Apollo::proteus()->presets()->store(string $directoryId, array $data)`                    | `POST`      | `/api/directories/{id}/presets`             | App + user | Requires `WRITE`. |
+| `Apollo::proteus()->presets()->show(string $directoryId, string $presetId)`                | `GET`       | `/api/directories/{id}/presets/{preset_id}` | App + user | Requires `READ`.  |
+| `Apollo::proteus()->presets()->update(string $directoryId, string $presetId, array $data)` | `PUT`       | `/api/directories/{id}/presets/{preset_id}` | App + user | Requires `WRITE`. |
+| `Apollo::proteus()->presets()->delete(string $directoryId, string $presetId)`              | `DELETE`    | `/api/directories/{id}/presets/{preset_id}` | App + user | Requires `WRITE`. |
 
 ## Media
 
-| Apollo resource action | HTTP method | URI | Auth | Permission |
-| --- | --- | --- | --- | --- |
-| `Apollo::proteus()->media()->index(array $query = [])` | `GET` | `/api/media` | App + user | Tenant-scoped list. |
-| `Apollo::proteus()->media()->upload(array $data)` | `POST` | `/api/media` | App + user | Multipart-capable upload. |
-| `Apollo::proteus()->media()->create()` | `GET` | `/api/media/create` | App + user | Upload metadata helper. |
-| `Apollo::proteus()->media()->tags()` | `GET` | `/api/media/tags` | App + user | Tenant tag list. |
-| `Apollo::proteus()->media()->show(string $id)` | `GET` | `/api/media/{id}` | App + user | Requires `READ`. |
-| `Apollo::proteus()->media()->delete(string $id)` | `DELETE` | `/api/media/{id}` | App + user | Requires `DELETE`. |
-| `Apollo::proteus()->media()->availableFormats(string $id)` | `GET` | `/api/media/{id}/available-formats` | App + user | Requires `READ`. |
-| `Apollo::proteus()->media()->setDefaultFormat(string $id, array $data)` | `POST` | `/api/media/{id}/available-formats` | App + user | Requires `WRITE`. |
-| `Apollo::proteus()->media()->download(string $id, ?string $ext = null)` | `GET` | `/api/media/{id}/download` | App + user | Requires `READ`. |
-| `Apollo::proteus()->media()->lightPathUrl(string $id, array $options = [])` | `POST` | `/api/media/{id}/lightpath-url` | App + user | Requires `READ`; payload: `ext`, `url_ttl_seconds`. |
-| `Apollo::proteus()->media()->transformationOptions(string $id)` | `GET` | `/api/media/{id}/request-transformations` | App + user | Requires `READ`. |
-| `Apollo::proteus()->media()->requestTransformations(string $id, array $data)` | `POST` | `/api/media/{id}/request-transformations` | App + user | Requires `WRITE`. |
-| `Apollo::proteus()->media()->setMetadata(string $id, array $data)` | `POST` | `/api/media/{id}/set-metadata` | App + user | Requires `WRITE`. |
-| `Apollo::proteus()->media()->storeTags(string $id, array $data)` | `POST` | `/api/media/{id}/tags/store` | App + user | Requires `WRITE`. |
+| Apollo resource action                                                        | HTTP method | URI                                       | Auth       | Permission                                          |
+| ----------------------------------------------------------------------------- | ----------- | ----------------------------------------- | ---------- | --------------------------------------------------- |
+| `Apollo::proteus()->media()->index(array $query = [])`                        | `GET`       | `/api/media`                              | App + user | Tenant-scoped list.                                 |
+| `Apollo::proteus()->media()->upload(array $data)`                             | `POST`      | `/api/media`                              | App + user | Multipart-capable upload.                           |
+| `Apollo::proteus()->media()->create()`                                        | `GET`       | `/api/media/create`                       | App + user | Upload metadata helper.                             |
+| `Apollo::proteus()->media()->tags()`                                          | `GET`       | `/api/media/tags`                         | App + user | Tenant tag list.                                    |
+| `Apollo::proteus()->media()->show(string $id)`                                | `GET`       | `/api/media/{id}`                         | App + user | Requires `READ`.                                    |
+| `Apollo::proteus()->media()->delete(string $id)`                              | `DELETE`    | `/api/media/{id}`                         | App + user | Requires `DELETE`.                                  |
+| `Apollo::proteus()->media()->availableFormats(string $id)`                    | `GET`       | `/api/media/{id}/available-formats`       | App + user | Requires `READ`.                                    |
+| `Apollo::proteus()->media()->setDefaultFormat(string $id, array $data)`       | `POST`      | `/api/media/{id}/available-formats`       | App + user | Requires `WRITE`.                                   |
+| `Apollo::proteus()->media()->download(string $id, ?string $ext = null)`       | `GET`       | `/api/media/{id}/download`                | App + user | Requires `READ`.                                    |
+| `Apollo::proteus()->media()->thumbnail(string $id)`                           | `GET`       | `/api/media/{id}/download?ext=thumb`      | App + user | Requires `READ`; thumbnail download response.       |
+| `Apollo::proteus()->media()->lightPathUrl(string $id, array $options = [])`   | `POST`      | `/api/media/{id}/lightpath-url`           | App + user | Requires `READ`; payload: `ext`, `url_ttl_seconds`. |
+| `Apollo::proteus()->media()->transformationOptions(string $id)`               | `GET`       | `/api/media/{id}/request-transformations` | App + user | Requires `READ`.                                    |
+| `Apollo::proteus()->media()->requestTransformations(string $id, array $data)` | `POST`      | `/api/media/{id}/request-transformations` | App + user | Requires `WRITE`.                                   |
+| `Apollo::proteus()->media()->setMetadata(string $id, array $data)`            | `POST`      | `/api/media/{id}/set-metadata`            | App + user | Requires `WRITE`.                                   |
+| `Apollo::proteus()->media()->storeTags(string $id, array $data)`              | `POST`      | `/api/media/{id}/tags/store`              | App + user | Requires `WRITE`.                                   |
 
 ### LightPath media URLs
 
@@ -149,47 +150,47 @@ $response = Apollo::proteus()->media()->lightPathUrl($mediaId, [
 
 Payload fields:
 
-| Field | Type | Required | Notes |
-| --- | --- | --- | --- |
-| `ext` | `string|null` | No | Requested completed format. When omitted, Proteus uses the media default format. |
-| `url_ttl_seconds` | `int|null` | No | URL access TTL. Proteus applies its configured default and maximum. |
+| Field             | Type    | Required | Notes |
+| ----------------- | ------- | -------- | ----- | -------------------------------------------------------------------------------- |
+| `ext`             | `string | null`    | No    | Requested completed format. When omitted, Proteus uses the media default format. |
+| `url_ttl_seconds` | `int    | null`    | No    | URL access TTL. Proteus applies its configured default and maximum.              |
 
 Response data:
 
-| Field | Type | Notes |
-| --- | --- | --- |
-| `url` | `string` | Public URL, usually `https://lightpath.example.com/m/{token}`. |
-| `url_expires_at` | `string` | Access expiration for the opaque token. |
-| `media_id` | `string` | Proteus media id. |
-| `format` | `string` | Resolved delivery format. |
+| Field            | Type     | Notes                                                          |
+| ---------------- | -------- | -------------------------------------------------------------- |
+| `url`            | `string` | Public URL, usually `https://lightpath.example.com/m/{token}`. |
+| `url_expires_at` | `string` | Access expiration for the opaque token.                        |
+| `media_id`       | `string` | Proteus media id.                                              |
+| `format`         | `string` | Resolved delivery format.                                      |
 
 The SDK does not expose LightPath node APIs. Nodes validate tokens and fetch
 origin bytes directly from Proteus.
 
 ## Metadata
 
-| Apollo resource action | HTTP method | URI | Auth | Permission |
-| --- | --- | --- | --- | --- |
-| `Apollo::proteus()->metadata()->keys(string $key)` | `GET` | `/api/media/metadata/{key}` | App | Tenant metadata key lookup. |
-| `Apollo::proteus()->metadata()->values(string $key)` | `GET` | `/api/media/metadata/{key}/values` | App | Tenant metadata values lookup. |
-| `Apollo::proteus()->metadata()->index(string $mediaId, array $query = [])` | `GET` | `/api/media/{id}/metadata` | App + user | Requires `READ`. |
-| `Apollo::proteus()->metadata()->store(string $mediaId, array $data)` | `POST` | `/api/media/{id}/metadata` | App + user | Requires `WRITE`. |
-| `Apollo::proteus()->metadata()->update(string $mediaId, array $data)` | `PUT` | `/api/media/{id}/metadata` | App + user | Requires `WRITE`. |
-| `Apollo::proteus()->metadata()->show(string $mediaId, string $key)` | `GET` | `/api/media/{id}/metadata/{key}` | App + user | Requires `READ`. |
-| `Apollo::proteus()->metadata()->delete(string $mediaId, string $key)` | `DELETE` | `/api/media/{id}/metadata/{key}` | App + user | Requires `WRITE`. |
+| Apollo resource action                                                     | HTTP method | URI                                | Auth       | Permission                     |
+| -------------------------------------------------------------------------- | ----------- | ---------------------------------- | ---------- | ------------------------------ |
+| `Apollo::proteus()->metadata()->keys(string $key)`                         | `GET`       | `/api/media/metadata/{key}`        | App        | Tenant metadata key lookup.    |
+| `Apollo::proteus()->metadata()->values(string $key)`                       | `GET`       | `/api/media/metadata/{key}/values` | App        | Tenant metadata values lookup. |
+| `Apollo::proteus()->metadata()->index(string $mediaId, array $query = [])` | `GET`       | `/api/media/{id}/metadata`         | App + user | Requires `READ`.               |
+| `Apollo::proteus()->metadata()->store(string $mediaId, array $data)`       | `POST`      | `/api/media/{id}/metadata`         | App + user | Requires `WRITE`.              |
+| `Apollo::proteus()->metadata()->update(string $mediaId, array $data)`      | `PUT`       | `/api/media/{id}/metadata`         | App + user | Requires `WRITE`.              |
+| `Apollo::proteus()->metadata()->show(string $mediaId, string $key)`        | `GET`       | `/api/media/{id}/metadata/{key}`   | App + user | Requires `READ`.               |
+| `Apollo::proteus()->metadata()->delete(string $mediaId, string $key)`      | `DELETE`    | `/api/media/{id}/metadata/{key}`   | App + user | Requires `WRITE`.              |
 
 ## Flare Stations
 
-| Apollo resource action | HTTP method | URI | Auth | Notes |
-| --- | --- | --- | --- | --- |
-| `Apollo::flare()->stations()->index(array $query = [])` | `GET` | `/api/stations` | App | Query passthrough. |
-| `Apollo::flare()->stations()->show(string $id)` | `GET` | `/api/stations/{id}` | App | Station detail lookup. |
+| Apollo resource action                                  | HTTP method | URI                  | Auth | Notes                  |
+| ------------------------------------------------------- | ----------- | -------------------- | ---- | ---------------------- |
+| `Apollo::flare()->stations()->index(array $query = [])` | `GET`       | `/api/stations`      | App  | Query passthrough.     |
+| `Apollo::flare()->stations()->show(string $id)`         | `GET`       | `/api/stations/{id}` | App  | Station detail lookup. |
 
 ## Pulse Groups
 
-| Apollo resource action | HTTP method | URI | Auth | Notes |
-| --- | --- | --- | --- | --- |
-| `Apollo::pulse()->groups()->index(array $query = [])` | `GET` | `/api/ignis/groups` | App | Bridge endpoint exposed from Pulse module by product requirement. |
+| Apollo resource action                                | HTTP method | URI                 | Auth | Notes                                                             |
+| ----------------------------------------------------- | ----------- | ------------------- | ---- | ----------------------------------------------------------------- |
+| `Apollo::pulse()->groups()->index(array $query = [])` | `GET`       | `/api/ignis/groups` | App  | Bridge endpoint exposed from Pulse module by product requirement. |
 
 ## Ignis Campaigns
 
@@ -200,9 +201,9 @@ origin bytes directly from Proteus.
 
 ## Ignis Content Hits
 
-| Apollo resource action | HTTP method | URI | Auth | Notes |
-| --- | --- | --- | --- | --- |
-| `Apollo::ignis()->contentHits()->report(array $report)` | `POST` | `/api/content-hits` | App | Migrated from `hitReport(...)` in `ometra-ignis-client`. |
+| Apollo resource action                                  | HTTP method | URI                 | Auth | Notes                                                    |
+| ------------------------------------------------------- | ----------- | ------------------- | ---- | -------------------------------------------------------- |
+| `Apollo::ignis()->contentHits()->report(array $report)` | `POST`      | `/api/content-hits` | App  | Migrated from `hitReport(...)` in `ometra-ignis-client`. |
 
 ## Ignis Groups Exposure (Inbound)
 
@@ -210,9 +211,9 @@ Apollo SDK is outbound-only by default. When the host enables the opt-in `ignis_
 
 ### Route
 
-| HTTP method | URI (default) | Configurable prefix | Auth | Enabled by default |
-| --- | --- | --- | --- | --- |
-| `GET` | `/api/ignis/groups` | `apollo.ignis_groups.route_prefix` | `caronte.application:tenant_required` | No (`apollo.ignis_groups.enabled` defaults to `false`) |
+| HTTP method | URI (default)       | Configurable prefix                | Auth                                  | Enabled by default                                     |
+| ----------- | ------------------- | ---------------------------------- | ------------------------------------- | ------------------------------------------------------ |
+| `GET`       | `/api/ignis/groups` | `apollo.ignis_groups.route_prefix` | `caronte.application:tenant_required` | No (`apollo.ignis_groups.enabled` defaults to `false`) |
 
 The route is registered only when `apollo.ignis_groups.enabled` is `true`. With the default config (`false`), no groups route is registered and `GET /api/ignis/groups` returns `404`.
 
@@ -231,13 +232,13 @@ The response body is a raw JSON array (no wrapper) of `ExternalGroupDTO::toArray
 ]
 ```
 
-| Field | Type | Notes |
-| --- | --- | --- |
-| `name` | string | Group display name. |
-| `external_id` | string | Host-external group identifier. |
-| `media_type` | string[] | Normalized to `MediaTypeEnum` values (`video`, `audio`, `image`). |
-| `provider_id` | string | Auto-set to `Str::slug(config('app.name'))`. |
-| `play_modifiers` | object\|null | Optional playback modifiers. Absent when `null`. |
+| Field            | Type         | Notes                                                             |
+| ---------------- | ------------ | ----------------------------------------------------------------- |
+| `name`           | string       | Group display name.                                               |
+| `external_id`    | string       | Host-external group identifier.                                   |
+| `media_type`     | string[]     | Normalized to `MediaTypeEnum` values (`video`, `audio`, `image`). |
+| `provider_id`    | string       | Auto-set to `Str::slug(config('app.name'))`.                      |
+| `play_modifiers` | object\|null | Optional playback modifiers. Absent when `null`.                  |
 
 ### Authentication
 

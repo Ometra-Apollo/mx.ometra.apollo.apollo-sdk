@@ -142,6 +142,17 @@ Opciones:
 - `ext`: formato a entregar. Si se omite, Proteus usa el formato default.
 - `url_ttl_seconds`: vigencia de la URL. Proteus aplica su maximo configurado.
 
+### Miniaturas de media
+
+Para solicitar la miniatura de un recurso de media, usa `MediaResource::thumbnail()`.
+
+```php
+$response = Apollo::proteus()->media()->thumbnail($mediaId);
+```
+
+Esta llamada aprovecha el mismo endpoint de descarga y solicita el formato
+`thumb` mediante `ext=thumb`.
+
 La URL generada tiene forma `https://lightpath.example.com/m/{token}`. El token
 opaco es la unica credencial y quien tenga la URL puede consumirla hasta
 `url_expires_at`.
