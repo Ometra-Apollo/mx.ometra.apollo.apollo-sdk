@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "97dfe1a4d607fcdd9cfa50ef60a7d8db",
+    "content-hash": "00559859ca8b412b513cf67f11e717ed",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3058,16 +3058,16 @@
         },
         {
             "name": "ometra/caronte-sdk",
-            "version": "6.0.0",
+            "version": "7.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ometra-Nyx/mx.ometra.caronte-sdk.git",
-                "reference": "470c98d83120347f35c856951f9583701154af80"
+                "reference": "22f5e2d1d710eef41480c0325a1df4acb8196d8c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ometra-Nyx/mx.ometra.caronte-sdk/zipball/470c98d83120347f35c856951f9583701154af80",
-                "reference": "470c98d83120347f35c856951f9583701154af80",
+                "url": "https://api.github.com/repos/Ometra-Nyx/mx.ometra.caronte-sdk/zipball/22f5e2d1d710eef41480c0325a1df4acb8196d8c",
+                "reference": "22f5e2d1d710eef41480c0325a1df4acb8196d8c",
                 "shasum": ""
             },
             "require": {
@@ -3111,9 +3111,9 @@
             "description": "Caronte SDK",
             "support": {
                 "issues": "https://github.com/Ometra-Nyx/mx.ometra.caronte-sdk/issues",
-                "source": "https://github.com/Ometra-Nyx/mx.ometra.caronte-sdk/tree/6.0.0"
+                "source": "https://github.com/Ometra-Nyx/mx.ometra.caronte-sdk/tree/7.0.0"
             },
-            "time": "2026-07-14T17:15:23+00:00"
+            "time": "2026-07-14T20:50:32+00:00"
         },
         {
             "name": "phpoption/phpoption",
