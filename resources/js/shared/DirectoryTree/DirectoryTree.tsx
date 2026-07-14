@@ -107,6 +107,16 @@ export default function DirectoryTree({
     const [isSubmittingFolder, setIsSubmittingFolder] =
         useState<boolean>(false);
     const directoriesQueryKey = JSON.stringify(directoriesQuery ?? {});
+    const effectiveDirectoriesQuery = useMemo(
+        () => ({
+            ...(directoriesQuery ?? {}),
+            only_tree: selectableItemType === "directory",
+        }),
+        [directoriesQueryKey, selectableItemType],
+    );
+    const effectiveDirectoriesQueryKey = JSON.stringify(
+        effectiveDirectoriesQuery,
+    );
     const activeDirectories = loadedDirectories;
     const isBusy = isLoading || isFetchingDirectories;
 
@@ -121,7 +131,7 @@ export default function DirectoryTree({
 
         setIsFetchingDirectories(true);
 
-        fetch(buildUrl(directoriesEndpoint, directoriesQuery), {
+        fetch(buildUrl(directoriesEndpoint, effectiveDirectoriesQuery), {
             signal: controller.signal,
             credentials: "same-origin",
             headers: { Accept: "application/json" },
@@ -144,7 +154,12 @@ export default function DirectoryTree({
             });
 
         return () => controller.abort();
-    }, [directories, directoriesEndpoint, directoriesQueryKey]);
+    }, [
+        directories,
+        directoriesEndpoint,
+        effectiveDirectoriesQueryKey,
+        effectiveDirectoriesQuery,
+    ]);
 
     useEffect(() => {
         if (activeDirectories) {
