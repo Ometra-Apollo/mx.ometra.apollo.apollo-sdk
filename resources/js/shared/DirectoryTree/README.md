@@ -40,6 +40,7 @@ Esa ruta esta registrada desde `src/routes/web.php` y usa `web` + `caronte.sessi
 ```
 
 Por defecto `selectableItemType` es `"directory"`.
+El fetch default manda `only_tree=true` para directorios y `only_tree=false` para media.
 
 Usa `showRecursiveToggle={false}` para ocultar "Incluir subcarpetas".
 
