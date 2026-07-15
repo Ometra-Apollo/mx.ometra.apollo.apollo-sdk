@@ -22,9 +22,9 @@ final class CampaignsResource
         );
     }
 
-    public function byExternalGroup(string $externalGroupId): array
+    public function byExternalGroup(string $id_externalGroup): array
     {
-        return $this->byGroup($externalGroupId);
+        return $this->byGroup($id_externalGroup);
     }
 
     public function show(string $id_externalGroup, int $id_campaign): array

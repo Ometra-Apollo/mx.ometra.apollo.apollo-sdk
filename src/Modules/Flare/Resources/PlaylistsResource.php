@@ -11,12 +11,12 @@ final class PlaylistsResource
     public function __construct(private readonly ApolloHttpClient $client) {}
 
 
-    public function show(string $id): array
+    public function show(string $id_playlist): array
     {
-        return $this->client->userRequest('GET', 'playlists/' . $id);
+        return $this->client->userRequest('GET', 'playlists/' . $id_playlist);
     }
-       public function items(string $id): array
+       public function items(string $id_playlist): array
     {
-        return $this->client->userRequest('GET', 'playlists/' . $id . '/items');
+        return $this->client->userRequest('GET', 'playlists/' . $id_playlist . '/items');
     }
 }

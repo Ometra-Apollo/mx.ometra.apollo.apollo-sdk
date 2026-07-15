@@ -16,11 +16,11 @@ final class StationsResource
         return $this->client->applicationRequest('GET', 'stations', query: $query);
     }
 
-    public function show(string $id, bool $nameStation = false): array
+    public function show(string $id_station, bool $nameStation = false): array
     {
         return $this->client->applicationRequest(
             'GET',
-            'stations/' . $id,
+            'stations/' . $id_station,
             [],
             array_filter(['nameStation' => $nameStation])
         );

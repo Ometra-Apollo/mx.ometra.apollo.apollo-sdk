@@ -18,12 +18,12 @@ final class DirectoriesResource
         return $this->client->userRequest('GET', 'directories', query: $data);
     }
 
-    public function create(?string $parentId = null): array
+    public function create(?string $id_parent = null): array
     {
         $endpoint = 'directories/create';
 
-        if ($parentId !== null && $parentId !== '') {
-            $endpoint .= '/' . $parentId;
+        if ($id_parent !== null && $id_parent !== '') {
+            $endpoint .= '/' . $id_parent;
         }
 
         return $this->client->userRequest('GET', $endpoint);
@@ -35,24 +35,24 @@ final class DirectoriesResource
         return $this->client->userRequest('POST', 'directories', payload: $data);
     }
 
-    public function show(string $id): array
+    public function show(string $id_directory): array
     {
-        return $this->client->userRequest('GET', 'directories/' . $id);
+        return $this->client->userRequest('GET', 'directories/' . $id_directory);
     }
 
     /** @param array<string, mixed> $data */
-    public function update(string $id, array $data): array
+    public function update(string $id_directory, array $data): array
     {
-        return $this->client->userRequest('PUT', 'directories/' . $id, payload: $data);
+        return $this->client->userRequest('PUT', 'directories/' . $id_directory, payload: $data);
     }
 
-    public function delete(string $id): ?array
+    public function delete(string $id_directory): ?array
     {
-        return $this->client->userRequest('DELETE', 'directories/' . $id);
+        return $this->client->userRequest('DELETE', 'directories/' . $id_directory);
     }
 
-    public function setVisibility(string $id, string $visibility): array
+    public function setVisibility(string $id_directory, string $visibility): array
     {
-        return $this->client->userRequest('POST', 'directories/' . $id . '/set-visibility', payload: ['visibility' => $visibility]);
+        return $this->client->userRequest('POST', 'directories/' . $id_directory . '/set-visibility', payload: ['visibility' => $visibility]);
     }
 }

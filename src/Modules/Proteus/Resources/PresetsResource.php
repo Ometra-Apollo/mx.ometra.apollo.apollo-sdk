@@ -12,30 +12,30 @@ final class PresetsResource
     {
     }
 
-    public function index(string $directoryId): array
+    public function index(string $id_directory): array
     {
-        return $this->client->userRequest('GET', 'directories/' . $directoryId . '/presets');
+        return $this->client->userRequest('GET', 'directories/' . $id_directory . '/presets');
     }
 
     /** @param array<string, mixed> $data */
-    public function store(string $directoryId, array $data): array
+    public function store(string $id_directory, array $data): array
     {
-        return $this->client->userRequest('POST', 'directories/' . $directoryId . '/presets', payload: $data);
+        return $this->client->userRequest('POST', 'directories/' . $id_directory . '/presets', payload: $data);
     }
 
-    public function show(string $directoryId, string $presetId): array
+    public function show(string $id_directory, string $id_preset): array
     {
-        return $this->client->userRequest('GET', 'directories/' . $directoryId . '/presets/' . $presetId);
+        return $this->client->userRequest('GET', 'directories/' . $id_directory . '/presets/' . $id_preset);
     }
 
     /** @param array<string, mixed> $data */
-    public function update(string $directoryId, string $presetId, array $data): array
+    public function update(string $id_directory, string $id_preset, array $data): array
     {
-        return $this->client->userRequest('PUT', 'directories/' . $directoryId . '/presets/' . $presetId, payload: $data);
+        return $this->client->userRequest('PUT', 'directories/' . $id_directory . '/presets/' . $id_preset, payload: $data);
     }
 
-    public function delete(string $directoryId, string $presetId): ?array
+    public function delete(string $id_directory, string $id_preset): ?array
     {
-        return $this->client->userRequest('DELETE', 'directories/' . $directoryId . '/presets/' . $presetId);
+        return $this->client->userRequest('DELETE', 'directories/' . $id_directory . '/presets/' . $id_preset);
     }
 }

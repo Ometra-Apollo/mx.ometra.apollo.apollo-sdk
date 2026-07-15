@@ -21,30 +21,30 @@ final class MetadataResource
     }
 
     /** @param array<string, mixed> $query */
-    public function index(string $mediaId, array $query = []): array
+    public function index(string $id_media, array $query = []): array
     {
-        return $this->client->userRequest('GET', 'media/' . $mediaId . '/metadata', query: $query);
+        return $this->client->userRequest('GET', 'media/' . $id_media . '/metadata', query: $query);
     }
 
-    public function show(string $mediaId, string $key): array
+    public function show(string $id_media, string $key): array
     {
-        return $this->client->userRequest('GET', 'media/' . $mediaId . '/metadata/' . $key);
-    }
-
-    /** @param array<string, mixed> $data */
-    public function store(string $mediaId, array $data): array
-    {
-        return $this->client->userRequest('POST', 'media/' . $mediaId . '/metadata', payload: $data);
+        return $this->client->userRequest('GET', 'media/' . $id_media . '/metadata/' . $key);
     }
 
     /** @param array<string, mixed> $data */
-    public function update(string $mediaId, array $data): array
+    public function store(string $id_media, array $data): array
     {
-        return $this->client->userRequest('PUT', 'media/' . $mediaId . '/metadata', payload: $data);
+        return $this->client->userRequest('POST', 'media/' . $id_media . '/metadata', payload: $data);
     }
 
-    public function delete(string $mediaId, string $key): ?array
+    /** @param array<string, mixed> $data */
+    public function update(string $id_media, array $data): array
     {
-        return $this->client->userRequest('DELETE', 'media/' . $mediaId . '/metadata/' . $key);
+        return $this->client->userRequest('PUT', 'media/' . $id_media . '/metadata', payload: $data);
+    }
+
+    public function delete(string $id_media, string $key): ?array
+    {
+        return $this->client->userRequest('DELETE', 'media/' . $id_media . '/metadata/' . $key);
     }
 }
