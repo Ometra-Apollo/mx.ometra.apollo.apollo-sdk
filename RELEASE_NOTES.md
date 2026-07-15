@@ -1,3 +1,62 @@
+# Release v4.0.0
+
+**Date:** 2026-07-15
+**Branch:** `main`
+**Package:** `ometra/apollo-sdk`
+
+Apollo 4 delegates raw downloads, multipart uploads, authentication headers,
+tenant propagation, retries, and response parsing to Caronte SDK 7.1.
+Applications configured with a group now send only `X-Group-Token`; other
+applications send `X-Application-Token`.
+
+## Highlights
+
+- Corrected Proteus metadata listing to use the media-scoped endpoint.
+- Hardened `DirectoryTree` loading and folder-creation error handling.
+- Made `AppMenu` react to Inertia URL changes and centralized app URL building.
+- Fixed `ExternalGroupDTO` serialization so falsey non-null values are kept.
+- Removed unused AWS S3, database, and Guzzle runtime dependencies.
+- Removed the production `DummyGroup` fixture.
+
+## Upgrade requirements
+
+- Require `ometra/apollo-sdk ^4.0` and allow `ometra/caronte-sdk ^7.1`.
+- Update metadata listing calls to pass a media ID:
+
+```php
+$metadata = Apollo::proteus()->metadata()->index($mediaId, [
+    'search' => 'title',
+]);
+```
+
+- Stop reading `base_url_env` from module `config()` results; use `base_url`.
+- Remove `apollo.frontend.route_prefix` overrides. Published frontend components
+  and SDK web routes use the fixed `/_apollo` prefix.
+- If the Ignis groups route is enabled, bind `IgnisGroupContract` in the host;
+  no dummy implementation is shipped.
+
+Module URLs remain configured through `config/apollo.php`:
+
+```dotenv
+PROTEUS_BASE_URL=https://proteus.example.com/api
+PULSE_BASE_URL=https://pulse.example.com/api
+FLARE_BASE_URL=https://flare.example.com/api
+IGNIS_BASE_URL=https://ignis.example.com/api
+```
+
+Existing modular calls such as `Apollo::proteus()->media()->index()` are
+unchanged.
+
+## Validation
+
+- `composer validate --no-check-publish`
+- `composer test`: 121 tests and 444 assertions pass
+
+## Links
+
+- Full history: `CHANGELOG.md`
+- Migration guidance: `BREAKING_CHANGES.md`
+
 # Release v3.7.0 "Astra"
 
 **Date:** 2026-07-13  

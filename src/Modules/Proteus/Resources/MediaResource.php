@@ -11,6 +11,7 @@ final class MediaResource
 {
     public function __construct(private readonly ApolloHttpClient $client)
     {
+        //
     }
 
     /** @param array<string, mixed> $data */
@@ -94,7 +95,7 @@ final class MediaResource
         );
     }
 
-     public function thumbnail(string $id): Response
+    public function thumbnail(string $id): Response
     {
         return $this->client->userRawRequest(
             'GET',

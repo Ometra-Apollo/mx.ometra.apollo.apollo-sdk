@@ -22,10 +22,10 @@ final class ApolloServiceProviderTest extends TestCase
         $config = require __DIR__ . '/../../config/apollo.php';
 
         self::assertArrayHasKey('modules', $config);
-        self::assertSame('PROTEUS_BASE_URL', $config['modules']['proteus']['base_url_env']);
-        self::assertSame('PULSE_BASE_URL', $config['modules']['pulse']['base_url_env']);
-        self::assertSame('FLARE_BASE_URL', $config['modules']['flare']['base_url_env']);
-        self::assertSame('IGNIS_BASE_URL', $config['modules']['ignis']['base_url_env']);
+        self::assertArrayHasKey('base_url', $config['modules']['proteus']);
+        self::assertArrayHasKey('base_url', $config['modules']['pulse']);
+        self::assertArrayHasKey('base_url', $config['modules']['flare']);
+        self::assertArrayHasKey('base_url', $config['modules']['ignis']);
     }
 
     public function testApolloConfigDoesNotDefineCaronteAuthConfiguration(): void

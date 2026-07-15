@@ -13,16 +13,16 @@ final class StationsResource
     /** @param array<string, mixed> $query */
     public function index(array $query = []): array
     {
-        return $this->client->userRequest('GET', 'stations', query: $query);
+        return $this->client->applicationRequest('GET', 'stations', query: $query);
     }
 
     public function show(string $id, bool $nameStation = false): array
     {
-        return $this->client->userRequest(
+        return $this->client->applicationRequest(
             'GET',
             'stations/' . $id,
             [],
-            ['nameStation' => $nameStation]
+            array_filter(['nameStation' => $nameStation])
         );
     }
 }

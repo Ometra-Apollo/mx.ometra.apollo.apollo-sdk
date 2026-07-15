@@ -47,13 +47,14 @@ error pages.
 
 ## Authentication
 
-Every request must be application-authenticated through Caronte:
+Every request is application- or group-authenticated through Caronte:
 
-| Header                | Required    | Source                                                            |
-| --------------------- | ----------- | ----------------------------------------------------------------- |
-| `X-Application-Token` | Yes         | `caronte-sdk` application token.                                  |
-| `X-Tenant-Id`         | Yes         | Current BeeHive `TenantContext`.                                  |
-| `X-User-Token`        | Conditional | Current Caronte user token when the operation must run as a user. |
+| Header                | Required    | Source                                                                      |
+| --------------------- | ----------- | --------------------------------------------------------------------------- |
+| `X-Group-Token`       | Conditional | Sent when Caronte is configured for a group application.                    |
+| `X-Application-Token` | Conditional | Sent when no group application is configured; never sent with a group token. |
+| `X-Tenant-Id`         | Conditional | Current BeeHive `TenantContext`, when one is active.                         |
+| `X-User-Token`        | Conditional | Current Caronte user token when the operation must run as a user.           |
 
 `uri_user` is not part of the API contract. Proteus ignores it as a request input.
 User-authenticated SDK calls send `X-Tenant-Id` from the active BeeHive `TenantContext`.
@@ -294,5 +295,5 @@ Apollo SDK uses a shared HTTP client adapter built on the installed
 
 1. Extends `CaronteHttpClient`.
 2. Resolves module base URLs from `config/apollo.php`.
-3. Builds `X-Application-Token` through Caronte's inherited helpers.
-4. Uses Caronte's inherited `applicationRequest()` and `userRequest()` header behavior.
+3. Builds application or group authentication through Caronte's inherited helpers.
+4. Uses Caronte's inherited application, user, raw-response, and multipart behavior.

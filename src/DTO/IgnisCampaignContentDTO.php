@@ -25,7 +25,7 @@ final class IgnisCampaignContentDTO
     {
         return new self(
             id_media: (string) $data['id_media'],
-            type: (string) $data['type'],
+            type: (string) ($data['type'] ?? $data['media_type'] ?? ''),
             media_type: (string) ($data['media_type'] ?? $data['type'] ?? ''),
             ext: (string) ($data['ext'] ?? ''),
             name: (string) $data['name'],
@@ -46,6 +46,7 @@ final class IgnisCampaignContentDTO
     {
         return [
             'id_media' => $this->id_media,
+            'type' => $this->type,
             'media_type' => $this->media_type,
             'ext' => $this->ext,
             'name' => $this->name,

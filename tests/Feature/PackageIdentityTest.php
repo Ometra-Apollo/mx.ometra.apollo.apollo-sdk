@@ -28,6 +28,16 @@ final class PackageIdentityTest extends TestCase
         self::assertStringNotContainsString('ProteusServiceProvider', $composerRaw);
     }
 
+    public function testComposerOnlyDeclaresRuntimeDependenciesUsedByTheSdk(): void
+    {
+        $composer = $this->readComposer();
+
+        self::assertSame('Modular Laravel SDK for the Apollo suite APIs', $composer['description']);
+        self::assertArrayNotHasKey('illuminate/database', $composer['require']);
+        self::assertArrayNotHasKey('league/flysystem-aws-s3-v3', $composer['require']);
+        self::assertArrayNotHasKey('guzzlehttp/guzzle', $composer['require']);
+    }
+
     /**
      * @return array<string, mixed>
      */

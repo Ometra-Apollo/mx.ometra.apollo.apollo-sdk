@@ -25,7 +25,7 @@ final class IgnisApiShapeTest extends TestCase
         $app->instance('config', new Repository([
             'apollo' => [
                 'modules' => [
-                    'ignis' => ['base_url_env' => 'IGNIS_BASE_URL', 'base_url' => 'https://ignis.test'],
+                    'ignis' => ['base_url' => 'https://ignis.test'],
                 ],
             ],
         ]));

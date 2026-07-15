@@ -20,10 +20,10 @@ final class MetadataResource
         return $this->client->applicationRequest('GET', 'media/metadata/' . $key . '/values');
     }
 
-    /** @param string $key */
-    public function index(string $key = ""): array
+    /** @param array<string, mixed> $query */
+    public function index(string $mediaId, array $query = []): array
     {
-        return $this->client->userRequest('GET', 'media/metadata', query: ['search' => $key]);
+        return $this->client->userRequest('GET', 'media/' . $mediaId . '/metadata', query: $query);
     }
 
     public function show(string $mediaId, string $key): array

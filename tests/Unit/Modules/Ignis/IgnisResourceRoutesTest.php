@@ -29,7 +29,13 @@ final class IgnisResourceRoutesTest extends TestCase
 
     public function testCampaignShowUsesExpectedEndpoint(): void
     {
-        $client = new RecordingApolloHttpClient();
+        $client = new RecordingApolloHttpClient([
+            'id_campaign' => 11,
+            'name' => 'Campaign',
+            'dt_start' => '2026-07-15T00:00:00Z',
+            'dt_end' => '2026-07-16T00:00:00Z',
+            'contents' => [],
+        ]);
         $resource = new CampaignsResource($client);
 
         $resource->show('group-1', 11);

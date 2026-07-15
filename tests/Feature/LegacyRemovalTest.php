@@ -36,6 +36,7 @@ final class LegacyRemovalTest extends TestCase
             'legacy api wrapper test' => ['tests/ApiWrappersTest.php'],
             'legacy proteus api client test' => ['tests/ProteusApiClientTest.php'],
             'legacy recording proteus client test double' => ['tests/RecordingProteusApiClient.php'],
+            'hardcoded production test group' => ['src/Test/DummyGroup.php'],
         ];
     }
 

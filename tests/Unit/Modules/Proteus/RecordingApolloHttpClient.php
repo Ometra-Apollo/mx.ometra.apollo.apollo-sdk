@@ -13,7 +13,8 @@ final class RecordingApolloHttpClient extends ApolloHttpClient
      */
     public ?array $lastRequest = null;
 
-    public function __construct()
+    /** @param array<string, mixed>|array<int, array<string, mixed>> $responseData */
+    public function __construct(private readonly array $responseData = [])
     {
         parent::__construct('https://proteus.test/api');
     }
@@ -80,7 +81,7 @@ final class RecordingApolloHttpClient extends ApolloHttpClient
         return [
             'status' => 200,
             'message' => 'ok',
-            'data' => $this->lastRequest,
+            'data' => $this->responseData,
             'errors' => [],
         ];
     }

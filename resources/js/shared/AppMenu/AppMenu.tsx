@@ -1,5 +1,5 @@
 import { usePage } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
+import { useMemo, type SetStateAction } from 'react';
 
 import { DropdownContent, DropdownOption, DropdownRoot } from '@/Components';
 
@@ -8,6 +8,7 @@ import { AppMenuRow } from './AppMenuRow';
 import { AppMenuTrigger } from './AppMenuTrigger';
 import { APP_META, APPS_ORDER, type AppName } from './appMenu.config';
 import {
+    buildAppUrl,
     getAppFromHostname,
     getAppFromUrlSegment,
     getFirstSegment,
@@ -46,19 +47,33 @@ function makeAppOption(name: AppName): DropdownOption<AppName> {
 
 export default function AppMenu() {
     const { url } = usePage();
-    const [app, setApp] = useState<AppName | null>(() => {
-        const appFromHostname = getAppFromHostname(window.location.hostname);
+    const app = useMemo<AppName | null>(() => {
+        const hostname = typeof window === 'undefined' ? null : window.location.hostname;
+        const appFromHostname = getAppFromHostname(hostname);
         if (appFromHostname) return appFromHostname;
 
         const segment = getFirstSegment(url);
         return getAppFromUrlSegment(segment);
-    });
+    }, [url]);
 
     const options = useMemo(() => APPS_ORDER.map(makeAppOption), []);
 
+    const handleAppChange = (nextValue: SetStateAction<AppName | null>) => {
+        const nextApp =
+            typeof nextValue === 'function' ? nextValue(app) : nextValue;
+
+        if (nextApp) {
+            window.location.href = buildAppUrl(APP_META[nextApp].url);
+        }
+    };
+
     return (
         <div className="relative">
-            <DropdownRoot options={options} value={app} onValueChange={setApp}>
+            <DropdownRoot
+                options={options}
+                value={app}
+                onValueChange={handleAppChange}
+            >
                 <AppMenuTrigger app={app} />
                 <DropdownContent />
             </DropdownRoot>

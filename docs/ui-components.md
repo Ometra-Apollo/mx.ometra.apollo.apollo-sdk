@@ -52,6 +52,7 @@ import { AppMenu } from '@/shared/AppMenu';
 2. If hostname detection fails, it uses the first segment of the Inertia URL.
 3. Clicking the current app icon navigates to that app home.
 4. App actions are defined in `appMenu.config.tsx`.
+5. The active app is recalculated when the Inertia URL changes.
 
 ### Files You Can Customize
 
@@ -158,6 +159,10 @@ The component tries to resolve CSRF token from:
 
 1. `<meta name="csrf-token" />`
 2. `XSRF-TOKEN` cookie
+
+Failed directory loads and folder creations are rendered as accessible alerts.
+When folder creation fails, the entered name remains available so the user can
+correct the issue and retry.
 
 ### Example: Folder Picker
 

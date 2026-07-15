@@ -13,14 +13,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v4.0.0] - 2026-07-15
+
+Major release aligning Apollo's transport and authentication behavior with
+Caronte SDK 7.1, correcting the Proteus metadata contract, and hardening the
+published frontend components.
+
+### Changed
+
+- Require `ometra/caronte-sdk ^7.1.0` and inherit its raw-response and multipart transport.
+- Send either `X-Group-Token` or `X-Application-Token` according to the canonical Caronte authentication contract, never both.
+- Remove duplicated HTTP, header, tenant, and multipart handling from `ApolloHttpClient`.
+- Keep the internal frontend route prefix fixed at `/_apollo` so published UI defaults and backend routes cannot diverge.
+- Preserve falsey non-null values when serializing `ExternalGroupDTO`.
+- Surface directory loading and creation failures in `DirectoryTree` and retain failed folder input for retry.
+- Derive the active `AppMenu` application from the current Inertia URL and keep URL construction in one utility.
+- Change `MetadataResource::index()` to require a media ID and call
+  `GET /media/{mediaId}/metadata`, with an optional query array.
+- Use application authentication for Flare station reads.
+- Return only `base_url` from module `config()` methods and remove the redundant
+  `base_url_env` configuration entries.
+- Register publishable assets only when the host application exposes Laravel's
+  config and resource path APIs.
+- Accept either `type` or `media_type` when hydrating `IgnisCampaignContentDTO`
+  and serialize both fields.
+
 ### Added
 
-- Suite-styled Laravel HTTP error pages for `401`, `403`, `404`, `419`, `429`,
-  `500`, and `503`.
-- Automatic error-page fallback registration through the Apollo service
-  provider, with `APOLLO_ERROR_PAGES_ENABLED=false` as an opt-out.
-- `apollo-error-pages` publish tag for customizable host copies, plus aggregate
-  `apollo` publishing for config and error pages.
+- Tests for Caronte 7.1 authentication, inherited raw and multipart transport,
+  stable frontend routes, component error states, and falsey DTO values.
+
+### Removed
+
+- Unused direct AWS S3, database, and Guzzle dependencies.
+- The hardcoded `src/Test/DummyGroup.php` fixture from the production autoload tree.
+
+### Fixed
+
+- Correct the Proteus metadata listing endpoint, which previously called the
+  global metadata search route instead of the media-scoped route.
+- Omit the false `nameStation` query parameter from Flare station detail calls.
+
+### Deprecated
+
+- Nothing deprecated.
+
+### Security
+
+- Group-authenticated requests no longer send an application token alongside
+  the group token.
+
+### Breaking Changes
+
+- `MetadataResource::index()` changed from `index(string $key = '')` to
+  `index(string $mediaId, array $query = [])`.
+- Module `config()` results no longer contain `base_url_env`.
+- `apollo.frontend.route_prefix` was removed; SDK frontend routes always use
+  `/_apollo`.
+- `ometra/caronte-sdk ^7.1.0` is now required.
 
 ## [v3.7.0] - 2026-07-13 "Astra"
 

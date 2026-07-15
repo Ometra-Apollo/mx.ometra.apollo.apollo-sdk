@@ -1,37 +1,32 @@
-# Release v3.7.0 - Astra
+# Release v4.0.0
 
 ## Motivation / Context
 
-This release ships a new Proteus media thumbnail helper for Apollo and improves
-LightPath media URL documentation so integrators can request thumbnails and
-opaque delivery URLs with confidence.
+This major release aligns Apollo with Caronte SDK 7.1, corrects the public
+Proteus metadata contract, and hardens shared frontend components.
 
 ## Summary of changes
 
-- Added `MediaResource::thumbnail(string $id)` for thumbnail retrieval.
-- Updated `README.md` with LightPath media URL and thumbnail usage examples.
-- Updated `docs/api-contract.md` with thumbnail and LightPath URL request/response
-  documentation.
-- Updated `CHANGELOG.md` with the `v3.7.0` release entry.
-- Updated `BREAKING_CHANGES.md` to add a `v3.7.0` section confirming there are
-  no breaking changes.
-- Updated `RELEASE_NOTES.md` for the `v3.7.0` release.
-- Added route coverage in
-  `tests/Unit/Modules/Proteus/ProteusResourceRoutesTest.php` for the new
-  `thumbnail()` helper.
+- Upgraded the transport contract to `ometra/caronte-sdk ^7.1.0`.
+- Corrected `MetadataResource::index()` to target media-scoped metadata.
+- Enforced mutually exclusive group/application authentication headers.
+- Removed unused direct runtime dependencies and the production dummy fixture.
+- Stabilized the internal `/_apollo` frontend route contract.
+- Improved AppMenu navigation and DirectoryTree error feedback.
+- Updated README, API contract, changelog, release notes, and migration guidance.
 
 ## Testing checklist
 
-- [ ] `phpunit` passes locally.
-- [ ] Documentation updates are correct and coherent.
-- [ ] `CHANGELOG.md` accurately reflects the release.
-- [ ] No breaking changes were introduced.
+- [x] `composer validate --no-check-publish` passes locally.
+- [x] `composer test` passes: 121 tests, 444 assertions.
+- [x] Documentation matches the current API and authentication contract.
+- [x] Breaking changes and migration steps are documented.
 
 ## Risk / Impact
 
-- Low risk: this release adds backward-compatible helper functionality and
-  documentation only.
-- No public API removal or behavioral breaking changes are included.
+- Medium risk: authentication and transport now follow Caronte 7.1 directly.
+- High migration impact for callers of `metadata()->index()` and consumers of
+  `base_url_env` or `apollo.frontend.route_prefix`.
 
 ## Links
 

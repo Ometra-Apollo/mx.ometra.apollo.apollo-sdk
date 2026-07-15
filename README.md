@@ -78,10 +78,10 @@ FLARE_BASE_URL=https://flare.example.com/api
 IGNIS_BASE_URL=https://ignis.example.com/api
 ```
 
-Las llamadas HTTP usan el contrato de Caronte y agregan, segun el tipo de request:
+Las llamadas HTTP usan el transporte de Caronte 7.1, incluyendo uploads multipart
+y respuestas binarias sin parsing. Segun el tipo de request agregan:
 
-- `X-Application-Token`
-- `X-Group-Token` cuando existe
+- `X-Group-Token` cuando existe una aplicacion grupal; en caso contrario, `X-Application-Token`
 - `X-User-Token` en llamadas de usuario
 - `X-Tenant-Id` desde `TenantContext` cuando existe
 
@@ -105,6 +105,10 @@ Apollo::proteus()->media()->setMetadata($mediaId, [
     'metadata' => [
         'title' => 'Hero image',
     ],
+]);
+
+$metadata = Apollo::proteus()->metadata()->index($mediaId, [
+    'search' => 'title',
 ]);
 
 $images = Apollo::proteus()->media()->index(['type' => 'image']);

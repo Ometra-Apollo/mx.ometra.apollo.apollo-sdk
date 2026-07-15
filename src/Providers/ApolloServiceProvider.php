@@ -45,28 +45,23 @@ final class ApolloServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->publishes([
-            self::CONFIG_PATH => config_path('apollo.php'),
-        ], 'apollo-config');
+        if (method_exists($this->app, 'configPath') && method_exists($this->app, 'resourcePath')) {
+            $configPath = $this->app->configPath('apollo.php');
+            $errorPagesPath = $this->app->resourcePath('views/errors');
+            $appMenuPath = $this->app->resourcePath('js/shared/AppMenu');
+            $directoryTreePath = $this->app->resourcePath('js/shared/DirectoryTree');
 
-        $this->publishes([
-            self::viewsPath() . '/errors' => resource_path('views/errors'),
-        ], 'apollo-error-pages');
-
-        $this->publishes([
-            self::appMenuPath() => resource_path('js/shared/AppMenu'),
-        ], 'apollo-app-menu');
-
-        $this->publishes([
-            self::directoryTreePath() => resource_path('js/shared/DirectoryTree'),
-        ], 'apollo-directory-tree');
-
-        $this->publishes([
-            self::CONFIG_PATH => config_path('apollo.php'),
-            self::appMenuPath() => resource_path('js/shared/AppMenu'),
-            self::directoryTreePath() => resource_path('js/shared/DirectoryTree'),
-            self::viewsPath() . '/errors' => resource_path('views/errors'),
-        ], 'apollo');
+            $this->publishes([self::CONFIG_PATH => $configPath], 'apollo-config');
+            $this->publishes([self::viewsPath() . '/errors' => $errorPagesPath], 'apollo-error-pages');
+            $this->publishes([self::appMenuPath() => $appMenuPath], 'apollo-app-menu');
+            $this->publishes([self::directoryTreePath() => $directoryTreePath], 'apollo-directory-tree');
+            $this->publishes([
+                self::CONFIG_PATH => $configPath,
+                self::appMenuPath() => $appMenuPath,
+                self::directoryTreePath() => $directoryTreePath,
+                self::viewsPath() . '/errors' => $errorPagesPath,
+            ], 'apollo');
+        }
 
         $this->registerErrorPageViewFallback();
 

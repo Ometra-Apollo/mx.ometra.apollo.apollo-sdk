@@ -57,6 +57,10 @@ function getCsrfToken(): string | null {
     return xsrfCookie ? decodeURIComponent(xsrfCookie) : null;
 }
 
+function getErrorMessage(error: unknown, fallback: string): string {
+    return error instanceof Error && error.message ? error.message : fallback;
+}
+
 export default function DirectoryTree({
     directories,
     directoriesEndpoint = "/_apollo/proteus/directories",
@@ -106,6 +110,9 @@ export default function DirectoryTree({
         useState<string>("Nueva carpeta");
     const [isSubmittingFolder, setIsSubmittingFolder] =
         useState<boolean>(false);
+    const [directoriesError, setDirectoriesError] =
+        useState<string | null>(null);
+    const [folderError, setFolderError] = useState<string | null>(null);
     const directoriesQueryKey = JSON.stringify(directoriesQuery ?? {});
     const effectiveDirectoriesQuery = useMemo(
         () => ({
@@ -124,27 +131,48 @@ export default function DirectoryTree({
         if (directories) {
             setLoadedDirectories(directories);
             setIsFetchingDirectories(false);
+            setDirectoriesError(null);
             return;
         }
 
         const controller = new AbortController();
 
         setIsFetchingDirectories(true);
+        setDirectoriesError(null);
 
         fetch(buildUrl(directoriesEndpoint, effectiveDirectoriesQuery), {
             signal: controller.signal,
             credentials: "same-origin",
             headers: { Accept: "application/json" },
         })
-            .then((response) => response.json())
+            .then(async (response) => {
+                if (!response.ok) {
+                    throw new Error(
+                        `No se pudieron cargar los directorios (${response.status}).`,
+                    );
+                }
+
+                return response.json();
+            })
             .then((payload) => {
                 if (!controller.signal.aborted) {
-                    setLoadedDirectories(getDirectoryFromResponse(payload));
+                    const nextDirectories = getDirectoryFromResponse(payload);
+
+                    if (!nextDirectories) {
+                        throw new Error(
+                            "La respuesta de directorios no tiene un formato valido.",
+                        );
+                    }
+
+                    setLoadedDirectories(nextDirectories);
                 }
             })
-            .catch(() => {
+            .catch((error: unknown) => {
                 if (!controller.signal.aborted) {
                     setLoadedDirectories(null);
+                    setDirectoriesError(
+                        getErrorMessage(error, "No se pudieron cargar los directorios."),
+                    );
                 }
             })
             .finally(() => {
@@ -243,6 +271,7 @@ export default function DirectoryTree({
 
         setCreatingFolderParentId(null);
         setCreatingFolderName("Nueva carpeta");
+        setFolderError(null);
         setIsExplorerOpen(true);
         onExplorerOpenChange?.(true);
     };
@@ -298,6 +327,7 @@ export default function DirectoryTree({
         setActiveDirectoryId(confirmedDirectoryId);
         setCreatingFolderParentId(null);
         setCreatingFolderName("Nueva carpeta");
+        setFolderError(null);
         setIsExplorerOpen(false);
         onExplorerOpenChange?.(false);
     };
@@ -310,6 +340,7 @@ export default function DirectoryTree({
         setActiveDirectoryId(null);
         setCreatingFolderParentId(null);
         setCreatingFolderName("Nueva carpeta");
+        setFolderError(null);
         setIsExplorerOpen(false);
         onExplorerOpenChange?.(false);
         onSelect?.("", "", isRecursive);
@@ -322,6 +353,7 @@ export default function DirectoryTree({
 
         setCreatingFolderParentId(activeDirectoryId);
         setCreatingFolderName("Nueva carpeta");
+        setFolderError(null);
         setExpandedIds((current) =>
             current.includes(activeDirectoryId)
                 ? current
@@ -333,6 +365,7 @@ export default function DirectoryTree({
         setCreatingFolderParentId(null);
         setCreatingFolderName("Nueva carpeta");
         setIsSubmittingFolder(false);
+        setFolderError(null);
     };
 
     const handleConfirmCreateFolder = async () => {
@@ -347,6 +380,7 @@ export default function DirectoryTree({
         }
 
         setIsSubmittingFolder(true);
+        setFolderError(null);
 
         try {
             if (onCreateFolder) {
@@ -373,13 +407,19 @@ export default function DirectoryTree({
                 });
 
                 if (!response.ok) {
-                    throw new Error("No se pudo crear la carpeta.");
+                    throw new Error(`No se pudo crear la carpeta (${response.status}).`);
                 }
 
                 const payload = await response.json();
                 const createdDirectory = getDirectoryFromResponse(payload);
 
-                if (createdDirectory && activeDirectories) {
+                if (!createdDirectory) {
+                    throw new Error(
+                        "La carpeta fue creada, pero la respuesta no tiene un formato valido.",
+                    );
+                }
+
+                if (activeDirectories) {
                     setLoadedDirectories(
                         insertDirectoryChild(
                             activeDirectories,
@@ -404,10 +444,12 @@ export default function DirectoryTree({
                     setPendingDirectoryName(createdDirectory.name);
                 }
             }
-        } catch {
-        } finally {
+
             setCreatingFolderParentId(null);
             setCreatingFolderName("Nueva carpeta");
+        } catch (error: unknown) {
+            setFolderError(getErrorMessage(error, "No se pudo crear la carpeta."));
+        } finally {
             setIsSubmittingFolder(false);
         }
     };
@@ -449,7 +491,12 @@ export default function DirectoryTree({
                         aria-label="Cargando directorios"
                     />
                 ) : (
-                    "No se pudieron cargar los directorios."
+                    <span
+                        role="alert"
+                        className="px-4 text-center text-red-700"
+                    >
+                        {directoriesError ?? "No se pudieron cargar los directorios."}
+                    </span>
                 )}
             </div>
         );
@@ -552,6 +599,12 @@ export default function DirectoryTree({
                         {renderTree()}
                     </div>
                 </div>
+
+                {folderError && (
+                    <p role="alert" className="mt-3 text-sm text-red-700">
+                        {folderError}
+                    </p>
+                )}
             </div>
 
             <div className="flex w-full flex-col gap-4 bg-gray-100 px-6 py-6 md:flex-row md:items-center md:justify-between">

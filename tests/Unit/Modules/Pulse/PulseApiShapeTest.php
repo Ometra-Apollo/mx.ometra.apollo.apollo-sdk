@@ -24,7 +24,7 @@ final class PulseApiShapeTest extends TestCase
         $app->instance('config', new Repository([
             'apollo' => [
                 'modules' => [
-                    'pulse' => ['base_url_env' => 'PULSE_BASE_URL', 'base_url' => 'https://pulse.test'],
+                    'pulse' => ['base_url' => 'https://pulse.test'],
                 ],
             ],
         ]));

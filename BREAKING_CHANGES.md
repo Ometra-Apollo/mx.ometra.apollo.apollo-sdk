@@ -1,5 +1,49 @@
 # Breaking Changes
 
+## v4.0.0
+
+### Caronte SDK 7.1 is required
+
+Apollo now delegates its request transport and header construction to
+`ometra/caronte-sdk ^7.1.0`. Group authentication is mutually exclusive:
+requests send `X-Group-Token` when a group application is configured, otherwise
+they send `X-Application-Token`.
+
+### Proteus metadata listing is media-scoped
+
+Replace the old optional metadata-key search:
+
+```php
+Apollo::proteus()->metadata()->index('title');
+```
+
+with a media ID and, when needed, query parameters:
+
+```php
+Apollo::proteus()->metadata()->index($mediaId, ['search' => 'title']);
+```
+
+The request now targets `GET /media/{mediaId}/metadata`.
+
+### Module config shape is smaller
+
+`Apollo::{module}()->config()` now returns only `base_url`. Consumers reading
+`base_url_env` must remove that access; environment-variable names remain
+documented and are resolved by `config/apollo.php`.
+
+### Apollo frontend route prefix is fixed
+
+The `apollo.frontend.route_prefix` setting was removed. SDK-owned web routes and
+the default published component endpoints always use `/_apollo`. Remove any
+prefix override or explicitly pass custom endpoints to `DirectoryTree` if the
+host provides its own controller routes.
+
+### Dummy Ignis group data was removed
+
+The production `Ometra\Apollo\Sdk\Test\DummyGroup` fixture no longer exists. A
+host with `APOLLO_IGNIS_GROUPS_ENABLED=true` must bind
+`IgnisGroupContract` to its own implementation.
+
 ## v3.7.0
 
 No breaking changes were introduced in this release.

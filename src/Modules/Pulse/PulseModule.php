@@ -21,7 +21,7 @@ final class PulseModule
     }
 
     /**
-     * @return array{base_url_env: string, base_url: string}
+     * @return array{base_url: string}
      */
     public function config(): array
     {

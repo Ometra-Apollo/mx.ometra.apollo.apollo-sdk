@@ -27,10 +27,10 @@ final class ModuleResolutionTest extends TestCase
         $app->instance('config', new Repository([
             'apollo' => [
                 'modules' => [
-                    'proteus' => ['base_url_env' => 'PROTEUS_BASE_URL', 'base_url' => 'https://proteus.test'],
-                    'pulse' => ['base_url_env' => 'PULSE_BASE_URL', 'base_url' => 'https://pulse.test'],
-                    'flare' => ['base_url_env' => 'FLARE_BASE_URL', 'base_url' => 'https://flare.test'],
-                    'ignis' => ['base_url_env' => 'IGNIS_BASE_URL', 'base_url' => 'https://ignis.test'],
+                    'proteus' => ['base_url' => 'https://proteus.test'],
+                    'pulse' => ['base_url' => 'https://pulse.test'],
+                    'flare' => ['base_url' => 'https://flare.test'],
+                    'ignis' => ['base_url' => 'https://ignis.test'],
                 ],
             ],
         ]));
@@ -66,19 +66,15 @@ final class ModuleResolutionTest extends TestCase
         $resolver = new ModuleConfigResolver();
 
         self::assertSame([
-            'base_url_env' => 'PROTEUS_BASE_URL',
             'base_url' => 'https://proteus.test',
         ], (new ProteusModule($resolver))->config());
         self::assertSame([
-            'base_url_env' => 'PULSE_BASE_URL',
             'base_url' => 'https://pulse.test',
         ], (new PulseModule($resolver))->config());
         self::assertSame([
-            'base_url_env' => 'FLARE_BASE_URL',
             'base_url' => 'https://flare.test',
         ], (new FlareModule($resolver))->config());
         self::assertSame([
-            'base_url_env' => 'IGNIS_BASE_URL',
             'base_url' => 'https://ignis.test',
         ], (new IgnisModule($resolver))->config());
     }

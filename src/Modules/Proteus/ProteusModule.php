@@ -20,6 +20,7 @@ final class ProteusModule
 
     public function __construct(private readonly ModuleConfigResolver $configResolver)
     {
+        //
     }
 
     public function asApplication(): static
@@ -32,7 +33,7 @@ final class ProteusModule
     }
 
     /**
-     * @return array{base_url_env: string, base_url: string}
+     * @return array{base_url: string}
      */
     public function config(): array
     {

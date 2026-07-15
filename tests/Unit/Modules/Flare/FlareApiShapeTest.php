@@ -24,7 +24,7 @@ final class FlareApiShapeTest extends TestCase
         $app->instance('config', new Repository([
             'apollo' => [
                 'modules' => [
-                    'flare' => ['base_url_env' => 'FLARE_BASE_URL', 'base_url' => 'https://flare.test'],
+                    'flare' => ['base_url' => 'https://flare.test'],
                 ],
             ],
         ]));

@@ -45,6 +45,6 @@ final class ExternalGroupDTO
             'media_type' => $this->media_type,
             'provider_id' => $this->provider_id,
             'play_modifiers' => $this->play_modifiers,
-        ]);
+        ], static fn (mixed $value): bool => $value !== null);
     }
 }

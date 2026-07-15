@@ -68,16 +68,3 @@ export const APP_META: Record<AppName, AppMeta> = {
         url: 'apollo.ometra.mx',
     },
 };
-
-export function buildAppUrl(appUrl: string) {
-    const hostname = window.location.hostname;
-    let prefix = '';
-
-    if (hostname.startsWith('dev.')) {
-        prefix = 'dev.';
-    } else if (hostname.startsWith('staging.')) {
-        prefix = 'staging.';
-    }
-
-    return `https://${prefix}${appUrl}`;
-}
