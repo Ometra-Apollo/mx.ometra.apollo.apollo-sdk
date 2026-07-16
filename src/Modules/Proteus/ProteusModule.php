@@ -8,6 +8,7 @@ use Ometra\Apollo\Sdk\Core\Config\ModuleConfigResolver;
 use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\CategoriesResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoriesResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\LightPathResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MediaResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MetadataResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\PresetsResource;
@@ -43,6 +44,11 @@ final class ProteusModule
     public function media(): MediaResource
     {
         return new MediaResource($this->client());
+    }
+
+    public function lightPath(): LightPathResource
+    {
+        return new LightPathResource($this->client());
     }
 
     public function metadata(): MetadataResource

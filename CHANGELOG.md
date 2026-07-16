@@ -13,6 +13,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v4.1.0] - 2026-07-16
+
+Feature release adding management helpers for Proteus LightPath grants.
+
+### Added
+
+- Add `Apollo::proteus()->lightPath()` with helpers to extend and delete
+  LightPath grants.
+- Document LightPath grant identifiers, renewal windows, and application-token
+  management.
+- Add route, API-shape, and application-authentication coverage for LightPath
+  grant operations.
+
+### Changed
+
+- Nothing changed.
+
+### Fixed
+
+- Nothing fixed.
+
+### Removed
+
+- Nothing removed.
+
+### Deprecated
+
+- Nothing deprecated.
+
+### Security
+
+- Nothing changed.
+
+### Breaking Changes
+
+- None.
+
 ## [v4.0.0] - 2026-07-15
 
 Major release aligning Apollo's transport and authentication behavior with

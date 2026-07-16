@@ -133,6 +133,8 @@ In this mode, every call that would normally use `userRequest()` is transparentl
 | `Apollo::proteus()->media()->download(string $id_media, ?string $ext = null)`       | `GET`       | `/api/media/{id}/download`                | App + user | Requires `READ`.                                    |
 | `Apollo::proteus()->media()->thumbnail(string $id_media)`                           | `GET`       | `/api/media/{id}/download?ext=thumb`      | App + user | Requires `READ`; thumbnail download response.       |
 | `Apollo::proteus()->media()->lightPathUrl(string $id_media, array $options = [])`   | `POST`      | `/api/media/{id}/lightpath-url`           | App + user | Requires `READ`; payload: `ext`, `url_ttl_seconds`. |
+| `Apollo::proteus()->lightPath()->extendGrant(string $uuid, int $ttl)`               | `PATCH`     | `/api/lightpath/grants/{uuid}/extend`     | User/App   | Owner or valid same-tenant AppToken/GroupToken.     |
+| `Apollo::proteus()->lightPath()->deleteGrant(string $uuid)`                         | `DELETE`    | `/api/lightpath/grants/{uuid}`            | User/App   | Owner or valid same-tenant AppToken/GroupToken.     |
 | `Apollo::proteus()->media()->transformationOptions(string $id_media)`               | `GET`       | `/api/media/{id}/request-transformations` | App + user | Requires `READ`.                                    |
 | `Apollo::proteus()->media()->requestTransformations(string $id_media, array $data)` | `POST`      | `/api/media/{id}/request-transformations` | App + user | Requires `WRITE`.                                   |
 | `Apollo::proteus()->media()->setMetadata(string $id_media, array $data)`            | `POST`      | `/api/media/{id}/set-metadata`            | App + user | Requires `WRITE`.                                   |
@@ -160,10 +162,13 @@ Response data:
 
 | Field            | Type     | Notes                                                          |
 | ---------------- | -------- | -------------------------------------------------------------- |
-| `url`            | `string` | Public URL, usually `https://lightpath.example.com/m/{token}`. |
-| `url_expires_at` | `string` | Access expiration for the opaque token.                        |
-| `media_id`       | `string` | Proteus media id.                                              |
-| `format`         | `string` | Resolved delivery format.                                      |
+| `id_lightpath_grant` | `string` | UUID used to extend or delete the grant.                       |
+| `url`                | `string` | Public URL, usually `https://lightpath.example.com/m/{token}`. |
+| `url_expires_at`     | `string` | Access expiration for the opaque token.                        |
+| `renewable_from`     | `string` | Start of the renewal window.                                   |
+| `renewable_until`    | `string` | End of the post-expiration renewal grace period.               |
+| `id_media`           | `string` | Proteus media id.                                              |
+| `format`             | `string` | Resolved delivery format.                                      |
 
 The SDK does not expose LightPath node APIs. Nodes validate tokens and fetch
 origin bytes directly from Proteus.

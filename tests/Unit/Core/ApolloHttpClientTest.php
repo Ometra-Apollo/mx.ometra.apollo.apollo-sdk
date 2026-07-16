@@ -11,6 +11,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Http;
 use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\LightPathResource;
 use Ometra\Caronte\Caronte;
 use Ometra\Caronte\Support\CaronteHttpClient;
 use PHPUnit\Framework\TestCase;
@@ -169,6 +170,21 @@ final class ApolloHttpClientTest extends TestCase
             && $request->hasHeader('X-Group-Token')
             && ! $request->hasHeader('X-User-Token')
             && $request->hasHeader('X-Tenant-Id', 'tenant-42'));
+    }
+
+    public function testLightPathManagementUsesApplicationContextWhenRequested(): void
+    {
+        $resource = new LightPathResource(
+            new ApolloHttpClient('https://proteus.test/api', asApplication: true)
+        );
+
+        $resource->extendGrant('grant-uuid', 3600);
+
+        Http::assertSent(fn(Request $request): bool => $request->url() === 'https://proteus.test/api/lightpath/grants/grant-uuid/extend'
+            && $request->method() === 'PATCH'
+            && $request['url_ttl_seconds'] === 3600
+            && $request->hasHeader('X-Group-Token')
+            && ! $request->hasHeader('X-User-Token'));
     }
 
     public function testApplicationTokenIsUsedWhenGroupIsNotConfigured(): void

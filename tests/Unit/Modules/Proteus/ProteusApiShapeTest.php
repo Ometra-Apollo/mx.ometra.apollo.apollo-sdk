@@ -12,6 +12,7 @@ use Ometra\Apollo\Sdk\Modules\Ignis\IgnisModule;
 use Ometra\Apollo\Sdk\Modules\Proteus\ProteusModule;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\CategoriesResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoriesResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\LightPathResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MediaResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MetadataResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\PresetsResource;
@@ -56,6 +57,7 @@ final class ProteusApiShapeTest extends TestCase
         $module = new ProteusModule(new ModuleConfigResolver());
 
         self::assertInstanceOf(MediaResource::class, $module->media());
+        self::assertInstanceOf(LightPathResource::class, $module->lightPath());
         self::assertInstanceOf(MetadataResource::class, $module->metadata());
         self::assertInstanceOf(CategoriesResource::class, $module->categories());
         self::assertInstanceOf(DirectoriesResource::class, $module->directories());
@@ -105,6 +107,7 @@ final class ProteusApiShapeTest extends TestCase
     {
         return [
             'media' => [MediaResource::class, ['mediaIndex', 'mediaUpload', 'mediaSetMetadata', 'mediaDelete', 'saveMediaLocal']],
+            'lightpath' => [LightPathResource::class, ['lightPathExtendGrant', 'lightPathDeleteGrant']],
             'metadata' => [MetadataResource::class, ['metadataKeys', 'metadataValuesFromKey', 'metadataIndex', 'metadataShow']],
             'categories' => [CategoriesResource::class, ['categoriesIndex', 'categoryStore', 'categoryShow', 'categoryUpdate', 'categoryDelete']],
             'directories' => [DirectoriesResource::class, ['directoriesIndex', 'directoryCreate', 'directoryStore', 'directoryShow', 'directoryUpdate', 'directoryDelete']],

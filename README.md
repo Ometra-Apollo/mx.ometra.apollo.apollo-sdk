@@ -145,10 +145,26 @@ $response = Apollo::proteus()->media()->lightPathUrl($mediaId, [
 $url = $response['data']['url'];
 ```
 
+La respuesta incluye `id_lightpath_grant` (UUID), `url`, `format`,
+`url_expires_at`, `renewable_from` y `renewable_until`.
+
 Opciones:
 
 - `ext`: formato a entregar. Si se omite, Proteus usa el formato default.
 - `url_ttl_seconds`: vigencia de la URL. Proteus aplica su maximo configurado.
+
+El owner puede extender o eliminar el grant. AppToken y GroupToken validos del
+mismo tenant tambien pueden administrarlo, aunque no pueden crear grants:
+
+```php
+$grantId = $response['data']['id_lightpath_grant'];
+
+Apollo::proteus()->lightPath()->extendGrant($grantId, 3600);
+Apollo::proteus()->lightPath()->deleteGrant($grantId);
+
+// En un proceso autenticado con AppToken:
+Apollo::proteus()->asApplication()->lightPath()->extendGrant($grantId, 3600);
+```
 
 ### Miniaturas de media
 

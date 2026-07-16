@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\CategoriesResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoriesResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\LightPathResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MediaResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MetadataResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\PresetsResource;
@@ -90,6 +91,9 @@ final class ProteusResourceRoutesTest extends TestCase
             'media download' => [MediaResource::class, 'download', ['media-1', 'jpg'], 'user', 'GET', 'media/media-1/download', [], ['ext' => 'jpg'], true],
             'media thumbnail' => [MediaResource::class, 'thumbnail', ['media-1'], 'user', 'GET', 'media/media-1/download', [], ['ext' => 'thumb'], true],
             'media save local' => [MediaResource::class, 'saveLocal', ['media-1', 'webp'], 'user', 'GET', 'media/media-1/download', [], ['ext' => 'webp'], true],
+
+            'lightpath extend grant' => [LightPathResource::class, 'extendGrant', ['grant-uuid', 3600], 'user', 'PATCH', 'lightpath/grants/grant-uuid/extend', ['url_ttl_seconds' => 3600]],
+            'lightpath delete grant' => [LightPathResource::class, 'deleteGrant', ['grant-uuid'], 'user', 'DELETE', 'lightpath/grants/grant-uuid'],
 
             'metadata keys' => [MetadataResource::class, 'keys', ['author'], 'application', 'GET', 'media/metadata/author'],
             'metadata values' => [MetadataResource::class, 'values', ['author'], 'application', 'GET', 'media/metadata/author/values'],

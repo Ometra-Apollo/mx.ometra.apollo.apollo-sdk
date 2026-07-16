@@ -1,3 +1,34 @@
+# Release v4.1.0
+
+**Date:** 2026-07-16
+**Branch:** `main`
+**Package:** `ometra/apollo-sdk`
+
+Apollo SDK 4.1 adds first-class management of Proteus LightPath grants. Callers
+can extend a grant's URL lifetime or delete it using its
+`id_lightpath_grant`, including from application authentication contexts.
+
+## Highlights
+
+- Added `Apollo::proteus()->lightPath()->extendGrant($grantId, $ttl)`.
+- Added `Apollo::proteus()->lightPath()->deleteGrant($grantId)`.
+- Documented grant IDs, expiration, and renewal-window response fields.
+- Added route, API-shape, and application-authentication test coverage.
+
+## Upgrade requirements
+
+- Require `ometra/apollo-sdk ^4.1`.
+- No breaking changes or configuration changes are required.
+
+## Validation
+
+- `composer validate --strict`: valid
+- `composer test`: 125 tests and 454 assertions pass
+
+## Links
+
+- Full history: `CHANGELOG.md`
+
 # Release v4.0.0
 
 **Date:** 2026-07-15
