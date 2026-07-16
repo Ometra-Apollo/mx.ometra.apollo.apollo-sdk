@@ -29,7 +29,7 @@ final class ProteusDirectoryController
     {
         $payload = $request->validate([
             'name' => ['required', 'string'],
-            'parent_id' => ['nullable', 'string'],
+            'id_parent' => ['nullable', 'string'],
         ]);
 
         return response()->json(

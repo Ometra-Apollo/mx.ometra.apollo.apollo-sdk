@@ -1,5 +1,4 @@
 export type DirectoryTreeMedia = {
-    id?: string;
     id_media?: string;
     name: string;
     type?: string | null;

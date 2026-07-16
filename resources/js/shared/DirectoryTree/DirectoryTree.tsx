@@ -401,7 +401,7 @@ export default function DirectoryTree({
                             : {}),
                     },
                     body: JSON.stringify({
-                        parent_id: creatingFolderParentId,
+                        id_parent: creatingFolderParentId,
                         name: folderName,
                     }),
                 });

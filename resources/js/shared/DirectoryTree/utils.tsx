@@ -154,7 +154,7 @@ export function getMediaIcon(media: DirectoryTreeMedia) {
 }
 
 export function getMediaId(media: DirectoryTreeMedia): string {
-    return media.id ?? media.id_media ?? "";
+    return media.id_media ?? "";
 }
 
 export function buildUrl(
