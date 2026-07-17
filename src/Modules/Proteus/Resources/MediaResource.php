@@ -30,9 +30,9 @@ final class MediaResource
         return $this->client->userRequest('GET', 'media/tags');
     }
 
-    public function show(string $id_media): array
+    public function show(string $id_media, array $query = []): array
     {
-        return $this->client->userRequest('GET', 'media/' . $id_media);
+        return $this->client->userRequest('GET', 'media/' . $id_media, query: $query);
     }
 
     /** @param array<string, mixed> $data */

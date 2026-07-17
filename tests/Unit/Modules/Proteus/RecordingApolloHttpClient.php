@@ -13,6 +13,8 @@ final class RecordingApolloHttpClient extends ApolloHttpClient
      */
     public ?array $lastRequest = null;
 
+    public ?string $lastUserToken = null;
+
     /** @param array<string, mixed>|array<int, array<string, mixed>> $responseData */
     public function __construct(private readonly array $responseData = [])
     {
@@ -31,6 +33,8 @@ final class RecordingApolloHttpClient extends ApolloHttpClient
         array $query = [],
         ?string $userToken = null,
     ): array {
+        $this->lastUserToken = $userToken;
+
         return $this->record('application', $method, $endpoint, $payload, $query, raw: false);
     }
 

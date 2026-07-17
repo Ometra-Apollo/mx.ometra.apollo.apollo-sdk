@@ -132,6 +132,28 @@ $groups = Apollo::pulse()->groups()->index();
 
 ### URLs LightPath para media
 
+Antes de emitir URLs desde un proceso de aplicación, un usuario puede delegar
+acceso a un directorio. `write` incluye lectura y modificación, pero nunca
+eliminación:
+
+```php
+use Ometra\Apollo\Sdk\Modules\Proteus\Enums\DirectoryApplicationPermission;
+
+$directoryGrant = Apollo::proteus()->directories()->grantApplication(
+    $directoryId,
+    'flare:playlist:42',
+    DirectoryApplicationPermission::READ,
+);
+
+// En un comando con un token de usuario delegado:
+$directoryGrant = Apollo::proteus()->directories()->grantApplicationWithUserToken(
+    $directoryId,
+    'flare:playlist:42',
+    DirectoryApplicationPermission::READ,
+    $serviceUserToken,
+);
+```
+
 LightPath se integra desde el recurso de media de Proteus porque Proteus es la
 autoridad de permisos y formatos. El SDK solo solicita una URL temporal; no
 valida tokens ni habla con nodos LightPath.
@@ -140,6 +162,7 @@ valida tokens ni habla con nodos LightPath.
 $response = Apollo::proteus()->media()->lightPathUrl($mediaId, [
     'ext' => 'mp4',
     'url_ttl_seconds' => 3600,
+    'id_directory_application_grant' => $directoryGrant['data']['id_directory_application_grant'],
 ]);
 
 $url = $response['data']['url'];

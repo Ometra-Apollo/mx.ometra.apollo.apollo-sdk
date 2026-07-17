@@ -13,6 +13,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Nothing added.
+
+## [v4.2.0] - 2026-07-16
+
+Feature release centralizing Proteus directory-application grant transport in the SDK.
+
+### Added
+
+- Add typed Proteus directory application grants with `read` and `write` levels.
+- Add delegated-user-token support for directory grants created by background processes.
+- Allow LightPath URL requests to carry their owning directory application grant.
+
+### Changed
+
+- Document the user, delegated-user, and application authentication contexts for grant operations.
+
+### Breaking Changes
+
+- None.
+
 ## [v4.1.0] - 2026-07-16
 
 Feature release adding management helpers for Proteus LightPath grants.

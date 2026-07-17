@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\CategoriesResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Enums\DirectoryApplicationPermission;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoriesResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\LightPathResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MediaResource;
@@ -15,6 +16,28 @@ require_once __DIR__ . '/RecordingApolloHttpClient.php';
 
 final class ProteusResourceRoutesTest extends TestCase
 {
+    public function testDirectoryApplicationGrantAcceptsADelegatedUserToken(): void
+    {
+        $client = new RecordingApolloHttpClient();
+        $resource = new DirectoriesResource($client);
+
+        $resource->grantApplicationWithUserToken(
+            'dir-1',
+            'flare:playlist:1',
+            DirectoryApplicationPermission::READ,
+            'delegated-user-token',
+        );
+
+        self::assertSame('application', $client->lastRequest['auth']);
+        self::assertSame('POST', $client->lastRequest['method']);
+        self::assertSame('directories/dir-1/application-grants', $client->lastRequest['endpoint']);
+        self::assertSame([
+            'client_reference' => 'flare:playlist:1',
+            'permission' => 'read',
+        ], $client->lastRequest['payload']);
+        self::assertSame('delegated-user-token', $client->lastUserToken);
+    }
+
     /**
      * @param  class-string  $resourceClass
      * @param  array<int, mixed>  $arguments
@@ -68,6 +91,9 @@ final class ProteusResourceRoutesTest extends TestCase
             'directories show' => [DirectoriesResource::class, 'show', ['dir-1'], 'user', 'GET', 'directories/dir-1'],
             'directories update' => [DirectoriesResource::class, 'update', ['dir-1', ['name' => 'Updated']], 'user', 'PUT', 'directories/dir-1', ['name' => 'Updated']],
             'directories delete' => [DirectoriesResource::class, 'delete', ['dir-1'], 'user', 'DELETE', 'directories/dir-1'],
+            'directories grant application' => [DirectoriesResource::class, 'grantApplication', ['dir-1', 'flare:playlist:1', DirectoryApplicationPermission::READ], 'user', 'POST', 'directories/dir-1/application-grants', ['client_reference' => 'flare:playlist:1', 'permission' => 'read']],
+            'directories update application grant' => [DirectoriesResource::class, 'updateApplicationGrant', ['grant-1', DirectoryApplicationPermission::WRITE], 'user', 'PATCH', 'directories/application-grants/grant-1', ['permission' => 'write']],
+            'directories revoke application grant' => [DirectoriesResource::class, 'revokeApplicationGrant', ['grant-1'], 'user', 'DELETE', 'directories/application-grants/grant-1'],
 
             'presets index' => [PresetsResource::class, 'index', ['dir-1'], 'user', 'GET', 'directories/dir-1/presets'],
             'presets store' => [PresetsResource::class, 'store', ['dir-1', ['name' => 'Default']], 'user', 'POST', 'directories/dir-1/presets', ['name' => 'Default']],
@@ -80,6 +106,7 @@ final class ProteusResourceRoutesTest extends TestCase
             'media create' => [MediaResource::class, 'create', [], 'user', 'GET', 'media/create'],
             'media tags' => [MediaResource::class, 'tags', [], 'user', 'GET', 'media/tags'],
             'media show' => [MediaResource::class, 'show', ['media-1'], 'user', 'GET', 'media/media-1'],
+            'media show with directory grant' => [MediaResource::class, 'show', ['media-1', ['id_directory_application_grant' => 'grant-1']], 'user', 'GET', 'media/media-1', [], ['id_directory_application_grant' => 'grant-1']],
             'media delete' => [MediaResource::class, 'delete', ['media-1'], 'user', 'DELETE', 'media/media-1'],
             'media available formats' => [MediaResource::class, 'availableFormats', ['media-1'], 'user', 'GET', 'media/media-1/available-formats'],
             'media set default format' => [MediaResource::class, 'setDefaultFormat', ['media-1', ['format' => 'jpg']], 'user', 'POST', 'media/media-1/available-formats', ['format' => 'jpg']],
