@@ -12,39 +12,39 @@ final class MetadataResource
 
     public function keys(string $key): array
     {
-        return $this->client->applicationRequest('GET', 'media/metadata/' . $key);
+        return $this->client->applicationRequest('GET', 'media/metadata/'.$key);
     }
 
     public function values(string $key): array
     {
-        return $this->client->applicationRequest('GET', 'media/metadata/' . $key . '/values');
+        return $this->client->applicationRequest('GET', 'media/metadata/'.$key.'/values');
     }
 
     /** @param array<string, mixed> $query */
     public function index(string $id_media, array $query = []): array
     {
-        return $this->client->userRequest('GET', 'media/' . $id_media . '/metadata', query: $query);
+        return $this->client->userRequest('GET', 'media/'.$id_media.'/metadata', query: $query);
     }
 
     public function show(string $id_media, string $key): array
     {
-        return $this->client->userRequest('GET', 'media/' . $id_media . '/metadata/' . $key);
+        return $this->client->userRequest('GET', 'media/'.$id_media.'/metadata/'.$key);
     }
 
     /** @param array<string, mixed> $data */
     public function store(string $id_media, array $data): array
     {
-        return $this->client->userRequest('POST', 'media/' . $id_media . '/metadata', payload: $data);
+        return $this->client->userRequest('POST', 'media/'.$id_media.'/metadata', payload: $data);
     }
 
     /** @param array<string, mixed> $data */
     public function update(string $id_media, array $data): array
     {
-        return $this->client->userRequest('PUT', 'media/' . $id_media . '/metadata', payload: $data);
+        return $this->client->userRequest('PUT', 'media/'.$id_media.'/metadata', payload: $data);
     }
 
     public function delete(string $id_media, string $key): ?array
     {
-        return $this->client->userRequest('DELETE', 'media/' . $id_media . '/metadata/' . $key);
+        return $this->client->userRequest('DELETE', 'media/'.$id_media.'/metadata/'.$key);
     }
 }

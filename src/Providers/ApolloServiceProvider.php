@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ometra\Apollo\Sdk\Providers;
 
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\ServiceProvider;
 use Ometra\Apollo\Sdk\Apollo;
 use Ometra\Apollo\Sdk\Contracts\IgnisGroupContract;
@@ -16,10 +17,13 @@ use RuntimeException;
 
 final class ApolloServiceProvider extends ServiceProvider
 {
-    private const CONFIG_PATH = __DIR__ . '/../../config/apollo.php';
-    private const APP_MENU_PATH = __DIR__ . '/../../resources/js/shared/AppMenu';
-    private const DIRECTORY_TREE_PATH = __DIR__ . '/../../resources/js/shared/DirectoryTree';
-    private const VIEWS_PATH = __DIR__ . '/../../resources/views';
+    private const CONFIG_PATH = __DIR__.'/../../config/apollo.php';
+
+    private const APP_MENU_PATH = __DIR__.'/../../resources/js/shared/AppMenu';
+
+    private const DIRECTORY_TREE_PATH = __DIR__.'/../../resources/js/shared/DirectoryTree';
+
+    private const VIEWS_PATH = __DIR__.'/../../resources/views';
 
     public function register(): void
     {
@@ -45,29 +49,34 @@ final class ApolloServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        if (method_exists($this->app, 'configPath') && method_exists($this->app, 'resourcePath')) {
+        /** @phpstan-ignore function.alreadyNarrowedType */
+        $supportsConfigPath = method_exists($this->app, 'configPath');
+        /** @phpstan-ignore function.alreadyNarrowedType */
+        $supportsResourcePath = method_exists($this->app, 'resourcePath');
+
+        if ($supportsConfigPath && $supportsResourcePath) {
             $configPath = $this->app->configPath('apollo.php');
             $errorPagesPath = $this->app->resourcePath('views/errors');
             $appMenuPath = $this->app->resourcePath('js/shared/AppMenu');
             $directoryTreePath = $this->app->resourcePath('js/shared/DirectoryTree');
 
             $this->publishes([self::CONFIG_PATH => $configPath], 'apollo-config');
-            $this->publishes([self::viewsPath() . '/errors' => $errorPagesPath], 'apollo-error-pages');
+            $this->publishes([self::viewsPath().'/errors' => $errorPagesPath], 'apollo-error-pages');
             $this->publishes([self::appMenuPath() => $appMenuPath], 'apollo-app-menu');
             $this->publishes([self::directoryTreePath() => $directoryTreePath], 'apollo-directory-tree');
             $this->publishes([
                 self::CONFIG_PATH => $configPath,
                 self::appMenuPath() => $appMenuPath,
                 self::directoryTreePath() => $directoryTreePath,
-                self::viewsPath() . '/errors' => $errorPagesPath,
+                self::viewsPath().'/errors' => $errorPagesPath,
             ], 'apollo');
         }
 
         $this->registerErrorPageViewFallback();
 
         if (method_exists($this->app, 'routesAreCached')) {
-            $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
-            $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+            $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
+            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         }
 
         if ((bool) config('apollo.ignis_groups.enabled', false)) {
@@ -84,12 +93,12 @@ final class ApolloServiceProvider extends ServiceProvider
      */
     private function registerErrorPageViewFallback(): void
     {
-        if (!(bool) config('apollo.error_pages.enabled', true)) {
+        if (! (bool) config('apollo.error_pages.enabled', true)) {
             return;
         }
 
-        /** @var \Illuminate\Contracts\Config\Repository $config */
         $config = $this->app['config'];
+        assert($config instanceof Repository);
         $paths = (array) $config->get('view.paths', []);
         $viewsPath = self::viewsPath();
 
@@ -124,7 +133,7 @@ final class ApolloServiceProvider extends ServiceProvider
         }
 
         throw new RuntimeException(
-            'APOLLO_IGNIS_GROUPS_ENABLED=true requires a host binding for ' . IgnisGroupContract::class . '.'
+            'APOLLO_IGNIS_GROUPS_ENABLED=true requires a host binding for '.IgnisGroupContract::class.'.'
         );
     }
 }

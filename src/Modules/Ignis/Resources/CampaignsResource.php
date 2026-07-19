@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Ometra\Apollo\Sdk\Modules\Ignis\Resources;
 
 use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
-use Ometra\Apollo\Sdk\DTO\IgnisCampaignDTO;
 use Ometra\Apollo\Sdk\DTO\IgnisCampaignDetailDTO;
+use Ometra\Apollo\Sdk\DTO\IgnisCampaignDTO;
 
 final class CampaignsResource
 {
@@ -15,10 +15,10 @@ final class CampaignsResource
     public function byGroup(string $id_externalGroup): array
     {
         return array_map(
-            static fn(array $campaign): array => IgnisCampaignDTO::fromArray($campaign)->toArray(),
+            static fn (array $campaign): array => IgnisCampaignDTO::fromArray($campaign)->toArray(),
             $this->unwrapList(
-                $this->client->applicationRequest('GET', 'external-groups/' . $id_externalGroup . '/campaigns')
-            )
+                $this->client->applicationRequest('GET', 'external-groups/'.$id_externalGroup.'/campaigns'),
+            ),
         );
     }
 
@@ -31,8 +31,11 @@ final class CampaignsResource
     {
         return IgnisCampaignDetailDTO::fromArray(
             $this->unwrapItem(
-                $this->client->applicationRequest('GET', 'external-groups/' . $id_externalGroup . '/campaigns/' . $id_campaign)
-            )
+                $this->client->applicationRequest(
+                    'GET',
+                    'external-groups/'.$id_externalGroup.'/campaigns/'.$id_campaign,
+                ),
+            ),
         )->toArray();
     }
 
@@ -46,7 +49,7 @@ final class CampaignsResource
 
     /**
      * @param  array{data?: mixed}  $response
-     * @return array<string,mixed>
+     * @return array<string, mixed>
      */
     private function unwrapItem(array $response): array
     {

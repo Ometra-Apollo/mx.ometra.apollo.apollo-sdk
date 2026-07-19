@@ -19,7 +19,7 @@ final class ProteusDirectoryController
             'uri_user' => Caronte::getUser()->uri_user ?? '',
             'recursive' => true,
             'format_search' => true,
-            'only_tree' => $request->query('only_tree', false),
+            'only_tree' => $request->boolean('only_tree'),
         ];
 
         return response()->json(Apollo::proteus()->directories()->index($query));

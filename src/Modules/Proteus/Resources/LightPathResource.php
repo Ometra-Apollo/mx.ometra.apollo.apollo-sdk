@@ -17,7 +17,7 @@ final class LightPathResource
     {
         return $this->client->userRequest(
             'PATCH',
-            'lightpath/grants/' . $id_lightpath_grant . '/extend',
+            'lightpath/grants/'.$id_lightpath_grant.'/extend',
             payload: ['url_ttl_seconds' => $url_ttl_seconds],
         );
     }
@@ -26,7 +26,7 @@ final class LightPathResource
     {
         return $this->client->userRequest(
             'DELETE',
-            'lightpath/grants/' . $id_lightpath_grant,
+            'lightpath/grants/'.$id_lightpath_grant,
         );
     }
 }

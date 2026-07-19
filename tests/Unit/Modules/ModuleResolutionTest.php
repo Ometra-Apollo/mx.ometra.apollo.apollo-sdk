@@ -19,7 +19,7 @@ final class ModuleResolutionTest extends TestCase
     {
         parent::setUp();
 
-        $app = new Container();
+        $app = new Container;
         Container::setInstance($app);
         Facade::clearResolvedInstances();
         Facade::setFacadeApplication($app);
@@ -45,9 +45,9 @@ final class ModuleResolutionTest extends TestCase
         parent::tearDown();
     }
 
-    public function testApolloEntrypointReturnsAllBatchOneModules(): void
+    public function test_apollo_entrypoint_returns_all_batch_one_modules(): void
     {
-        $resolver = new ModuleConfigResolver();
+        $resolver = new ModuleConfigResolver;
         $apollo = new Apollo(
             new ProteusModule($resolver),
             new PulseModule($resolver),
@@ -61,9 +61,9 @@ final class ModuleResolutionTest extends TestCase
         self::assertInstanceOf(IgnisModule::class, $apollo->ignis());
     }
 
-    public function testEachModuleResolvesItsOwnExactBaseUrlConfig(): void
+    public function test_each_module_resolves_its_own_exact_base_url_config(): void
     {
-        $resolver = new ModuleConfigResolver();
+        $resolver = new ModuleConfigResolver;
 
         self::assertSame([
             'base_url' => 'https://proteus.test',
@@ -79,7 +79,7 @@ final class ModuleResolutionTest extends TestCase
         ], (new IgnisModule($resolver))->config());
     }
 
-    public function testApolloEntrypointDoesNotExposeFlatResourceMethods(): void
+    public function test_apollo_entrypoint_does_not_expose_flat_resource_methods(): void
     {
         $methods = get_class_methods(Apollo::class);
 

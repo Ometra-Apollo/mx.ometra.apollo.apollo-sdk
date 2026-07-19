@@ -6,11 +6,11 @@ use PHPUnit\Framework\TestCase;
 
 final class FrontendRouteContractTest extends TestCase
 {
-    public function testFrontendRoutePrefixHasOneStableSourceOfTruth(): void
+    public function test_frontend_route_prefix_has_one_stable_source_of_truth(): void
     {
-        $config = require __DIR__ . '/../../config/apollo.php';
-        $routes = file_get_contents(__DIR__ . '/../../src/routes/web.php');
-        $component = file_get_contents(__DIR__ . '/../../resources/js/shared/DirectoryTree/DirectoryTree.tsx');
+        $config = require __DIR__.'/../../config/apollo.php';
+        $routes = file_get_contents(__DIR__.'/../../src/routes/web.php');
+        $component = file_get_contents(__DIR__.'/../../resources/js/shared/DirectoryTree/DirectoryTree.tsx');
 
         self::assertArrayNotHasKey('route_prefix', $config['frontend']);
         self::assertIsString($routes);
@@ -19,11 +19,11 @@ final class FrontendRouteContractTest extends TestCase
         self::assertStringContainsString('/_apollo/proteus/directories', $component);
     }
 
-    public function testAppMenuHasOneEnvironmentAwareUrlBuilder(): void
+    public function test_app_menu_has_one_environment_aware_url_builder(): void
     {
-        $config = file_get_contents(__DIR__ . '/../../resources/js/shared/AppMenu/appMenu.config.tsx');
-        $utils = file_get_contents(__DIR__ . '/../../resources/js/shared/AppMenu/appMenu.utils.ts');
-        $index = file_get_contents(__DIR__ . '/../../resources/js/shared/AppMenu/index.ts');
+        $config = file_get_contents(__DIR__.'/../../resources/js/shared/AppMenu/appMenu.config.tsx');
+        $utils = file_get_contents(__DIR__.'/../../resources/js/shared/AppMenu/appMenu.utils.ts');
+        $index = file_get_contents(__DIR__.'/../../resources/js/shared/AppMenu/index.ts');
 
         self::assertIsString($config);
         self::assertStringNotContainsString('function buildAppUrl', $config);
@@ -33,9 +33,9 @@ final class FrontendRouteContractTest extends TestCase
         self::assertStringContainsString("export { buildAppUrl } from './appMenu.utils'", $index);
     }
 
-    public function testDirectoryTreeExposesHttpFailuresInsteadOfSwallowingThem(): void
+    public function test_directory_tree_exposes_http_failures_instead_of_swallowing_them(): void
     {
-        $component = file_get_contents(__DIR__ . '/../../resources/js/shared/DirectoryTree/DirectoryTree.tsx');
+        $component = file_get_contents(__DIR__.'/../../resources/js/shared/DirectoryTree/DirectoryTree.tsx');
 
         self::assertIsString($component);
         self::assertSame(2, substr_count($component, 'if (!response.ok)'));

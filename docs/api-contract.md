@@ -127,6 +127,7 @@ In this mode, every call that would normally use `userRequest()` is transparentl
 | `Apollo::proteus()->media()->create()`                                        | `GET`       | `/api/media/create`                       | App + user | Upload metadata helper.                             |
 | `Apollo::proteus()->media()->tags()`                                          | `GET`       | `/api/media/tags`                         | App + user | Tenant tag list.                                    |
 | `Apollo::proteus()->media()->show(string $id_media)`                                | `GET`       | `/api/media/{id}`                         | App + user | Requires `READ`.                                    |
+| `Apollo::proteus()->media()->showWithUserToken(string $id_media, string $user_token, array $query = [])` | `GET` | `/api/media/{id}` | App + delegated user | Background lookup using an explicit user token. |
 | `Apollo::proteus()->media()->delete(string $id_media)`                              | `DELETE`    | `/api/media/{id}`                         | App + user | Requires `DELETE`.                                  |
 | `Apollo::proteus()->media()->availableFormats(string $id_media)`                    | `GET`       | `/api/media/{id}/available-formats`       | App + user | Requires `READ`.                                    |
 | `Apollo::proteus()->media()->setDefaultFormat(string $id_media, array $data)`       | `POST`      | `/api/media/{id}/available-formats`       | App + user | Requires `WRITE`.                                   |
@@ -196,12 +197,18 @@ origin bytes directly from Proteus.
 | ------------------------------------------------------- | ----------- | -------------------- | ---- | ---------------------- |
 | `Apollo::flare()->stations()->index(array $query = [])` | `GET`       | `/api/stations`      | App  | Query passthrough.     |
 | `Apollo::flare()->stations()->show(string $id_station)`         | `GET`       | `/api/stations/{id}` | App  | Station detail lookup. |
+| `Apollo::flare()->stations()->showByGroup(string $uri_group)` | `GET` | `/api/stations/groups/{uri_group}` | App | Resolve the station owned by Flare for a global group URI. |
+| `Apollo::flare()->stations()->assignGroups(string $id_station, array $uri_groups)` | `PUT` | `/api/stations/{id}/groups/assign` | App | Replace the station's complete group selection. |
+| `Apollo::flare()->stations()->detachGroup(string $uri_group)` | `DELETE` | `/api/stations/groups/{uri_group}` | App | Idempotently remove a group assignment. |
+| `Apollo::flare()->stations()->invalidateGroupCatalogCache()` | `POST` | `/api/stations/groups/cache/invalidate` | App | Invalidate Flare's cached Pulse catalog. |
 
 ## Pulse Groups
 
 | Apollo resource action                                | HTTP method | URI                 | Auth | Notes                                                             |
 | ----------------------------------------------------- | ----------- | ------------------- | ---- | ----------------------------------------------------------------- |
 | `Apollo::pulse()->groups()->index(array $query = [])` | `GET`       | `/api/ignis/groups` | App  | Bridge endpoint exposed from Pulse module by product requirement. |
+| `Apollo::pulse()->groups()->catalog(array $query = [])` | `GET` | `/api/groups/catalog` | App | Tenant-aware Pulse group catalog using global `uri_group`. |
+| `Apollo::pulse()->groups()->invalidateStationCache(array $uri_groups)` | `POST` | `/api/groups/station-cache/invalidate` | App | Invalidate cached station payloads for groups. |
 
 ## Ignis Campaigns
 

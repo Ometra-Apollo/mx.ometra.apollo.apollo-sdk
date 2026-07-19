@@ -7,7 +7,7 @@ namespace Ometra\Apollo\Sdk\DTO;
 final class IgnisCampaignContentDTO
 {
     /**
-     * @param array<int,IgnisCampaignContentScheduleDTO> $content_schedules
+     * @param  array<int,IgnisCampaignContentScheduleDTO>  $content_schedules
      */
     public function __construct(
         public readonly string $id_media,
@@ -19,7 +19,7 @@ final class IgnisCampaignContentDTO
     ) {}
 
     /**
-     * @param array<string,mixed> $data
+     * @param  array<string,mixed>  $data
      */
     public static function fromArray(array $data): self
     {

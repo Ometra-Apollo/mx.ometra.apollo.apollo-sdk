@@ -17,7 +17,7 @@ final class IgnisApiShapeTest extends TestCase
     {
         parent::setUp();
 
-        $app = new Container();
+        $app = new Container;
         Container::setInstance($app);
         Facade::clearResolvedInstances();
         Facade::setFacadeApplication($app);
@@ -40,9 +40,9 @@ final class IgnisApiShapeTest extends TestCase
         parent::tearDown();
     }
 
-    public function testIgnisModuleExposesResources(): void
+    public function test_ignis_module_exposes_resources(): void
     {
-        $module = new IgnisModule(new ModuleConfigResolver());
+        $module = new IgnisModule(new ModuleConfigResolver);
 
         self::assertInstanceOf(CampaignsResource::class, $module->campaigns());
         self::assertInstanceOf(ContentHitsResource::class, $module->contentHits());

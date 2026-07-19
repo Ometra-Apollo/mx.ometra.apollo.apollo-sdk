@@ -26,7 +26,7 @@ final class ProteusApiShapeTest extends TestCase
     {
         parent::setUp();
 
-        $app = new Container();
+        $app = new Container;
         Container::setInstance($app);
         Facade::clearResolvedInstances();
         Facade::setFacadeApplication($app);
@@ -52,9 +52,9 @@ final class ProteusApiShapeTest extends TestCase
         parent::tearDown();
     }
 
-    public function testProteusModuleExposesRealResourceObjects(): void
+    public function test_proteus_module_exposes_real_resource_objects(): void
     {
-        $module = new ProteusModule(new ModuleConfigResolver());
+        $module = new ProteusModule(new ModuleConfigResolver);
 
         self::assertInstanceOf(MediaResource::class, $module->media());
         self::assertInstanceOf(LightPathResource::class, $module->lightPath());
@@ -64,9 +64,9 @@ final class ProteusApiShapeTest extends TestCase
         self::assertInstanceOf(PresetsResource::class, $module->presets());
     }
 
-    public function testApolloEntrypointStillRejectsFlatRootProteusMethods(): void
+    public function test_apollo_entrypoint_still_rejects_flat_root_proteus_methods(): void
     {
-        $resolver = new ModuleConfigResolver();
+        $resolver = new ModuleConfigResolver;
         $apollo = new Apollo(
             new ProteusModule($resolver),
             new PulseModule($resolver),
@@ -89,14 +89,14 @@ final class ProteusApiShapeTest extends TestCase
      * @param  list<string>  $forbiddenMethods
      */
     #[DataProvider('forbiddenResourceMethods')]
-    public function testProteusResourcesDoNotExposeRedundantLegacyMethodNames(
+    public function test_proteus_resources_do_not_expose_redundant_legacy_method_names(
         string $resourceClass,
         array $forbiddenMethods,
     ): void {
         $methods = get_class_methods($resourceClass);
 
         foreach ($forbiddenMethods as $method) {
-            self::assertNotContains($method, $methods, $resourceClass . ' must not expose ' . $method);
+            self::assertNotContains($method, $methods, $resourceClass.' must not expose '.$method);
         }
     }
 

@@ -22,7 +22,7 @@ final class ApolloHttpClientTest extends TestCase
     {
         parent::setUp();
 
-        $app = new Container();
+        $app = new Container;
         Container::setInstance($app);
         Facade::clearResolvedInstances();
         Facade::setFacadeApplication($app);
@@ -42,10 +42,12 @@ final class ApolloHttpClientTest extends TestCase
             ],
         ]));
 
-        $app->instance(Caronte::class, new class {
+        $app->instance(Caronte::class, new class
+        {
             public function getToken(): object
             {
-                return new class {
+                return new class
+                {
                     public function toString(): string
                     {
                         return 'user-token';
@@ -54,7 +56,7 @@ final class ApolloHttpClientTest extends TestCase
             }
         });
 
-        $tenantContext = new TenantContext();
+        $tenantContext = new TenantContext;
         $tenantContext->set('tenant-42');
         $app->instance(TenantContext::class, $tenantContext);
 
@@ -78,34 +80,36 @@ final class ApolloHttpClientTest extends TestCase
         parent::tearDown();
     }
 
-    public function testApolloHttpClientPreservesCaronteHttpClientContract(): void
+    public function test_apollo_http_client_preserves_caronte_http_client_contract(): void
     {
         $client = new ApolloHttpClient('https://proteus.test/api');
 
         self::assertInstanceOf(CaronteHttpClient::class, $client);
     }
 
-    public function testUserRequestSendsGroupUserAndTenantHeadersFromCaronte(): void
+    public function test_user_request_sends_group_user_and_tenant_headers_from_caronte(): void
     {
         $client = new ApolloHttpClient('https://proteus.test/api');
 
         $response = $client->userRequest('GET', 'media', query: ['type' => 'image']);
 
         self::assertSame(['accepted' => true], $response['data']);
-        Http::assertSent(fn(Request $request): bool => $request->url() === 'https://proteus.test/api/media?type=image'
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://proteus.test/api/media?type=image'
             && ! $request->hasHeader('X-Application-Token')
             && $request->hasHeader('X-Group-Token')
             && $request->hasHeader('X-User-Token', 'user-token')
             && $request->hasHeader('X-Tenant-Id', 'tenant-42'));
     }
 
-    public function testRequestWithoutCaronteConfigThrowsBeforeTransport(): void
+    public function test_request_without_caronte_config_throws_before_transport(): void
     {
-        $app = new class extends Container {
+        $app = new class extends Container
+        {
             public function runningInConsole(): bool
             {
                 return true;
             }
+
             public function runningUnitTests(): bool
             {
                 return true;
@@ -125,21 +129,21 @@ final class ApolloHttpClientTest extends TestCase
         $client->userRequest('GET', 'media');
     }
 
-    public function testApplicationRequestOmitsUserTokenAndUsesGroupAuthentication(): void
+    public function test_application_request_omits_user_token_and_uses_group_authentication(): void
     {
         $client = new ApolloHttpClient('https://proteus.test/api');
 
         $response = $client->applicationRequest('POST', 'categories', ['name' => 'Images']);
 
         self::assertSame(['accepted' => true], $response['data']);
-        Http::assertSent(fn(Request $request): bool => $request->url() === 'https://proteus.test/api/categories'
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://proteus.test/api/categories'
             && ! $request->hasHeader('X-Application-Token')
             && $request->hasHeader('X-Group-Token')
             && ! $request->hasHeader('X-User-Token')
             && $request->hasHeader('X-Tenant-Id', 'tenant-42'));
     }
 
-    public function testApplicationRequestCanIncludeExplicitUserTokenWhenProvided(): void
+    public function test_application_request_can_include_explicit_user_token_when_provided(): void
     {
         $client = new ApolloHttpClient('https://proteus.test/api');
 
@@ -151,28 +155,28 @@ final class ApolloHttpClientTest extends TestCase
         );
 
         self::assertSame(['accepted' => true], $response['data']);
-        Http::assertSent(fn(Request $request): bool => $request->url() === 'https://proteus.test/api/categories'
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://proteus.test/api/categories'
             && ! $request->hasHeader('X-Application-Token')
             && $request->hasHeader('X-Group-Token')
             && $request->hasHeader('X-User-Token', 'delegated-user-token')
             && $request->hasHeader('X-Tenant-Id', 'tenant-42'));
     }
 
-    public function testUserRequestWithAsApplicationFlagOmitsUserTokenAndUsesGroupAuthentication(): void
+    public function test_user_request_with_as_application_flag_omits_user_token_and_uses_group_authentication(): void
     {
         $client = new ApolloHttpClient('https://proteus.test/api', asApplication: true);
 
         $response = $client->userRequest('GET', 'media', query: ['type' => 'image']);
 
         self::assertSame(['accepted' => true], $response['data']);
-        Http::assertSent(fn(Request $request): bool => $request->url() === 'https://proteus.test/api/media?type=image'
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://proteus.test/api/media?type=image'
             && ! $request->hasHeader('X-Application-Token')
             && $request->hasHeader('X-Group-Token')
             && ! $request->hasHeader('X-User-Token')
             && $request->hasHeader('X-Tenant-Id', 'tenant-42'));
     }
 
-    public function testLightPathManagementUsesApplicationContextWhenRequested(): void
+    public function test_light_path_management_uses_application_context_when_requested(): void
     {
         $resource = new LightPathResource(
             new ApolloHttpClient('https://proteus.test/api', asApplication: true)
@@ -180,14 +184,14 @@ final class ApolloHttpClientTest extends TestCase
 
         $resource->extendGrant('grant-uuid', 3600);
 
-        Http::assertSent(fn(Request $request): bool => $request->url() === 'https://proteus.test/api/lightpath/grants/grant-uuid/extend'
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://proteus.test/api/lightpath/grants/grant-uuid/extend'
             && $request->method() === 'PATCH'
             && $request['url_ttl_seconds'] === 3600
             && $request->hasHeader('X-Group-Token')
             && ! $request->hasHeader('X-User-Token'));
     }
 
-    public function testApplicationTokenIsUsedWhenGroupIsNotConfigured(): void
+    public function test_application_token_is_used_when_group_is_not_configured(): void
     {
         config()->set('caronte.application_group_id', '');
         config()->set('caronte.application_group_secret', '');
@@ -195,11 +199,11 @@ final class ApolloHttpClientTest extends TestCase
         $client = new ApolloHttpClient('https://proteus.test/api');
         $client->applicationRequest('GET', 'media');
 
-        Http::assertSent(fn(Request $request): bool => $request->hasHeader('X-Application-Token')
+        Http::assertSent(fn (Request $request): bool => $request->hasHeader('X-Application-Token')
             && ! $request->hasHeader('X-Group-Token'));
     }
 
-    public function testUserRawRequestReturnsTheInheritedUnparsedResponse(): void
+    public function test_user_raw_request_returns_the_inherited_unparsed_response(): void
     {
         Http::fake([
             'https://binary.test/api/media/asset/download' => Http::response('binary-data', 200),
@@ -210,17 +214,19 @@ final class ApolloHttpClientTest extends TestCase
 
         self::assertInstanceOf(Response::class, $response);
         self::assertSame('binary-data', $response->body());
-        Http::assertSent(fn(Request $request): bool => $request->hasHeader('Accept', '*/*')
+        Http::assertSent(fn (Request $request): bool => $request->hasHeader('Accept', '*/*')
             && $request->hasHeader('X-Group-Token')
             && ! $request->hasHeader('X-Application-Token')
             && $request->hasHeader('X-User-Token', 'user-token'));
     }
 
-    public function testUploadUsesInheritedMultipartTransport(): void
+    public function test_upload_uses_inherited_multipart_transport(): void
     {
+        $path = dirname(__DIR__, 2).'/Fixtures/image.txt';
+
         $client = new ApolloHttpClient('https://proteus.test/api', asApplication: true);
         $client->userRequest('POST', 'media', [
-            'file' => UploadedFile::fake()->createWithContent('image.txt', 'image-data'),
+            'file' => new UploadedFile($path, 'image.txt', 'text/plain', null, true),
             'published' => true,
         ]);
 

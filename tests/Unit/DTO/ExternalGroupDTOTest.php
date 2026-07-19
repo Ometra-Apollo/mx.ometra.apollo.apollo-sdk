@@ -14,7 +14,7 @@ final class ExternalGroupDTOTest extends TestCase
     {
         parent::setUp();
 
-        $app = new Container();
+        $app = new Container;
         Container::setInstance($app);
         Facade::clearResolvedInstances();
         Facade::setFacadeApplication($app);
@@ -30,7 +30,7 @@ final class ExternalGroupDTOTest extends TestCase
         parent::tearDown();
     }
 
-    public function testToArrayOmitsOnlyNullOptionalValues(): void
+    public function test_to_array_omits_only_null_optional_values(): void
     {
         $dto = new ExternalGroupDTO(
             name: '',

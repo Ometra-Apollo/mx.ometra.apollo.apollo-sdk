@@ -10,16 +10,16 @@ use PHPUnit\Framework\TestCase;
 
 final class ApolloServiceProviderTest extends TestCase
 {
-    public function testApolloClassesExistAndProviderIsDiscoverable(): void
+    public function test_apollo_classes_exist_and_provider_is_discoverable(): void
     {
         self::assertTrue(class_exists(\Ometra\Apollo\Sdk\Apollo::class));
         self::assertTrue(class_exists(\Ometra\Apollo\Sdk\Providers\ApolloServiceProvider::class));
         self::assertTrue(class_exists(\Ometra\Apollo\Sdk\Facades\Apollo::class));
     }
 
-    public function testApolloConfigUsesExactModuleBaseUrlKeys(): void
+    public function test_apollo_config_uses_exact_module_base_url_keys(): void
     {
-        $config = require __DIR__ . '/../../config/apollo.php';
+        $config = require __DIR__.'/../../config/apollo.php';
 
         self::assertArrayHasKey('modules', $config);
         self::assertArrayHasKey('base_url', $config['modules']['proteus']);
@@ -28,27 +28,27 @@ final class ApolloServiceProviderTest extends TestCase
         self::assertArrayHasKey('base_url', $config['modules']['ignis']);
     }
 
-    public function testApolloConfigDoesNotDefineCaronteAuthConfiguration(): void
+    public function test_apollo_config_does_not_define_caronte_auth_configuration(): void
     {
-        $config = require __DIR__ . '/../../config/apollo.php';
+        $config = require __DIR__.'/../../config/apollo.php';
 
         self::assertArrayNotHasKey('auth', $config);
-        self::assertStringNotContainsString('CARONTE_', file_get_contents(__DIR__ . '/../../config/apollo.php'));
+        self::assertStringNotContainsString('CARONTE_', file_get_contents(__DIR__.'/../../config/apollo.php'));
     }
 
-    public function testApolloConfigDefinesErrorPagesOptOut(): void
+    public function test_apollo_config_defines_error_pages_opt_out(): void
     {
-        $config = require __DIR__ . '/../../config/apollo.php';
+        $config = require __DIR__.'/../../config/apollo.php';
 
         self::assertArrayHasKey('error_pages', $config);
         self::assertArrayHasKey('enabled', $config['error_pages']);
     }
 
-    public function testProviderAppendsApolloViewsAsErrorPageFallback(): void
+    public function test_provider_appends_apollo_views_as_error_page_fallback(): void
     {
         $app = self::makeApplicationContainer();
         $config = new Repository([
-            'apollo' => array_replace_recursive(require __DIR__ . '/../../config/apollo.php', [
+            'apollo' => array_replace_recursive(require __DIR__.'/../../config/apollo.php', [
                 'error_pages' => ['enabled' => true],
                 'ignis_groups' => ['enabled' => false],
             ]),
@@ -66,16 +66,16 @@ final class ApolloServiceProviderTest extends TestCase
         $paths = $config->get('view.paths');
 
         self::assertSame('/host/resources/views', $paths[0]);
-        self::assertSame((string) realpath(dirname(__DIR__, 2) . '/resources/views'), $paths[1]);
+        self::assertSame((string) realpath(dirname(__DIR__, 2).'/resources/views'), $paths[1]);
 
         Container::setInstance(null);
     }
 
-    public function testProviderDoesNotAppendErrorPageFallbackWhenDisabled(): void
+    public function test_provider_does_not_append_error_page_fallback_when_disabled(): void
     {
         $app = self::makeApplicationContainer();
         $config = new Repository([
-            'apollo' => array_replace_recursive(require __DIR__ . '/../../config/apollo.php', [
+            'apollo' => array_replace_recursive(require __DIR__.'/../../config/apollo.php', [
                 'error_pages' => ['enabled' => false],
                 'ignis_groups' => ['enabled' => false],
             ]),
@@ -95,11 +95,11 @@ final class ApolloServiceProviderTest extends TestCase
         Container::setInstance(null);
     }
 
-    public function testProviderPublishesApolloErrorPages(): void
+    public function test_provider_publishes_apollo_error_pages(): void
     {
         $app = self::makeApplicationContainer();
         $app->instance('config', new Repository([
-            'apollo' => array_replace_recursive(require __DIR__ . '/../../config/apollo.php', [
+            'apollo' => array_replace_recursive(require __DIR__.'/../../config/apollo.php', [
                 'ignis_groups' => ['enabled' => false],
             ]),
             'view' => [
@@ -115,20 +115,20 @@ final class ApolloServiceProviderTest extends TestCase
             \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider::class,
             'apollo-error-pages',
         );
-        $viewsPath = (string) realpath(dirname(__DIR__, 2) . '/resources/views');
+        $viewsPath = (string) realpath(dirname(__DIR__, 2).'/resources/views');
 
         self::assertSame([
-            $viewsPath . '/errors' => resource_path('views/errors'),
+            $viewsPath.'/errors' => resource_path('views/errors'),
         ], $paths);
 
         Container::setInstance(null);
     }
 
-    public function testProviderPublishesSharedAppMenu(): void
+    public function test_provider_publishes_shared_app_menu(): void
     {
         $app = self::makeApplicationContainer();
         $app->instance('config', new Repository([
-            'apollo' => array_replace_recursive(require __DIR__ . '/../../config/apollo.php', [
+            'apollo' => array_replace_recursive(require __DIR__.'/../../config/apollo.php', [
                 'ignis_groups' => ['enabled' => false],
             ]),
             'view' => [
@@ -144,7 +144,7 @@ final class ApolloServiceProviderTest extends TestCase
             \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider::class,
             'apollo-app-menu',
         );
-        $appMenuPath = (string) realpath(dirname(__DIR__, 2) . '/resources/js/shared/AppMenu');
+        $appMenuPath = (string) realpath(dirname(__DIR__, 2).'/resources/js/shared/AppMenu');
 
         self::assertSame([
             $appMenuPath => resource_path('js/shared/AppMenu'),
@@ -153,11 +153,11 @@ final class ApolloServiceProviderTest extends TestCase
         Container::setInstance(null);
     }
 
-    public function testProviderPublishesSharedDirectoryTree(): void
+    public function test_provider_publishes_shared_directory_tree(): void
     {
         $app = self::makeApplicationContainer();
         $app->instance('config', new Repository([
-            'apollo' => array_replace_recursive(require __DIR__ . '/../../config/apollo.php', [
+            'apollo' => array_replace_recursive(require __DIR__.'/../../config/apollo.php', [
                 'ignis_groups' => ['enabled' => false],
             ]),
             'view' => [
@@ -173,7 +173,7 @@ final class ApolloServiceProviderTest extends TestCase
             \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider::class,
             'apollo-directory-tree',
         );
-        $directoryTreePath = (string) realpath(dirname(__DIR__, 2) . '/resources/js/shared/DirectoryTree');
+        $directoryTreePath = (string) realpath(dirname(__DIR__, 2).'/resources/js/shared/DirectoryTree');
 
         self::assertSame([
             $directoryTreePath => resource_path('js/shared/DirectoryTree'),
@@ -182,23 +182,23 @@ final class ApolloServiceProviderTest extends TestCase
         Container::setInstance(null);
     }
 
-    public function testApolloErrorPageViewsExist(): void
+    public function test_apollo_error_page_views_exist(): void
     {
-        $viewsPath = dirname(__DIR__, 2) . '/resources/views/errors';
+        $viewsPath = dirname(__DIR__, 2).'/resources/views/errors';
 
         foreach (['layout', '401', '403', '404', '419', '429', '500', '503'] as $view) {
-            self::assertFileExists($viewsPath . '/' . $view . '.blade.php');
+            self::assertFileExists($viewsPath.'/'.$view.'.blade.php');
         }
     }
 
-    public function testFacadeResolvesApolloSingletonFromContainer(): void
+    public function test_facade_resolves_apollo_singleton_from_container(): void
     {
-        $app = new Container();
+        $app = new Container;
         Container::setInstance($app);
         Facade::clearResolvedInstances();
         Facade::setFacadeApplication($app);
 
-        $app->instance('config', new Repository(['apollo' => require __DIR__ . '/../../config/apollo.php']));
+        $app->instance('config', new Repository(['apollo' => require __DIR__.'/../../config/apollo.php']));
 
         $provider = new \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider($app);
         $provider->register();
@@ -210,12 +210,12 @@ final class ApolloServiceProviderTest extends TestCase
         Container::setInstance(null);
     }
 
-    public function testProviderRequiresIgnisGroupsBindingWhenRouteIsEnabled(): void
+    public function test_provider_requires_ignis_groups_binding_when_route_is_enabled(): void
     {
-        $app = new Container();
+        $app = new Container;
         Container::setInstance($app);
         $app->instance('config', new Repository([
-            'apollo' => array_replace_recursive(require __DIR__ . '/../../config/apollo.php', [
+            'apollo' => array_replace_recursive(require __DIR__.'/../../config/apollo.php', [
                 'ignis_groups' => ['enabled' => true],
             ]),
             'view' => ['paths' => []],
@@ -226,7 +226,7 @@ final class ApolloServiceProviderTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage(
             'APOLLO_IGNIS_GROUPS_ENABLED=true requires a host binding for '
-            . \Ometra\Apollo\Sdk\Contracts\IgnisGroupContract::class
+            .\Ometra\Apollo\Sdk\Contracts\IgnisGroupContract::class
         );
 
         try {
@@ -236,12 +236,13 @@ final class ApolloServiceProviderTest extends TestCase
         }
     }
 
-    public function testProviderKeepsHostIgnisGroupsBinding(): void
+    public function test_provider_keeps_host_ignis_groups_binding(): void
     {
-        $app = new Container();
+        $app = new Container;
         Container::setInstance($app);
-        $app->instance('config', new Repository(['apollo' => require __DIR__ . '/../../config/apollo.php']));
-        $hostGroups = new class implements \Ometra\Apollo\Sdk\Contracts\IgnisGroupContract {
+        $app->instance('config', new Repository(['apollo' => require __DIR__.'/../../config/apollo.php']));
+        $hostGroups = new class implements \Ometra\Apollo\Sdk\Contracts\IgnisGroupContract
+        {
             public function getGroups(): array
             {
                 return [];
@@ -259,15 +260,16 @@ final class ApolloServiceProviderTest extends TestCase
 
     private static function makeApplicationContainer(): Container
     {
-        return new class extends Container {
+        return new class extends Container
+        {
             public function configPath(string $path = ''): string
             {
-                return __DIR__ . '/../fixtures/config' . ($path !== '' ? DIRECTORY_SEPARATOR . $path : '');
+                return __DIR__.'/../fixtures/config'.($path !== '' ? DIRECTORY_SEPARATOR.$path : '');
             }
 
             public function resourcePath(string $path = ''): string
             {
-                return __DIR__ . '/../fixtures/resources' . ($path !== '' ? DIRECTORY_SEPARATOR . $path : '');
+                return __DIR__.'/../fixtures/resources'.($path !== '' ? DIRECTORY_SEPARATOR.$path : '');
             }
         };
     }

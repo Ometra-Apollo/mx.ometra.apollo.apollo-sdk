@@ -18,9 +18,7 @@ use Ometra\Apollo\Sdk\Modules\Ignis\Resources\ContentHitsResource;
  */
 final class IgnisModule
 {
-    public function __construct(private readonly ModuleConfigResolver $configResolver)
-    {
-    }
+    public function __construct(private readonly ModuleConfigResolver $configResolver) {}
 
     /**
      * @return array{base_url: string}

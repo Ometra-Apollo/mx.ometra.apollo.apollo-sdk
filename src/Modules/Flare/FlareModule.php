@@ -6,8 +6,8 @@ namespace Ometra\Apollo\Sdk\Modules\Flare;
 
 use Ometra\Apollo\Sdk\Core\Config\ModuleConfigResolver;
 use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
-use Ometra\Apollo\Sdk\Modules\Flare\Resources\StationsResource;
 use Ometra\Apollo\Sdk\Modules\Flare\Resources\PlaylistsResource;
+use Ometra\Apollo\Sdk\Modules\Flare\Resources\StationsResource;
 
 /**
  * Flare module entrypoint.
@@ -32,6 +32,7 @@ final class FlareModule
 
         return $clone;
     }
+
     /**
      * @return array{base_url: string}
      */

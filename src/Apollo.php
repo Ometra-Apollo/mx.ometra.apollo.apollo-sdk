@@ -16,8 +16,7 @@ final class Apollo
         private readonly PulseModule $pulse,
         private readonly FlareModule $flare,
         private readonly IgnisModule $ignis,
-    ) {
-    }
+    ) {}
 
     public function proteus(): ProteusModule
     {

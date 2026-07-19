@@ -12,10 +12,10 @@ final class ExternalGroupDTO
     public string $provider_id;
 
     /**
-     * @param string        $name           Group display name.
-     * @param string        $external_id    Host-external group identifier.
-     * @param array<string> $media_type     Raw media type values; normalized to {@see MediaTypeEnum} values in-place.
-     * @param array<string,mixed>|null $play_modifiers Optional playback modifiers; dropped from {@see toArray()} when null.
+     * @param  string  $name  Group display name.
+     * @param  string  $external_id  Host-external group identifier.
+     * @param  array<string>  $media_type  Raw media type values; normalized to {@see MediaTypeEnum} values in-place.
+     * @param  array<string,mixed>|null  $play_modifiers  Optional playback modifiers; dropped from {@see toArray()} when null.
      */
     public function __construct(
         public readonly string $name,

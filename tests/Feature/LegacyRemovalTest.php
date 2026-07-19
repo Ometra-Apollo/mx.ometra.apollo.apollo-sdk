@@ -8,11 +8,11 @@ use PHPUnit\Framework\TestCase;
 final class LegacyRemovalTest extends TestCase
 {
     #[DataProvider('legacyArtifacts')]
-    public function testLegacyProteusArtifactsArePhysicallyRemoved(string $relativePath): void
+    public function test_legacy_proteus_artifacts_are_physically_removed(string $relativePath): void
     {
         self::assertFileDoesNotExist(
             self::projectPath($relativePath),
-            $relativePath . ' must be removed from the Apollo SDK clean-cut migration.',
+            $relativePath.' must be removed from the Apollo SDK clean-cut migration.',
         );
     }
 
@@ -40,7 +40,7 @@ final class LegacyRemovalTest extends TestCase
         ];
     }
 
-    public function testSourceTreeDoesNotContainLegacyProteusNamespaceOrProviderReferences(): void
+    public function test_source_tree_does_not_contain_legacy_proteus_namespace_or_provider_references(): void
     {
         $indexedFiles = self::phpAndConfigFilesFrom(['src', 'config', 'composer.json']);
 
@@ -49,10 +49,10 @@ final class LegacyRemovalTest extends TestCase
         foreach ($indexedFiles as $file) {
             $contents = (string) file_get_contents(self::projectPath($file));
 
-            self::assertStringNotContainsString('Ometra\\Apollo\\Proteus', $contents, $file . ' contains the legacy namespace.');
-            self::assertStringNotContainsString('ProteusServiceProvider', $contents, $file . ' references the legacy provider.');
-            self::assertStringNotContainsString('config/proteus.php', $contents, $file . ' references the legacy config file.');
-            self::assertStringNotContainsString('proteus-config', $contents, $file . ' references the legacy publish tag.');
+            self::assertStringNotContainsString('Ometra\\Apollo\\Proteus', $contents, $file.' contains the legacy namespace.');
+            self::assertStringNotContainsString('ProteusServiceProvider', $contents, $file.' references the legacy provider.');
+            self::assertStringNotContainsString('config/proteus.php', $contents, $file.' references the legacy config file.');
+            self::assertStringNotContainsString('proteus-config', $contents, $file.' references the legacy publish tag.');
         }
     }
 
@@ -69,6 +69,7 @@ final class LegacyRemovalTest extends TestCase
 
             if (is_file($absoluteRoot)) {
                 $files[] = $root;
+
                 continue;
             }
 
@@ -98,6 +99,6 @@ final class LegacyRemovalTest extends TestCase
     {
         $root = dirname(__DIR__, 2);
 
-        return $relativePath === '' ? $root : $root . DIRECTORY_SEPARATOR . $relativePath;
+        return $relativePath === '' ? $root : $root.DIRECTORY_SEPARATOR.$relativePath;
     }
 }

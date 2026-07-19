@@ -22,6 +22,9 @@
     },
     "scripts": {
         "post-autoload-dump": [],
+        "analyse": "phpstan analyse --no-progress",
+        "format": "pint",
+        "lint": "pint --test",
         "test": "phpunit"
     },
     "extra": {
@@ -32,6 +35,8 @@
         }
     },
     "require-dev": {
+        "laravel/pint": "^1.24",
+        "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "11.5.55"
     }
 }

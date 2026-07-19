@@ -7,7 +7,7 @@ namespace Ometra\Apollo\Sdk\DTO;
 final class IgnisCampaignDetailDTO
 {
     /**
-     * @param array<int,IgnisCampaignContentDTO> $contents
+     * @param  array<int,IgnisCampaignContentDTO>  $contents
      */
     public function __construct(
         public readonly int $id_campaign,
@@ -18,7 +18,7 @@ final class IgnisCampaignDetailDTO
     ) {}
 
     /**
-     * @param array<string,mixed> $data
+     * @param  array<string,mixed>  $data
      */
     public static function fromArray(array $data): self
     {

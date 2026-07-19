@@ -1,3 +1,36 @@
+# Release v4.3.0
+
+**Date:** 2026-07-19
+**Branch:** `main`
+**Package:** `ometra/apollo-sdk`
+
+Apollo SDK 4.3 adds application-authenticated group coordination between Pulse
+and Flare while retaining the complete 4.x public API.
+
+## Highlights
+
+- Added Pulse group catalog and station-cache invalidation operations.
+- Added Flare station group lookup, assignment, detachment, and cache invalidation operations.
+- Added repeatable Pint and PHPStan quality gates.
+- Verified SDK usage across Aeris, Flare, Ignis, Proteus, and Pulse.
+
+## Upgrade requirements
+
+- Require `ometra/apollo-sdk ^4.3` after the release tag is available.
+- No breaking changes or configuration changes are required.
+
+## Validation
+
+- `composer validate --strict`: valid
+- `composer run lint`: pass
+- `composer run analyse`: pass
+- `composer test`: 133 tests and 485 assertions pass
+
+## Links
+
+- Full API contract: `docs/api-contract.md`
+- Consumer audit: `docs/integration-audit.md`
+
 # Release v4.1.0
 
 **Date:** 2026-07-16

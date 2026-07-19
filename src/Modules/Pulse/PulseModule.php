@@ -16,9 +16,7 @@ use Ometra\Apollo\Sdk\Modules\Pulse\Resources\GroupsResource;
  */
 final class PulseModule
 {
-    public function __construct(private readonly ModuleConfigResolver $configResolver)
-    {
-    }
+    public function __construct(private readonly ModuleConfigResolver $configResolver) {}
 
     /**
      * @return array{base_url: string}

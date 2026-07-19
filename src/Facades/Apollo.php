@@ -18,6 +18,7 @@ use Ometra\Apollo\Sdk\Modules\Pulse\PulseModule;
  * @method static IgnisModule ignis()
  *
  * @mixin ApolloEntrypoint
+ *
  * @see ApolloEntrypoint
  */
 final class Apollo extends Facade

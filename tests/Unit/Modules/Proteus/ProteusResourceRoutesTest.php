@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Ometra\Apollo\Sdk\Modules\Proteus\Resources\CategoriesResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Enums\DirectoryApplicationPermission;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\CategoriesResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoriesResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\LightPathResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MediaResource;
@@ -12,13 +12,27 @@ use Ometra\Apollo\Sdk\Modules\Proteus\Resources\PresetsResource;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__ . '/RecordingApolloHttpClient.php';
+require_once __DIR__.'/RecordingApolloHttpClient.php';
 
 final class ProteusResourceRoutesTest extends TestCase
 {
-    public function testDirectoryApplicationGrantAcceptsADelegatedUserToken(): void
+    public function test_media_show_accepts_a_delegated_user_token(): void
     {
-        $client = new RecordingApolloHttpClient();
+        $client = new RecordingApolloHttpClient;
+        $resource = new MediaResource($client);
+
+        $resource->showWithUserToken('media-1', 'delegated-user-token', ['include' => 'formats']);
+
+        self::assertSame('application', $client->lastRequest['auth']);
+        self::assertSame('GET', $client->lastRequest['method']);
+        self::assertSame('media/media-1', $client->lastRequest['endpoint']);
+        self::assertSame(['include' => 'formats'], $client->lastRequest['query']);
+        self::assertSame('delegated-user-token', $client->lastUserToken);
+    }
+
+    public function test_directory_application_grant_accepts_a_delegated_user_token(): void
+    {
+        $client = new RecordingApolloHttpClient;
         $resource = new DirectoriesResource($client);
 
         $resource->grantApplicationWithUserToken(
@@ -45,7 +59,7 @@ final class ProteusResourceRoutesTest extends TestCase
      * @param  array<string, mixed>  $query
      */
     #[DataProvider('resourceRoutes')]
-    public function testProteusResourcesExposeContextualActionsAndPreserveEndpointBehavior(
+    public function test_proteus_resources_expose_contextual_actions_and_preserve_endpoint_behavior(
         string $resourceClass,
         string $action,
         array $arguments,
@@ -56,7 +70,7 @@ final class ProteusResourceRoutesTest extends TestCase
         array $query = [],
         bool $raw = false,
     ): void {
-        $client = new RecordingApolloHttpClient();
+        $client = new RecordingApolloHttpClient;
         $resource = new $resourceClass($client);
 
         $resource->{$action}(...$arguments);

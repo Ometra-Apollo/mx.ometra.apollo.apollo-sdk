@@ -16,7 +16,7 @@ final class PulseApiShapeTest extends TestCase
     {
         parent::setUp();
 
-        $app = new Container();
+        $app = new Container;
         Container::setInstance($app);
         Facade::clearResolvedInstances();
         Facade::setFacadeApplication($app);
@@ -39,9 +39,9 @@ final class PulseApiShapeTest extends TestCase
         parent::tearDown();
     }
 
-    public function testPulseModuleExposesGroupsResource(): void
+    public function test_pulse_module_exposes_groups_resource(): void
     {
-        $module = new PulseModule(new ModuleConfigResolver());
+        $module = new PulseModule(new ModuleConfigResolver);
 
         self::assertInstanceOf(GroupsResource::class, $module->groups());
     }

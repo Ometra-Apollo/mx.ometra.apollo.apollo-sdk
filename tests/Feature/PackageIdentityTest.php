@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 final class PackageIdentityTest extends TestCase
 {
-    public function testComposerPackageIdentityUsesApolloSdkNaming(): void
+    public function test_composer_package_identity_uses_apollo_sdk_naming(): void
     {
         $composer = $this->readComposer();
 
@@ -18,9 +18,9 @@ final class PackageIdentityTest extends TestCase
         );
     }
 
-    public function testComposerIdentityDoesNotReferenceLegacyPackageOrNamespace(): void
+    public function test_composer_identity_does_not_reference_legacy_package_or_namespace(): void
     {
-        $composerRaw = file_get_contents(__DIR__ . '/../../composer.json');
+        $composerRaw = file_get_contents(__DIR__.'/../../composer.json');
 
         self::assertIsString($composerRaw);
         self::assertStringNotContainsString('ometra/proteus-client', $composerRaw);
@@ -28,7 +28,7 @@ final class PackageIdentityTest extends TestCase
         self::assertStringNotContainsString('ProteusServiceProvider', $composerRaw);
     }
 
-    public function testComposerOnlyDeclaresRuntimeDependenciesUsedByTheSdk(): void
+    public function test_composer_only_declares_runtime_dependencies_used_by_the_sdk(): void
     {
         $composer = $this->readComposer();
 
@@ -43,7 +43,7 @@ final class PackageIdentityTest extends TestCase
      */
     private function readComposer(): array
     {
-        $content = file_get_contents(__DIR__ . '/../../composer.json');
+        $content = file_get_contents(__DIR__.'/../../composer.json');
         self::assertIsString($content);
 
         $decoded = json_decode($content, true);

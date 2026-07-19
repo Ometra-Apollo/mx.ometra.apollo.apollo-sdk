@@ -9,9 +9,7 @@ use Ometra\Apollo\Sdk\Modules\Proteus\Enums\DirectoryApplicationPermission;
 
 final class DirectoriesResource
 {
-    public function __construct(private readonly ApolloHttpClient $client)
-    {
-    }
+    public function __construct(private readonly ApolloHttpClient $client) {}
 
     /** @param array<string, mixed> $data */
     public function index(array $data = []): array
@@ -24,7 +22,7 @@ final class DirectoriesResource
         $endpoint = 'directories/create';
 
         if ($id_parent !== null && $id_parent !== '') {
-            $endpoint .= '/' . $id_parent;
+            $endpoint .= '/'.$id_parent;
         }
 
         return $this->client->userRequest('GET', $endpoint);
@@ -38,23 +36,23 @@ final class DirectoriesResource
 
     public function show(string $id_directory): array
     {
-        return $this->client->userRequest('GET', 'directories/' . $id_directory);
+        return $this->client->userRequest('GET', 'directories/'.$id_directory);
     }
 
     /** @param array<string, mixed> $data */
     public function update(string $id_directory, array $data): array
     {
-        return $this->client->userRequest('PUT', 'directories/' . $id_directory, payload: $data);
+        return $this->client->userRequest('PUT', 'directories/'.$id_directory, payload: $data);
     }
 
     public function delete(string $id_directory): ?array
     {
-        return $this->client->userRequest('DELETE', 'directories/' . $id_directory);
+        return $this->client->userRequest('DELETE', 'directories/'.$id_directory);
     }
 
     public function setVisibility(string $id_directory, string $visibility): array
     {
-        return $this->client->userRequest('POST', 'directories/' . $id_directory . '/set-visibility', payload: ['visibility' => $visibility]);
+        return $this->client->userRequest('POST', 'directories/'.$id_directory.'/set-visibility', payload: ['visibility' => $visibility]);
     }
 
     public function grantApplication(
@@ -64,7 +62,7 @@ final class DirectoriesResource
     ): array {
         return $this->client->userRequest(
             'POST',
-            'directories/' . $id_directory . '/application-grants',
+            'directories/'.$id_directory.'/application-grants',
             payload: [
                 'client_reference' => $client_reference,
                 'permission' => $permission->value,
@@ -80,7 +78,7 @@ final class DirectoriesResource
     ): array {
         return $this->client->applicationRequest(
             'POST',
-            'directories/' . $id_directory . '/application-grants',
+            'directories/'.$id_directory.'/application-grants',
             payload: [
                 'client_reference' => $client_reference,
                 'permission' => $permission->value,
@@ -95,7 +93,7 @@ final class DirectoriesResource
     ): array {
         return $this->client->userRequest(
             'PATCH',
-            'directories/application-grants/' . $id_directory_application_grant,
+            'directories/application-grants/'.$id_directory_application_grant,
             payload: [
                 'permission' => $permission->value,
             ],
@@ -106,7 +104,7 @@ final class DirectoriesResource
     {
         return $this->client->userRequest(
             'DELETE',
-            'directories/application-grants/' . $id_directory_application_grant,
+            'directories/application-grants/'.$id_directory_application_grant,
         );
     }
 }

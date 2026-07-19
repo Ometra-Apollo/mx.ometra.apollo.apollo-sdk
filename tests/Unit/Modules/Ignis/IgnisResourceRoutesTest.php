@@ -6,13 +6,13 @@ use Ometra\Apollo\Sdk\Modules\Ignis\Resources\CampaignsResource;
 use Ometra\Apollo\Sdk\Modules\Ignis\Resources\ContentHitsResource;
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__ . '/../Proteus/RecordingApolloHttpClient.php';
+require_once __DIR__.'/../Proteus/RecordingApolloHttpClient.php';
 
 final class IgnisResourceRoutesTest extends TestCase
 {
-    public function testCampaignsByExternalGroupUsesExpectedEndpoint(): void
+    public function test_campaigns_by_external_group_uses_expected_endpoint(): void
     {
-        $client = new RecordingApolloHttpClient();
+        $client = new RecordingApolloHttpClient;
         $resource = new CampaignsResource($client);
 
         $resource->byExternalGroup('group-1');
@@ -27,7 +27,7 @@ final class IgnisResourceRoutesTest extends TestCase
         ], $client->lastRequest);
     }
 
-    public function testCampaignShowUsesExpectedEndpoint(): void
+    public function test_campaign_show_uses_expected_endpoint(): void
     {
         $client = new RecordingApolloHttpClient([
             'id_campaign' => 11,
@@ -50,9 +50,9 @@ final class IgnisResourceRoutesTest extends TestCase
         ], $client->lastRequest);
     }
 
-    public function testContentHitsReportUsesExpectedEndpoint(): void
+    public function test_content_hits_report_uses_expected_endpoint(): void
     {
-        $client = new RecordingApolloHttpClient();
+        $client = new RecordingApolloHttpClient;
         $resource = new ContentHitsResource($client);
 
         $report = [[

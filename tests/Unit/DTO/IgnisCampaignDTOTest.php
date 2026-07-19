@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use Ometra\Apollo\Sdk\DTO\IgnisCampaignDTO;
 use Ometra\Apollo\Sdk\DTO\IgnisCampaignDetailDTO;
+use Ometra\Apollo\Sdk\DTO\IgnisCampaignDTO;
 use Ometra\Apollo\Sdk\DTO\IgnisCampaignPlayModifiersDTO;
 use PHPUnit\Framework\TestCase;
 
 final class IgnisCampaignDTOTest extends TestCase
 {
-    public function testCampaignListDtoFiltersUnexpectedFields(): void
+    public function test_campaign_list_dto_filters_unexpected_fields(): void
     {
         $dto = IgnisCampaignDTO::fromArray([
             'id_campaign' => 11,
@@ -30,7 +30,7 @@ final class IgnisCampaignDTOTest extends TestCase
         ], $dto->toArray());
     }
 
-    public function testCampaignDetailDtoFiltersUnexpectedNestedFields(): void
+    public function test_campaign_detail_dto_filters_unexpected_nested_fields(): void
     {
         $dto = IgnisCampaignDetailDTO::fromArray([
             'id_campaign' => 11,
@@ -74,7 +74,7 @@ final class IgnisCampaignDTOTest extends TestCase
         ], $dto->toArray());
     }
 
-    public function testCampaignPlayModifiersDtoFiltersUnexpectedFields(): void
+    public function test_campaign_play_modifiers_dto_filters_unexpected_fields(): void
     {
         $dto = IgnisCampaignPlayModifiersDTO::fromArray([
             'frequency' => 10,

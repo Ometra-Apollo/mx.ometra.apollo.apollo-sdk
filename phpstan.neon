@@ -1,0 +1,10 @@
+parameters:
+    level: 5
+    paths:
+        - src
+    tmpDir: .phpstan-cache
+    ignoreErrors:
+        -
+            identifier: return.unusedType
+            paths:
+                - src/Modules/Proteus/Resources/*

@@ -8,13 +8,12 @@ use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
 
 final class ContentHitsResource
 {
-    public function __construct(private readonly ApolloHttpClient $client)
-    {
-    }
+    public function __construct(private readonly ApolloHttpClient $client) {}
 
     /** @param array<int, array<string, mixed>> $report */
     public function report(array $report): array
     {
+        /** @var array<string, mixed> $report */
         return $this->client->applicationRequest('POST', 'content-hits', payload: $report);
     }
 }

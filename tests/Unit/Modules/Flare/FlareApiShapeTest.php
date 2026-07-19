@@ -16,7 +16,7 @@ final class FlareApiShapeTest extends TestCase
     {
         parent::setUp();
 
-        $app = new Container();
+        $app = new Container;
         Container::setInstance($app);
         Facade::clearResolvedInstances();
         Facade::setFacadeApplication($app);
@@ -39,9 +39,9 @@ final class FlareApiShapeTest extends TestCase
         parent::tearDown();
     }
 
-    public function testFlareModuleExposesStationsResource(): void
+    public function test_flare_module_exposes_stations_resource(): void
     {
-        $module = new FlareModule(new ModuleConfigResolver());
+        $module = new FlareModule(new ModuleConfigResolver);
 
         self::assertInstanceOf(StationsResource::class, $module->stations());
     }

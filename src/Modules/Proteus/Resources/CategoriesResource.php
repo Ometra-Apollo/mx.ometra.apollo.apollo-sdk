@@ -24,22 +24,22 @@ final class CategoriesResource
 
     public function show(string $id_category): array
     {
-        return $this->client->applicationRequest('GET', 'configuration/categories/' . $id_category);
+        return $this->client->applicationRequest('GET', 'configuration/categories/'.$id_category);
     }
 
     /** @param array<string, mixed> $data */
     public function update(string $id_category, array $data): array
     {
-        return $this->client->applicationRequest('PUT', 'configuration/categories/' . $id_category, payload: $data);
+        return $this->client->applicationRequest('PUT', 'configuration/categories/'.$id_category, payload: $data);
     }
 
     public function delete(string $id_category): ?array
     {
-        return $this->client->applicationRequest('DELETE', 'configuration/categories/' . $id_category);
+        return $this->client->applicationRequest('DELETE', 'configuration/categories/'.$id_category);
     }
 
     public function setDefault(string $id_category): array
     {
-        return $this->client->applicationRequest('PATCH', 'configuration/categories/' . $id_category . '/default');
+        return $this->client->applicationRequest('PATCH', 'configuration/categories/'.$id_category.'/default');
     }
 }

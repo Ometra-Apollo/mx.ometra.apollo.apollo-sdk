@@ -32,7 +32,18 @@ final class MediaResource
 
     public function show(string $id_media, array $query = []): array
     {
-        return $this->client->userRequest('GET', 'media/' . $id_media, query: $query);
+        return $this->client->userRequest('GET', 'media/'.$id_media, query: $query);
+    }
+
+    /** @param array<string, mixed> $query */
+    public function showWithUserToken(string $id_media, string $user_token, array $query = []): array
+    {
+        return $this->client->applicationRequest(
+            'GET',
+            'media/'.$id_media,
+            query: $query,
+            userToken: $user_token,
+        );
     }
 
     /** @param array<string, mixed> $data */
@@ -43,54 +54,53 @@ final class MediaResource
 
     public function delete(string $id_media): ?array
     {
-        return $this->client->userRequest('DELETE', 'media/' . $id_media);
+        return $this->client->userRequest('DELETE', 'media/'.$id_media);
     }
 
     public function availableFormats(string $id_media): array
     {
-        return $this->client->userRequest('GET', 'media/' . $id_media . '/available-formats');
+        return $this->client->userRequest('GET', 'media/'.$id_media.'/available-formats');
     }
 
     /** @param array<string, mixed> $data */
     public function setDefaultFormat(string $id_media, array $data): array
     {
-        return $this->client->userRequest('POST', 'media/' . $id_media . '/available-formats', payload: $data);
+        return $this->client->userRequest('POST', 'media/'.$id_media.'/available-formats', payload: $data);
     }
 
     public function transformationOptions(string $id_media): array
     {
-        return $this->client->userRequest('GET', 'media/' . $id_media . '/request-transformations');
+        return $this->client->userRequest('GET', 'media/'.$id_media.'/request-transformations');
     }
 
     /** @param array<string, mixed> $data */
     public function requestTransformations(string $id_media, array $data): array
     {
-        return $this->client->userRequest('POST', 'media/' . $id_media . '/request-transformations', payload: $data);
+        return $this->client->userRequest('POST', 'media/'.$id_media.'/request-transformations', payload: $data);
     }
 
     /** @param array<string, mixed> $data */
     public function setMetadata(string $id_media, array $data): array
     {
-        return $this->client->userRequest('POST', 'media/' . $id_media . '/set-metadata', payload: $data);
+        return $this->client->userRequest('POST', 'media/'.$id_media.'/set-metadata', payload: $data);
     }
 
-    /** @param array<string, string> $visibility ('published', 'protected') */
     public function setVisibility(string $id_media, bool $visibility): array
     {
-        return $this->client->userRequest('POST', 'media/' . $id_media . '/set-visibility', payload: ['visibility' => $visibility]);
+        return $this->client->userRequest('POST', 'media/'.$id_media.'/set-visibility', payload: ['visibility' => $visibility]);
     }
 
     /** @param array<string, mixed> $data */
     public function storeTags(string $id_media, array $data): array
     {
-        return $this->client->userRequest('POST', 'media/' . $id_media . '/tags/store', payload: $data);
+        return $this->client->userRequest('POST', 'media/'.$id_media.'/tags/store', payload: $data);
     }
 
     public function download(string $id_media, ?string $ext = null): Response
     {
         return $this->client->userRawRequest(
             'GET',
-            'media/' . $id_media . '/download',
+            'media/'.$id_media.'/download',
             query: array_filter(['ext' => $ext]),
         );
     }
@@ -99,8 +109,8 @@ final class MediaResource
     {
         return $this->client->userRawRequest(
             'GET',
-            'media/' . $id_media . '/download',
-            query: array_filter(['ext' => 'thumb']),
+            'media/'.$id_media.'/download',
+            query: ['ext' => 'thumb'],
         );
     }
 
@@ -114,7 +124,7 @@ final class MediaResource
     {
         return $this->client->userRequest(
             'POST',
-            'media/' . $id_media . '/lightpath-url',
+            'media/'.$id_media.'/lightpath-url',
             payload: $options,
         );
     }

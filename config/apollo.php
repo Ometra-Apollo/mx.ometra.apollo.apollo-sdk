@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-$env = static fn(string $key, ?string $default = null): ?string => $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key) ?: $default;
+$env = static fn (string $key, ?string $default = null): ?string => $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key) ?: $default;
 
 return [
     'modules' => [

@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 final class IgnisCampaignsResourceResponseTest extends TestCase
 {
-    public function testByExternalGroupReturnsOnlyDtoFields(): void
+    public function test_by_external_group_returns_only_dto_fields(): void
     {
         $client = new class extends ApolloHttpClient
         {
@@ -46,7 +46,7 @@ final class IgnisCampaignsResourceResponseTest extends TestCase
         ]], $resource->byExternalGroup('group-1'));
     }
 
-    public function testShowReturnsOnlyDtoFields(): void
+    public function test_show_returns_only_dto_fields(): void
     {
         $client = new class extends ApolloHttpClient
         {

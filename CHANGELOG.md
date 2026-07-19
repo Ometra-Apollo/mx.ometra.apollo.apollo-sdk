@@ -17,6 +17,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Nothing added.
 
+## [v4.3.0] - 2026-07-19
+
+Backward-compatible release adding cross-service group management and SDK quality gates.
+
+### Added
+
+- Add Flare station group lookup, assignment, detachment, and cache invalidation APIs.
+- Add Pulse group catalog and station-cache invalidation APIs.
+- Add delegated-user-token support for background Proteus media lookups.
+- Add Pint and PHPStan checks for the SDK source.
+
+### Changed
+
+- Standardize SDK source formatting and document the verified consumer integration matrix.
+
+### Breaking Changes
+
+- None.
+
 ## [v4.2.0] - 2026-07-16
 
 Feature release centralizing Proteus directory-application grant transport in the SDK.
