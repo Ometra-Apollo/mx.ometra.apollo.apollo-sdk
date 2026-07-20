@@ -1,8 +1,8 @@
 @php
     $status = (int) ($status ?? 500);
-    $title = (string) ($title ?? 'Algo salio mal');
+    $title = (string) ($title ?? 'Algo salió mal');
     $message = (string) ($message ?? 'No pudimos completar la solicitud.');
-    $detail = (string) ($detail ?? 'Si el problema continua, contacta al equipo de soporte.');
+    $detail = (string) ($detail ?? 'Si el problema continúa, contacta al equipo de soporte.');
     $primaryAction = (string) ($primaryAction ?? 'Volver al inicio');
     $primaryHref = (string) ($primaryHref ?? url('/'));
     $secondaryAction = (string) ($secondaryAction ?? 'Regresar');
@@ -262,7 +262,7 @@
             <aside class="panel" aria-hidden="true">
                 <div class="panel-code">{{ $status }}</div>
                 <div class="signal"></div>
-                <p class="panel-copy">La experiencia sigue alineada con Apollo aunque la solicitud no haya podido completarse.</p>
+                <p class="panel-copy">La experiencia sigue alineada con Apollo, aunque la solicitud no haya podido completarse.</p>
             </aside>
         </section>
     </main>
