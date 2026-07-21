@@ -13,11 +13,13 @@ final class DirectoryResource
         private readonly string $directoryId,
     ) {}
 
+    /** @return array<array-key, mixed> */
     public function show(): array
     {
         return $this->client->userRequest('GET', 'directories/'.$this->directoryId);
     }
 
+    /** @return array<array-key, mixed> */
     public function destroy(): array
     {
         return $this->client->userRequest('DELETE', 'directories/'.$this->directoryId);

@@ -13,6 +13,7 @@ final class LightPathResource
         private readonly string $lightPathGrantId,
     ) {}
 
+    /** @return array<array-key, mixed> */
     public function extend(int $ttlSeconds): array
     {
         return $this->client->userRequest(
@@ -22,6 +23,7 @@ final class LightPathResource
         );
     }
 
+    /** @return array<array-key, mixed> */
     public function revoke(): array
     {
         return $this->client->userRequest(

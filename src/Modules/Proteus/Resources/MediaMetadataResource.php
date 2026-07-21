@@ -14,11 +14,13 @@ final class MediaMetadataResource
         private readonly string $key,
     ) {}
 
+    /** @return array<array-key, mixed> */
     public function show(): array
     {
         return $this->client->userRequest('GET', 'media/'.$this->mediaId.'/metadata/'.$this->key);
     }
 
+    /** @return array<array-key, mixed> */
     public function destroy(): array
     {
         return $this->client->userRequest('DELETE', 'media/'.$this->mediaId.'/metadata/'.$this->key);

@@ -10,7 +10,10 @@ final class GroupCatalogResource
 {
     public function __construct(private readonly ApolloHttpClient $client) {}
 
-    /** @param array<string, mixed> $filters */
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return array<array-key, mixed>
+     */
     public function index(array $filters = []): array
     {
         return $this->client->applicationRequest('GET', 'groups/catalog', query: $filters);

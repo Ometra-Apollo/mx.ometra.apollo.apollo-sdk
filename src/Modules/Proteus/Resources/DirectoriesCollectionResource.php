@@ -10,13 +10,19 @@ final class DirectoriesCollectionResource
 {
     public function __construct(private readonly ApolloHttpClient $client) {}
 
-    /** @param array<string, mixed> $filters */
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return array<array-key, mixed>
+     */
     public function index(array $filters = []): array
     {
         return $this->client->userRequest('GET', 'directories', query: $filters);
     }
 
-    /** @param array<string, mixed> $data */
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<array-key, mixed>
+     */
     public function store(array $data): array
     {
         return $this->client->userRequest('POST', 'directories', payload: $data);

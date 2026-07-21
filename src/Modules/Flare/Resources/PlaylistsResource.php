@@ -13,6 +13,7 @@ final class PlaylistsResource
         private readonly string $playlistId,
     ) {}
 
+    /** @return array<array-key, mixed> */
     public function show(): array
     {
         return $this->client->userRequest('GET', 'playlists/'.$this->playlistId);

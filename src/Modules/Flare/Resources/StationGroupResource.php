@@ -13,11 +13,13 @@ final class StationGroupResource
         private readonly string $groupUri,
     ) {}
 
+    /** @return array<array-key, mixed> */
     public function show(): array
     {
         return $this->client->applicationRequest('GET', 'stations/groups/'.$this->groupUri);
     }
 
+    /** @return array<array-key, mixed> */
     public function destroy(): array
     {
         return $this->client->applicationRequest('DELETE', 'stations/groups/'.$this->groupUri);

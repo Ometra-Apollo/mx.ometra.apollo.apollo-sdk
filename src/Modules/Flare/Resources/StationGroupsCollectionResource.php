@@ -10,6 +10,7 @@ final class StationGroupsCollectionResource
 {
     public function __construct(private readonly ApolloHttpClient $client) {}
 
+    /** @return array<array-key, mixed> */
     public function invalidateCache(): array
     {
         return $this->client->applicationRequest('POST', 'stations/groups/cache/invalidate');

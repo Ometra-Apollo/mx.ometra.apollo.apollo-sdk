@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.1.1] - 2026-07-20
+
+### Changed
+
+- Document AppMenu's Suite-backed application discovery and current customization points.
+- Enable strict types in `SuiteApplicationController`.
+- Raise static analysis from PHPStan level 5 to level 7 and add iterable value contracts.
+- Align directory application grant revocation with Proteus application authentication.
+
+### Removed
+
+- Remove the unused controller request injection and the obsolete AppMenu
+  `APP_NAMES`/`APPS_ORDER` aliases left by the static application list.
+
 ## [v5.0.0] - 2026-07-20
 
 Breaking release that reorganizes Apollo around bound resources and domain

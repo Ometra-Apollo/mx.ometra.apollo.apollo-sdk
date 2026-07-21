@@ -14,6 +14,7 @@ final class CampaignResource
         private readonly int $campaignId,
     ) {}
 
+    /** @return array<array-key, mixed> */
     public function show(): array
     {
         return $this->client->applicationRequest(

@@ -13,6 +13,7 @@ final class CampaignCollectionResource
         private readonly string $externalGroupId,
     ) {}
 
+    /** @return array<array-key, mixed> */
     public function index(): array
     {
         return $this->client->applicationRequest(

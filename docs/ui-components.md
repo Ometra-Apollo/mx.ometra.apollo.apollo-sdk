@@ -26,7 +26,7 @@ php artisan vendor:publish --tag=apollo
 
 ### Purpose
 
-`AppMenu` renders the suite app switcher (Proteus, Flare, Ignis, Pulse, Apollo) and builds environment-aware links (`dev.`, `staging.`, prod).
+`AppMenu` renders the applications returned for the current user by Suite and builds environment-aware links (`dev.`, `staging.`, prod). Known applications receive branded metadata; unknown applications use a safe fallback icon and action.
 
 ### Import
 
@@ -48,21 +48,23 @@ import { AppMenu } from '@/shared/AppMenu';
 
 ### Behavior
 
-1. Detects current app by hostname (for example: `ignis.apollo.ometra.mx`).
-2. If hostname detection fails, it uses the first segment of the Inertia URL.
-3. Clicking the current app icon navigates to that app home.
-4. App actions are defined in `appMenu.config.tsx`.
-5. The active app is recalculated when the Inertia URL changes.
+1. Loads the user's applications from `/_apollo/suite/applications/user`.
+2. Normalizes both `{ applications: [...] }` and `{ data: { applications: [...] } }` responses.
+3. Detects the current app by hostname (for example: `ignis.apollo.ometra.mx`).
+4. If hostname detection fails, it uses the first segment of the Inertia URL.
+5. Clicking the current app icon navigates to that app home.
+6. The active app is recalculated when the Inertia URL changes.
 
 ### Files You Can Customize
 
 - `resources/js/shared/AppMenu/appMenu.config.tsx`
-  - App order (`APPS_ORDER`)
-  - Icons, colors, a11y labels, and actions
-  - Target host per app (`url`)
+  - Default order for known apps (`DEFAULT_APPS_ORDER`)
+  - Icons, colors, a11y labels, and actions for known apps
 - `resources/js/shared/AppMenu/appMenu.utils.ts`
   - App resolution by hostname/URL segment
   - Environment-aware URL builder
+
+Application names and target URLs are supplied by Suite; they are not duplicated in the published component configuration.
 
 ### Basic Example
 

@@ -10,7 +10,10 @@ final class GroupStationCacheResource
 {
     public function __construct(private readonly ApolloHttpClient $client) {}
 
-    /** @param array<int, string> $groupUris */
+    /**
+     * @param  array<int, string>  $groupUris
+     * @return array<array-key, mixed>
+     */
     public function invalidate(array $groupUris): array
     {
         return $this->client->applicationRequest(

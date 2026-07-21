@@ -27,6 +27,9 @@ final class ExternalGroupDTO
         $this->media_type = collect($media_type)->mapInto(MediaTypeEnum::class)->pluck('value')->toArray();
     }
 
+    /**
+     * @param  array{name: string, external_id: string, media_type: array<string>, play_modifiers?: array<string, mixed>|null}  $data
+     */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -37,6 +40,7 @@ final class ExternalGroupDTO
         );
     }
 
+    /** @return array<string, mixed> */
     public function toArray(): array
     {
         return array_filter([

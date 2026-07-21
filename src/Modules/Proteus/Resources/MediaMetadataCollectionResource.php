@@ -13,13 +13,19 @@ final class MediaMetadataCollectionResource
         private readonly string $mediaId,
     ) {}
 
-    /** @param array<string, mixed> $data */
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<array-key, mixed>
+     */
     public function store(array $data): array
     {
         return $this->client->userRequest('POST', 'media/'.$this->mediaId.'/metadata', payload: $data);
     }
 
-    /** @param array<string, mixed> $data */
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<array-key, mixed>
+     */
     public function update(array $data): array
     {
         return $this->client->userRequest('PUT', 'media/'.$this->mediaId.'/metadata', payload: $data);

@@ -14,6 +14,7 @@ final class DirectoryApplicationGrantRequestResource
         private readonly string $directoryId,
     ) {}
 
+    /** @return array<array-key, mixed> */
     public function request(
         string $clientReference,
         DirectoryApplicationPermission $permission,

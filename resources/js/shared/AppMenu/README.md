@@ -26,5 +26,10 @@ import { AppMenu } from '@/shared/AppMenu';
 
 ## Archivos configurables
 
-- `appMenu.config.tsx`: apps, iconos, colores, acciones y URLs
+- `appMenu.config.tsx`: orden predeterminado, iconos, colores y acciones de apps conocidas
 - `appMenu.utils.ts`: resolución de app actual y armado de URLs por ambiente
+
+Las aplicaciones y sus URLs se obtienen de `/_apollo/suite/applications/user`.
+El componente admite los formatos `{ applications: [...] }` y
+`{ data: { applications: [...] } }`; una app sin metadata local usa el icono y
+la acción fallback.

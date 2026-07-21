@@ -56,6 +56,17 @@ final class LegacyRemovalTest extends TestCase
         }
     }
 
+    public function test_app_menu_does_not_keep_static_application_aliases(): void
+    {
+        $config = (string) file_get_contents(
+            self::projectPath('resources/js/shared/AppMenu/appMenu.config.tsx')
+        );
+
+        self::assertStringNotContainsString('export const APP_NAMES', $config);
+        self::assertStringNotContainsString('export const APPS_ORDER', $config);
+        self::assertStringContainsString('export const DEFAULT_APPS_ORDER', $config);
+    }
+
     /**
      * @param  list<string>  $roots
      * @return list<string>

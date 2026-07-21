@@ -46,10 +46,6 @@ export const DEFAULT_APPS_ORDER = [
     'Apollo',
 ] as const;
 
-export const APP_NAMES = DEFAULT_APPS_ORDER;
-
-export const APPS_ORDER: AppName[] = [...DEFAULT_APPS_ORDER];
-
 const DEFAULT_APP_META: AppMeta = {
     icon: FallbackAppIcon,
     a11y: 'APP',

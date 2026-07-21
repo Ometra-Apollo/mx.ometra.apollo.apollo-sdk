@@ -10,6 +10,7 @@ final class MediaMetadataValuesResource
 {
     public function __construct(private readonly ApolloHttpClient $client) {}
 
+    /** @return array<array-key, mixed> */
     public function values(string $key): array
     {
         return $this->client->applicationRequest('GET', 'media/metadata/'.$key.'/values');

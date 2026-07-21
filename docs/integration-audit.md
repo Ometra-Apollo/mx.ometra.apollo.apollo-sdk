@@ -2,6 +2,15 @@
 
 Revisión: 2026-07-20. Paquete: `ometra/apollo-sdk`. Configuración compartida: `config/apollo.php`.
 
+## Alcance de la revisión
+
+- Se recorrieron `src`, `config`, rutas y recursos compartidos buscando referencias heredadas y símbolos internos sin consumidores.
+- La API modular PHP se preserva aunque una clase sólo aparezca en pruebas: es superficie pública del paquete y puede tener consumidores externos.
+- Se retiraron el argumento HTTP no usado de `SuiteApplicationController` y los aliases estáticos `APP_NAMES`/`APPS_ORDER` del AppMenu. El orden interno vigente es `DEFAULT_APPS_ORDER`.
+- La revocación de un directory application grant usa autenticación de aplicación, tal como exige la ruta de Proteus que no depende de una sesión de usuario activa.
+- AppMenu obtiene aplicaciones y URLs desde Suite; la configuración local contiene solamente metadata visual y defaults de orden.
+- La suite, PHPStan y Pint son la barrera de regresión para esta limpieza.
+
 Variables requeridas:
 
 - `PROTEUS_BASE_URL`

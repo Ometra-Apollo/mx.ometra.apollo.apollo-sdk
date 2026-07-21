@@ -100,7 +100,7 @@ final class ApolloServiceProvider extends ServiceProvider
             return;
         }
 
-        $config = $this->app['config'];
+        $config = $this->app->make('config');
         assert($config instanceof Repository);
         $paths = (array) $config->get('view.paths', []);
         $viewsPath = self::viewsPath();

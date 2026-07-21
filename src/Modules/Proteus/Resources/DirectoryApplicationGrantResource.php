@@ -13,9 +13,10 @@ final class DirectoryApplicationGrantResource
         private readonly string $applicationGrantId,
     ) {}
 
+    /** @return array<array-key, mixed> */
     public function revoke(): array
     {
-        return $this->client->userRequest(
+        return $this->client->applicationRequest(
             'DELETE',
             'directories/application-grants/'.$this->applicationGrantId,
         );

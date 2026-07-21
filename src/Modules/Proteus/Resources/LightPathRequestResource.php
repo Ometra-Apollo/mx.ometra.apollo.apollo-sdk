@@ -13,6 +13,7 @@ final class LightPathRequestResource
         private readonly string $mediaId,
     ) {}
 
+    /** @return array<array-key, mixed> */
     public function request(?string $extension = null, ?int $ttlSeconds = null): array
     {
         return $this->client->userRequest(

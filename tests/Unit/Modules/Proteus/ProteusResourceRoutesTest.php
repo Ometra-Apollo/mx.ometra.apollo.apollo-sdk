@@ -119,7 +119,7 @@ final class ProteusResourceRoutesTest extends TestCase
         ]);
 
         (new DirectoryApplicationGrantResource($client, 'grant-1'))->revoke();
-        $this->assertRequest($client, 'user', 'DELETE', 'directories/application-grants/grant-1');
+        $this->assertRequest($client, 'application', 'DELETE', 'directories/application-grants/grant-1');
     }
 
     public function test_categories_use_canonical_routes(): void
