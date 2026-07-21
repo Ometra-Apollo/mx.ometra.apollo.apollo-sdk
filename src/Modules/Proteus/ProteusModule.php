@@ -7,11 +7,11 @@ namespace Ometra\Apollo\Sdk\Modules\Proteus;
 use Ometra\Apollo\Sdk\Core\Config\ModuleConfigResolver;
 use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\CategoriesResource;
-use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoriesResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoriesCollectionResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoryResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\LightPathResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MediaCollectionResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MediaResource;
-use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MetadataResource;
-use Ometra\Apollo\Sdk\Modules\Proteus\Resources\PresetsResource;
 
 final class ProteusModule
 {
@@ -34,26 +34,18 @@ final class ProteusModule
     }
 
     /**
-     * @return array{base_url: string}
+     * @return ($mediaId is null ? MediaCollectionResource : MediaResource)
      */
-    public function config(): array
+    public function media(?string $mediaId = null): MediaCollectionResource|MediaResource
     {
-        return $this->configResolver->resolve('proteus');
+        return $mediaId === null
+            ? new MediaCollectionResource($this->client())
+            : new MediaResource($this->client(), $mediaId);
     }
 
-    public function media(): MediaResource
+    public function lightPath(string $lightPathGrantId): LightPathResource
     {
-        return new MediaResource($this->client());
-    }
-
-    public function lightPath(): LightPathResource
-    {
-        return new LightPathResource($this->client());
-    }
-
-    public function metadata(): MetadataResource
-    {
-        return new MetadataResource($this->client());
+        return new LightPathResource($this->client(), $lightPathGrantId);
     }
 
     public function categories(): CategoriesResource
@@ -61,21 +53,21 @@ final class ProteusModule
         return new CategoriesResource($this->client());
     }
 
-    public function directories(): DirectoriesResource
+    /**
+     * @return ($directoryId is null ? DirectoriesCollectionResource : DirectoryResource)
+     */
+    public function directories(?string $directoryId = null): DirectoriesCollectionResource|DirectoryResource
     {
-        return new DirectoriesResource($this->client());
-    }
-
-    public function presets(): PresetsResource
-    {
-        return new PresetsResource($this->client());
+        return $directoryId === null
+            ? new DirectoriesCollectionResource($this->client())
+            : new DirectoryResource($this->client(), $directoryId);
     }
 
     private function client(): ApolloHttpClient
     {
         if ($this->client === null) {
             $this->client = new ApolloHttpClient(
-                $this->config()['base_url'],
+                $this->configResolver->resolve('proteus')['base_url'],
                 $this->asApplication,
             );
         }

@@ -33,29 +33,21 @@ final class FlareModule
         return $clone;
     }
 
-    /**
-     * @return array{base_url: string}
-     */
-    public function config(): array
-    {
-        return $this->configResolver->resolve('flare');
-    }
-
     public function stations(): StationsResource
     {
         return new StationsResource($this->client());
     }
 
-    public function playlists(): PlaylistsResource
+    public function playlists(string $playlistId): PlaylistsResource
     {
-        return new PlaylistsResource($this->client());
+        return new PlaylistsResource($this->client(), $playlistId);
     }
 
     private function client(): ApolloHttpClient
     {
         if ($this->client === null) {
             $this->client = new ApolloHttpClient(
-                $this->config()['base_url'],
+                $this->configResolver->resolve('flare')['base_url'],
                 $this->asApplication,
             );
         }

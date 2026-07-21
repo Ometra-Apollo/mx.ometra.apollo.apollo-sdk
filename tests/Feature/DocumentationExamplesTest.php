@@ -42,6 +42,47 @@ final class DocumentationExamplesTest extends TestCase
         }
     }
 
+    public function test_documentation_keeps_user_tokens_under_caronte_ownership(): void
+    {
+        $readme = self::readProjectFile('README.md');
+        $contract = self::readProjectFile('docs/api-contract.md');
+
+        foreach ([$readme, $contract] as $contents) {
+            self::assertStringNotContainsString('showWithUserToken', $contents);
+            self::assertStringNotContainsString('grantApplicationWithUserToken', $contents);
+            self::assertStringNotContainsString('$userToken', $contents);
+            self::assertStringContainsString('asApplication()', $contents);
+        }
+    }
+
+    public function test_primary_documentation_describes_only_the_v5_resource_shape(): void
+    {
+        foreach (['README.md', 'docs/api-contract.md'] as $path) {
+            $contents = self::readProjectFile($path);
+
+            foreach ([
+                'media($mediaId)',
+                'lightPath($grantId)->extend(',
+                'applicationGrants(',
+                'metadata()->values(',
+                'externalGroups($externalGroupId)',
+            ] as $fragment) {
+                self::assertStringContainsString($fragment, $contents, $path.' must document '.$fragment);
+            }
+
+            foreach ([
+                'media()->upload(',
+                'media()->lightPathUrl(',
+                'lightPath()->extendGrant(',
+                'directories()->grantApplication(',
+                'proteus()->metadata(',
+                'contentHits()',
+            ] as $fragment) {
+                self::assertStringNotContainsString($fragment, $contents, $path.' still advertises '.$fragment);
+            }
+        }
+    }
+
     /**
      * @return array<string, array{0: string}>
      */

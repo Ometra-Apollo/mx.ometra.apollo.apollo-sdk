@@ -4,114 +4,65 @@ declare(strict_types=1);
 
 use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
-use Illuminate\Support\Facades\Facade;
-use Ometra\Apollo\Sdk\Apollo;
 use Ometra\Apollo\Sdk\Core\Config\ModuleConfigResolver;
-use Ometra\Apollo\Sdk\Modules\Flare\FlareModule;
-use Ometra\Apollo\Sdk\Modules\Ignis\IgnisModule;
 use Ometra\Apollo\Sdk\Modules\Proteus\ProteusModule;
-use Ometra\Apollo\Sdk\Modules\Proteus\Resources\CategoriesResource;
-use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoriesResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoriesCollectionResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoryApplicationGrantRequestResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoryApplicationGrantResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoryResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\LightPathRequestResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\LightPathResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MediaCollectionResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MediaMetadataCollectionResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MediaMetadataResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MediaResource;
-use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MetadataResource;
-use Ometra\Apollo\Sdk\Modules\Proteus\Resources\PresetsResource;
-use Ometra\Apollo\Sdk\Modules\Pulse\PulseModule;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class ProteusApiShapeTest extends TestCase
 {
     protected function setUp(): void
     {
-        parent::setUp();
-
         $app = new Container;
+        $app->instance('config', new Repository(['apollo.modules.proteus.base_url' => 'https://proteus.test']));
         Container::setInstance($app);
-        Facade::clearResolvedInstances();
-        Facade::setFacadeApplication($app);
-
-        $app->instance('config', new Repository([
-            'apollo' => [
-                'modules' => [
-                    'proteus' => ['base_url' => 'https://proteus.test'],
-                    'pulse' => ['base_url' => 'https://pulse.test'],
-                    'flare' => ['base_url' => 'https://flare.test'],
-                    'ignis' => ['base_url' => 'https://ignis.test'],
-                ],
-            ],
-        ]));
     }
 
     protected function tearDown(): void
     {
-        Facade::clearResolvedInstances();
-        Facade::setFacadeApplication(null);
         Container::setInstance(null);
-
-        parent::tearDown();
     }
 
-    public function test_proteus_module_exposes_real_resource_objects(): void
+    public function test_collection_and_bound_resources_have_distinct_types(): void
     {
         $module = new ProteusModule(new ModuleConfigResolver);
 
-        self::assertInstanceOf(MediaResource::class, $module->media());
-        self::assertInstanceOf(LightPathResource::class, $module->lightPath());
-        self::assertInstanceOf(MetadataResource::class, $module->metadata());
-        self::assertInstanceOf(CategoriesResource::class, $module->categories());
-        self::assertInstanceOf(DirectoriesResource::class, $module->directories());
-        self::assertInstanceOf(PresetsResource::class, $module->presets());
+        self::assertInstanceOf(MediaCollectionResource::class, $module->media());
+        self::assertInstanceOf(MediaResource::class, $module->media('media-1'));
+        self::assertInstanceOf(DirectoriesCollectionResource::class, $module->directories());
+        self::assertInstanceOf(DirectoryResource::class, $module->directories('dir-1'));
+        self::assertInstanceOf(LightPathResource::class, $module->lightPath('grant-1'));
     }
 
-    public function test_apollo_entrypoint_still_rejects_flat_root_proteus_methods(): void
+    public function test_nested_resources_are_bound_to_their_parent(): void
     {
-        $resolver = new ModuleConfigResolver;
-        $apollo = new Apollo(
-            new ProteusModule($resolver),
-            new PulseModule($resolver),
-            new FlareModule($resolver),
-            new IgnisModule($resolver),
-        );
+        $module = new ProteusModule(new ModuleConfigResolver);
 
-        self::assertFalse(method_exists($apollo, 'media'));
-        self::assertFalse(method_exists($apollo, 'mediaIndex'));
-        self::assertFalse(method_exists($apollo, 'metadataKeys'));
-        self::assertFalse(method_exists($apollo, 'categoriesIndex'));
-        self::assertSame(['proteus', 'pulse', 'flare', 'ignis'], array_values(array_filter(
-            get_class_methods(Apollo::class),
-            static fn (string $method): bool => ! str_starts_with($method, '__'),
-        )));
+        self::assertInstanceOf(MediaMetadataCollectionResource::class, $module->media('media-1')->metadata());
+        self::assertInstanceOf(MediaMetadataResource::class, $module->media('media-1')->metadata('author'));
+        self::assertInstanceOf(LightPathRequestResource::class, $module->media('media-1')->lightPath());
+        self::assertInstanceOf(DirectoryApplicationGrantRequestResource::class, $module->directories('dir-1')->applicationGrants());
+        self::assertInstanceOf(DirectoryApplicationGrantResource::class, $module->directories()->applicationGrants('grant-1'));
     }
 
-    /**
-     * @param  class-string  $resourceClass
-     * @param  list<string>  $forbiddenMethods
-     */
-    #[DataProvider('forbiddenResourceMethods')]
-    public function test_proteus_resources_do_not_expose_redundant_legacy_method_names(
-        string $resourceClass,
-        array $forbiddenMethods,
-    ): void {
-        $methods = get_class_methods($resourceClass);
-
-        foreach ($forbiddenMethods as $method) {
-            self::assertNotContains($method, $methods, $resourceClass.' must not expose '.$method);
+    public function test_removed_api_names_are_absent(): void
+    {
+        foreach (['upload', 'create', 'delete', 'setMetadata', 'lightPathUrl', 'showWithUserToken'] as $method) {
+            self::assertFalse(method_exists(MediaResource::class, $method));
+            self::assertFalse(method_exists(MediaCollectionResource::class, $method));
         }
-    }
 
-    /**
-     * @return array<string, array{0: class-string, 1: list<string>}>
-     */
-    public static function forbiddenResourceMethods(): array
-    {
-        return [
-            'media' => [MediaResource::class, ['mediaIndex', 'mediaUpload', 'mediaSetMetadata', 'mediaDelete', 'saveMediaLocal']],
-            'lightpath' => [LightPathResource::class, ['lightPathExtendGrant', 'lightPathDeleteGrant']],
-            'metadata' => [MetadataResource::class, ['metadataKeys', 'metadataValuesFromKey', 'metadataIndex', 'metadataShow']],
-            'categories' => [CategoriesResource::class, ['categoriesIndex', 'categoryStore', 'categoryShow', 'categoryUpdate', 'categoryDelete']],
-            'directories' => [DirectoriesResource::class, ['directoriesIndex', 'directoryCreate', 'directoryStore', 'directoryShow', 'directoryUpdate', 'directoryDelete']],
-            'presets' => [PresetsResource::class, ['presetIndex', 'presetStore', 'presetShow', 'presetUpdate', 'presetDelete']],
-        ];
+        foreach (['metadata', 'presets', 'config'] as $method) {
+            self::assertFalse(method_exists(ProteusModule::class, $method));
+        }
     }
 }

@@ -1,147 +1,94 @@
-# Breaking Changes
+# Migración a Apollo SDK v5
 
-## v4.0.0
+Apollo SDK v5 es una versión breaking sin aliases. El paquete sigue siendo `ometra/apollo-sdk`, usa `config/apollo.php` y requiere estas URLs:
 
-### Caronte SDK 7.1 is required
+```env
+PROTEUS_BASE_URL=https://proteus.example.com/api
+PULSE_BASE_URL=https://pulse.example.com/api
+FLARE_BASE_URL=https://flare.example.com/api
+IGNIS_BASE_URL=https://ignis.example.com/api
+```
 
-Apollo now delegates its request transport and header construction to
-`ometra/caronte-sdk ^7.1.0`. Group authentication is mutually exclusive:
-requests send `X-Group-Token` when a group application is configured, otherwise
-they send `X-Application-Token`.
+Actualiza la dependencia:
 
-### Proteus metadata listing is media-scoped
+```json
+"ometra/apollo-sdk": "^5.0.0"
+```
 
-Replace the old optional metadata-key search:
+## Recursos ligados
+
+Los IDs pasan del método de acción al selector de recurso:
 
 ```php
-Apollo::proteus()->metadata()->index('title');
+// v5
+Apollo::proteus()->media($mediaId)->show();
+Apollo::proteus()->media($mediaId)->destroy();
+Apollo::proteus()->directories($directoryId)->show();
 ```
 
-with a media ID and, when needed, query parameters:
+Las colecciones conservan el selector sin ID:
 
 ```php
-Apollo::proteus()->metadata()->index($mediaId, ['search' => 'title']);
+Apollo::proteus()->media()->index($filters);
+Apollo::proteus()->media()->store($data);
+Apollo::proteus()->directories()->index($filters);
 ```
 
-The request now targets `GET /media/{mediaId}/metadata`.
+## Cambios de nombres
 
-### Module config shape is smaller
+| API 4.x | API 5 |
+| --- | --- |
+| `media()->upload($data)` | `media()->store($data)` |
+| `media()->delete($id)` | `media($id)->destroy()` |
+| `media()->lightPathUrl($id, $options)` | `media($id)->lightPath()->request($extension, $ttlSeconds)` |
+| `lightPath()->extendGrant($id, $ttl)` | `lightPath($id)->extend($ttl)` |
+| `lightPath()->deleteGrant($id)` | `lightPath($id)->revoke()` |
+| `directories()->grantApplication(...)` | `directories($id)->applicationGrants()->request(...)` |
+| `directories()->revokeApplicationGrant($id)` | `directories()->applicationGrants($id)->revoke()` |
 
-`Apollo::{module}()->config()` now returns only `base_url`. Consumers reading
-`base_url_env` must remove that access; environment-variable names remain
-documented and are resolved by `config/apollo.php`.
+No se conservan los nombres anteriores como aliases.
 
-### Apollo frontend route prefix is fixed
+## Autenticación
 
-The `apollo.frontend.route_prefix` setting was removed. SDK-owned web routes and
-the default published component endpoints always use `/_apollo`. Remove any
-prefix override or explicitly pass custom endpoints to `DirectoryTree` if the
-host provides its own controller routes.
+Elimina cualquier token explícito de las llamadas. Caronte obtiene el usuario actual. Los procesos sin sesión deben usar `asApplication()` solamente en endpoints que admiten autenticación de aplicación.
 
-### Dummy Ignis group data was removed
+Proteus ahora localiza automáticamente el directory application grant para media y LightPath. Elimina `directoryGrantId` de `thumbnail()` y de solicitudes LightPath.
 
-The production `Ometra\Apollo\Sdk\Test\DummyGroup` fixture no longer exists. A
-host with `APOLLO_IGNIS_GROUPS_ENABLED=true` must bind
-`IgnisGroupContract` to its own implementation.
-
-## v3.7.0
-
-No breaking changes were introduced in this release.
-
-## v3.4.0
-
-No breaking changes were introduced in this release.
-
-## v3.3.0
-
-No breaking changes were introduced in this release.
-
----
-
-## Apollo SDK migration
-
-This release completes the clean-cut migration to `ometra/apollo-sdk`. All consumers must use `config/apollo.php` and the modular API.
-
-Required module URL variables:
-
-- `PROTEUS_BASE_URL`
-- `PULSE_BASE_URL`
-- `FLARE_BASE_URL`
-- `IGNIS_BASE_URL`
-
-Example:
+## Metadata
 
 ```php
-use Ometra\Apollo\Sdk\Facades\Apollo;
-
-$media = Apollo::proteus()->media()->index(['type' => 'image']);
+Apollo::proteus()->media()->metadata()->values($key);
+Apollo::proteus()->media($mediaId)->metadata()->store($data);
+Apollo::proteus()->media($mediaId)->metadata()->update($data);
+Apollo::proteus()->media($mediaId)->metadata($key)->show();
+Apollo::proteus()->media($mediaId)->metadata($key)->destroy();
 ```
 
----
+El acceso de metadata a nivel de módulo y el helper separado de media fueron eliminados.
 
-### 1. Flat API removed
-
-Root resource methods are gone. Use `Apollo::proteus()->{resource}()->{action}()`.
-
----
-
-### 2. Legacy wrapper classes removed
-
-The old root entrypoint, facade, service provider, config file, API wrapper classes, and exception class are removed. Direct usage of the underlying HTTP client is rarely needed; prefer the module resources.
-
----
-
-### 3. Authentication remains Caronte-owned
-
-Apollo does not define authentication config. Caronte remains configured in its own SDK and Apollo reuses its HTTP helpers for application, group, user, and tenant headers.
-
----
-
-### 4. Tenant context
-
-The SDK reads the tenant ID from `Equidna\BeeHive\Tenancy\TenantContext` at
-request time. **You must set a tenant before calling any user-authenticated endpoint.**
+## Flare, Pulse e Ignis
 
 ```php
-use Equidna\BeeHive\Tenancy\TenantContext;
+Apollo::flare()->playlists($playlistId)->items()->index();
+Apollo::flare()->stations()->groups($groupUri)->show();
 
-app(TenantContext::class)->set('your-tenant-id');
+Apollo::pulse()->groups()->catalog()->index($filters);
+Apollo::pulse()->groups()->stationCache()->invalidate($groupUris);
+
+Apollo::ignis()->externalGroups($externalGroupId)->campaigns()->index();
+Apollo::ignis()->externalGroups($externalGroupId)->campaigns($campaignId)->show();
 ```
 
-Application-authenticated endpoints also include `X-Tenant-Id`
-when a tenant is active; they work without one but will be tenant-scoped when
-provided.
+Las campañas Ignis devuelven el envelope Caronte completo. El consumidor debe leer `['data']` cuando necesita solamente el contenido.
 
----
+## APIs eliminadas
 
-### 5. DB migrations removed
+- Helpers de creación y wrappers sin consumidores productivos.
+- Presets y content hits.
+- Actualización de permisos de directory application grants.
+- Configuración pública por módulo.
+- DTOs de campañas Ignis.
+- Backfill de Flare y su token resuelto almacenado.
+- Cualquier variante que acepte o nombre explícitamente un token de usuario.
 
-The service provider no longer publishes or runs any database migrations.
-If your application depended on Proteus migrations (e.g., `proteus_apps` table),
-remove those migrations from your project manually.
-
----
-
-### 6. Config structure
-
-`config/apollo.php` contains only module URL configuration. Re-publish the config after upgrading:
-
-```bash
-php artisan vendor:publish --tag=apollo-config --force
-```
-
----
-
-### 7. Partials (`DownloadMedia`, `PayloadFormatting`) removed
-
-These were internal helpers. Multipart formatting and download handling are now
-implemented inside Apollo module resources and are not part of the public API.
-
----
-
-### 8. Removed guide files
-
-`IMPLEMENTATION_GUIDE.md` and `PROTEUS_APPS_GUIDE.md` are deleted. Refer to:
-
-- `README.md` for installation, configuration, and usage.
-- `docs/api-contract.md` for the full endpoint contract.
+Ignis no usa un helper de URL de descarga; debe leer `apollo.modules.proteus.base_url` directamente.

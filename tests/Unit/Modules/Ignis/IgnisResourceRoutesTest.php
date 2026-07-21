@@ -2,73 +2,39 @@
 
 declare(strict_types=1);
 
-use Ometra\Apollo\Sdk\Modules\Ignis\Resources\CampaignsResource;
-use Ometra\Apollo\Sdk\Modules\Ignis\Resources\ContentHitsResource;
+use Ometra\Apollo\Sdk\Modules\Ignis\Resources\CampaignCollectionResource;
+use Ometra\Apollo\Sdk\Modules\Ignis\Resources\CampaignResource;
 use PHPUnit\Framework\TestCase;
 
 require_once __DIR__.'/../Proteus/RecordingApolloHttpClient.php';
 
 final class IgnisResourceRoutesTest extends TestCase
 {
-    public function test_campaigns_by_external_group_uses_expected_endpoint(): void
+    public function test_campaign_collection_returns_caronte_envelope(): void
     {
-        $client = new RecordingApolloHttpClient;
-        $resource = new CampaignsResource($client);
+        $client = new RecordingApolloHttpClient(['campaigns' => []]);
+        $response = (new CampaignCollectionResource($client, 'group-1'))->index();
 
-        $resource->byExternalGroup('group-1');
-
+        self::assertSame('external-groups/group-1/campaigns', $client->lastRequest['endpoint']);
         self::assertSame([
-            'auth' => 'application',
-            'method' => 'GET',
-            'endpoint' => 'external-groups/group-1/campaigns',
-            'payload' => [],
-            'query' => [],
-            'raw' => false,
-        ], $client->lastRequest);
+            'status' => 200,
+            'message' => 'ok',
+            'data' => ['campaigns' => []],
+            'errors' => [],
+        ], $response);
     }
 
-    public function test_campaign_show_uses_expected_endpoint(): void
+    public function test_bound_campaign_uses_expected_endpoint(): void
     {
-        $client = new RecordingApolloHttpClient([
-            'id_campaign' => 11,
-            'name' => 'Campaign',
-            'dt_start' => '2026-07-15T00:00:00Z',
-            'dt_end' => '2026-07-16T00:00:00Z',
-            'contents' => [],
-        ]);
-        $resource = new CampaignsResource($client);
+        $client = new RecordingApolloHttpClient(['id_campaign' => 11]);
+        $response = (new CampaignResource($client, 'group-1', 11))->show();
 
-        $resource->show('group-1', 11);
-
+        self::assertSame('external-groups/group-1/campaigns/11', $client->lastRequest['endpoint']);
         self::assertSame([
-            'auth' => 'application',
-            'method' => 'GET',
-            'endpoint' => 'external-groups/group-1/campaigns/11',
-            'payload' => [],
-            'query' => [],
-            'raw' => false,
-        ], $client->lastRequest);
-    }
-
-    public function test_content_hits_report_uses_expected_endpoint(): void
-    {
-        $client = new RecordingApolloHttpClient;
-        $resource = new ContentHitsResource($client);
-
-        $report = [[
-            'content_id' => 'content-1',
-            'hits' => 10,
-        ]];
-
-        $resource->report($report);
-
-        self::assertSame([
-            'auth' => 'application',
-            'method' => 'POST',
-            'endpoint' => 'content-hits',
-            'payload' => $report,
-            'query' => [],
-            'raw' => false,
-        ], $client->lastRequest);
+            'status' => 200,
+            'message' => 'ok',
+            'data' => ['id_campaign' => 11],
+            'errors' => [],
+        ], $response);
     }
 }

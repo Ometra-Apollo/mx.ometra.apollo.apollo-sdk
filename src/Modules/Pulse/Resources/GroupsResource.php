@@ -10,25 +10,19 @@ final class GroupsResource
 {
     public function __construct(private readonly ApolloHttpClient $client) {}
 
-    /** @param array<string, mixed> $query */
-    public function index(array $query = []): array
+    /** @param array<string, mixed> $filters */
+    public function index(array $filters = []): array
     {
-        return $this->client->applicationRequest('GET', 'ignis/groups', query: $query);
+        return $this->client->applicationRequest('GET', 'ignis/groups', query: $filters);
     }
 
-    /** @param array<string, mixed> $query */
-    public function catalog(array $query = []): array
+    public function catalog(): GroupCatalogResource
     {
-        return $this->client->applicationRequest('GET', 'groups/catalog', query: $query);
+        return new GroupCatalogResource($this->client);
     }
 
-    /** @param array<int, string> $uri_groups */
-    public function invalidateStationCache(array $uri_groups): array
+    public function stationCache(): GroupStationCacheResource
     {
-        return $this->client->applicationRequest(
-            'POST',
-            'groups/station-cache/invalidate',
-            ['uri_groups' => array_values($uri_groups)],
-        );
+        return new GroupStationCacheResource($this->client);
     }
 }

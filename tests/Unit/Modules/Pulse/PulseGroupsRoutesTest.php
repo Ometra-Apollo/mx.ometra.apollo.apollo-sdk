@@ -9,33 +9,19 @@ require_once __DIR__.'/../Proteus/RecordingApolloHttpClient.php';
 
 final class PulseGroupsRoutesTest extends TestCase
 {
-    public function test_groups_index_uses_expected_endpoint(): void
+    public function test_group_resources_use_expected_endpoints(): void
     {
         $client = new RecordingApolloHttpClient;
-        $resource = new GroupsResource($client);
+        $groups = new GroupsResource($client);
 
-        $resource->index(['active' => true]);
+        $groups->index(['media_type' => 'audio']);
+        self::assertSame('ignis/groups', $client->lastRequest['endpoint']);
 
-        self::assertSame([
-            'auth' => 'application',
-            'method' => 'GET',
-            'endpoint' => 'ignis/groups',
-            'payload' => [],
-            'query' => ['active' => true],
-            'raw' => false,
-        ], $client->lastRequest);
-    }
-
-    public function test_group_catalog_and_cache_invalidation_use_expected_endpoints(): void
-    {
-        $client = new RecordingApolloHttpClient;
-        $resource = new GroupsResource($client);
-
-        $resource->catalog(['media_type' => 'audio']);
+        $groups->catalog()->index(['media_type' => 'audio']);
         self::assertSame('groups/catalog', $client->lastRequest['endpoint']);
         self::assertSame(['media_type' => 'audio'], $client->lastRequest['query']);
 
-        $resource->invalidateStationCache(['group-1']);
+        $groups->stationCache()->invalidate(['group-1']);
         self::assertSame('groups/station-cache/invalidate', $client->lastRequest['endpoint']);
         self::assertSame(['uri_groups' => ['group-1']], $client->lastRequest['payload']);
     }

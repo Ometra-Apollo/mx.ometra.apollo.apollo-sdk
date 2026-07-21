@@ -6,19 +6,24 @@ namespace Ometra\Apollo\Sdk\Modules\Proteus\Resources;
 
 use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
 
-final class CategoriesResource
+final class MediaCollectionResource
 {
     public function __construct(private readonly ApolloHttpClient $client) {}
 
     /** @param array<string, mixed> $filters */
     public function index(array $filters = []): array
     {
-        return $this->client->applicationRequest('GET', 'categories', query: $filters);
+        return $this->client->userRequest('GET', 'media', query: $filters);
     }
 
     /** @param array<string, mixed> $data */
     public function store(array $data): array
     {
-        return $this->client->applicationRequest('POST', 'categories', payload: $data);
+        return $this->client->userRequest('POST', 'media', payload: $data);
+    }
+
+    public function metadata(): MediaMetadataValuesResource
+    {
+        return new MediaMetadataValuesResource($this->client);
     }
 }

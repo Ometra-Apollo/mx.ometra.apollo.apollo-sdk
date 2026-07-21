@@ -7,6 +7,7 @@ use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Facade;
 use Ometra\Apollo\Sdk\Core\Config\ModuleConfigResolver;
 use Ometra\Apollo\Sdk\Modules\Flare\FlareModule;
+use Ometra\Apollo\Sdk\Modules\Flare\Resources\PlaylistsResource;
 use Ometra\Apollo\Sdk\Modules\Flare\Resources\StationsResource;
 use PHPUnit\Framework\TestCase;
 
@@ -44,5 +45,7 @@ final class FlareApiShapeTest extends TestCase
         $module = new FlareModule(new ModuleConfigResolver);
 
         self::assertInstanceOf(StationsResource::class, $module->stations());
+        self::assertInstanceOf(PlaylistsResource::class, $module->playlists('playlist-1'));
+        self::assertFalse(method_exists(FlareModule::class, 'config'));
     }
 }

@@ -1,75 +1,15 @@
 # Apollo SDK
 
-Cliente Laravel/PHP modular para consumir Proteus, Pulse, Flare e Ignis con autenticacion compartida de Caronte.
+SDK modular para Laravel/PHP que consume Proteus, Pulse, Flare e Ignis con la autenticación compartida de Caronte.
 
-## Instalacion
-
-```bash
-composer require ometra/apollo-sdk
-```
-
-Publica la configuracion si necesitas sobrescribir las URLs de modulos:
+## Instalación
 
 ```bash
+composer require ometra/apollo-sdk:^5.0
 php artisan vendor:publish --tag=apollo-config
 ```
 
-El archivo publicado es `config/apollo.php`.
-
-## Paginas de error
-
-Apollo registra automaticamente paginas HTML para los errores HTTP comunes de
-Laravel (`401`, `403`, `404`, `419`, `429`, `500`, `503`). El SDK agrega sus
-vistas como fallback, por lo que cualquier archivo local en
-`resources/views/errors` mantiene prioridad.
-
-Para deshabilitar este fallback:
-
-```env
-APOLLO_ERROR_PAGES_ENABLED=false
-```
-
-Si necesitas personalizar las vistas dentro de la app host, publicalas con:
-
-```bash
-php artisan vendor:publish --tag=apollo-error-pages
-```
-
-Tambien puedes publicar configuracion y paginas de error juntas:
-
-```bash
-php artisan vendor:publish --tag=apollo
-```
-
-## AppMenu compartido
-
-El SDK incluye el menu compartido de la suite en `resources/js/shared/AppMenu`.
-Publicalo en una app host con:
-
-```bash
-php artisan vendor:publish --tag=apollo-app-menu
-```
-
-Tambien se publica con el tag agregado `apollo`.
-
-## DirectoryTree compartido
-
-El SDK incluye el arbol de directorios en `resources/js/shared/DirectoryTree`.
-Publicalo en una app host con:
-
-```bash
-php artisan vendor:publish --tag=apollo-directory-tree
-```
-
-Tambien se publica con el tag agregado `apollo`.
-
-Documentacion detallada de componentes UI:
-
-- `docs/ui-components.md`
-
-## Configuracion
-
-Apollo solo configura URLs por modulo; la autenticacion sigue viviendo en el SDK de Caronte.
+La configuración se publica en `config/apollo.php`:
 
 ```env
 PROTEUS_BASE_URL=https://proteus.example.com/api
@@ -78,239 +18,180 @@ FLARE_BASE_URL=https://flare.example.com/api
 IGNIS_BASE_URL=https://ignis.example.com/api
 ```
 
-Las llamadas HTTP usan el transporte de Caronte 7.1, incluyendo uploads multipart
-y respuestas binarias sin parsing. Segun el tipo de request agregan:
+## Autenticación
 
-- `X-Group-Token` cuando existe una aplicacion grupal; en caso contrario, `X-Application-Token`
-- `X-User-Token` en llamadas de usuario
-- `X-Tenant-Id` desde `TenantContext` cuando existe
+Apollo usa el transporte de `ometra/caronte-sdk`. Caronte obtiene el tenant, la aplicación y el usuario actuales; ningún método acepta tokens explícitos.
 
-## Uso modular
+Las operaciones usan autenticación de usuario por defecto. En jobs o procesos sin sesión, selecciona autenticación de aplicación:
 
 ```php
-use Ometra\Apollo\Sdk\Facades\Apollo;
+$proteus = Apollo::proteus()->asApplication();
 
-$directories = Apollo::proteus()->directories()->index();
-
-$media = Apollo::proteus()->media()->upload([
-    'type' => 'image',
-    'directory_id' => $directoryId,
-    'media' => [$request->file('image')],
-    'metadata' => [
-        'source' => 'apollo',
-    ],
-]);
-
-Apollo::proteus()->media()->setMetadata($mediaId, [
-    'metadata' => [
-        'title' => 'Hero image',
-    ],
-]);
-
-$metadata = Apollo::proteus()->metadata()->index($mediaId, [
-    'search' => 'title',
-]);
-
-$images = Apollo::proteus()->media()->index(['type' => 'image']);
-
-$lightPath = Apollo::proteus()->media()->lightPathUrl($mediaId, [
-    'ext' => 'mp4',
-    'url_ttl_seconds' => 3600,
-]);
-
-$stations = Apollo::flare()->stations()->index(['country' => 'mx']);
-
-$campaigns = Apollo::ignis()->campaigns()->byGroup('group-1');
-$campaign = Apollo::ignis()->campaigns()->show('group-1', 11);
-
-Apollo::ignis()->contentHits()->report([
-    ['content_id' => 'content-1', 'hits' => 10],
-]);
-
-$groups = Apollo::pulse()->groups()->index();
+$media = $proteus->media()->index(['type' => 'image']);
+$grant = $proteus->lightPath($grantId)->extend(3600);
 ```
 
-### URLs LightPath para media
+`asApplication()` no concede permisos adicionales. Proteus resuelve el directory application grant que cubre al media usando el tenant y la aplicación de Caronte.
 
-Antes de emitir URLs desde un proceso de aplicación, un usuario puede delegar
-acceso a un directorio. `write` incluye lectura y modificación, pero nunca
-eliminación:
+## Proteus
+
+### Media
+
+```php
+$items = Apollo::proteus()->media()->index(['type' => 'image']);
+
+$created = Apollo::proteus()->media()->store([
+    'directory_id' => $directoryId,
+    'media' => [$request->file('image')],
+    'metadata' => ['source' => 'apollo'],
+]);
+
+$media = Apollo::proteus()->media($mediaId);
+
+$detail = $media->show();
+$download = $media->download('mp4');
+$thumbnail = $media->thumbnail();
+$deleted = $media->destroy();
+```
+
+`show()` no admite filtros. `download()` y `thumbnail()` devuelven `Illuminate\Http\Client\Response`; los demás métodos devuelven el envelope JSON de Caronte.
+
+### Metadata
+
+Los valores únicos de una clave se consultan como operación de colección:
+
+```php
+$values = Apollo::proteus()->media()->metadata()->values('artist');
+```
+
+La metadata editable pertenece a un media:
+
+```php
+$metadata = Apollo::proteus()->media($mediaId)->metadata();
+
+$metadata->store(['metadata' => ['artist' => 'Ometra']]);
+$metadata->update(['metadata' => ['artist' => 'Apollo']]);
+
+$artist = Apollo::proteus()->media($mediaId)->metadata('artist')->show();
+Apollo::proteus()->media($mediaId)->metadata('artist')->destroy();
+```
+
+### LightPath
+
+La solicitud es síncrona: Proteus devuelve el grant y la URL ya emitidos.
+
+```php
+$response = Apollo::proteus()
+    ->media($mediaId)
+    ->lightPath()
+    ->request(extension: 'mp4', ttlSeconds: 3600);
+
+$grantId = $response['data']['id_lightpath_grant'];
+
+Apollo::proteus()->lightPath($grantId)->extend(3600);
+Apollo::proteus()->lightPath($grantId)->revoke();
+```
+
+En modo aplicación no se pasa un directory grant: Proteus lo localiza automáticamente.
+
+### Directorios y application grants
 
 ```php
 use Ometra\Apollo\Sdk\Modules\Proteus\Enums\DirectoryApplicationPermission;
 
-$directoryGrant = Apollo::proteus()->directories()->grantApplication(
-    $directoryId,
-    'flare:playlist:42',
-    DirectoryApplicationPermission::READ,
-);
+$directories = Apollo::proteus()->directories()->index();
+$created = Apollo::proteus()->directories()->store($data);
 
-// En un comando con un token de usuario delegado:
-$directoryGrant = Apollo::proteus()->directories()->grantApplicationWithUserToken(
-    $directoryId,
-    'flare:playlist:42',
-    DirectoryApplicationPermission::READ,
-    $serviceUserToken,
-);
+$directory = Apollo::proteus()->directories($directoryId);
+$detail = $directory->show();
+$directory->destroy();
+
+$grant = $directory
+    ->applicationGrants()
+    ->request(
+        clientReference: 'flare:playlist:42',
+        permission: DirectoryApplicationPermission::READ,
+    );
+
+Apollo::proteus()
+    ->asApplication()
+    ->directories()
+    ->applicationGrants($applicationGrantId)
+    ->revoke();
 ```
 
-LightPath se integra desde el recurso de media de Proteus porque Proteus es la
-autoridad de permisos y formatos. El SDK solo solicita una URL temporal; no
-valida tokens ni habla con nodos LightPath.
+Crear un grant requiere el usuario actual de Caronte. Revocarlo admite autenticación de aplicación.
+
+### Categorías
 
 ```php
-$response = Apollo::proteus()->media()->lightPathUrl($mediaId, [
-    'ext' => 'mp4',
-    'url_ttl_seconds' => 3600,
-    'id_directory_application_grant' => $directoryGrant['data']['id_directory_application_grant'],
-]);
-
-$url = $response['data']['url'];
+Apollo::proteus()->categories()->index();
+Apollo::proteus()->categories()->store($data);
 ```
 
-La respuesta incluye `id_lightpath_grant` (UUID), `url`, `format`,
-`url_expires_at`, `renewable_from` y `renewable_until`.
-
-Opciones:
-
-- `ext`: formato a entregar. Si se omite, Proteus usa el formato default.
-- `url_ttl_seconds`: vigencia de la URL. Proteus aplica su maximo configurado.
-
-El owner puede extender o eliminar el grant. AppToken y GroupToken validos del
-mismo tenant tambien pueden administrarlo, aunque no pueden crear grants:
+## Flare
 
 ```php
-$grantId = $response['data']['id_lightpath_grant'];
+$playlist = Apollo::flare()->playlists($playlistId)->show();
+$items = Apollo::flare()->playlists($playlistId)->items()->index();
 
-Apollo::proteus()->lightPath()->extendGrant($grantId, 3600);
-Apollo::proteus()->lightPath()->deleteGrant($grantId);
-
-// En un proceso autenticado con AppToken:
-Apollo::proteus()->asApplication()->lightPath()->extendGrant($grantId, 3600);
+$group = Apollo::flare()->stations()->groups($groupUri)->show();
+Apollo::flare()->stations()->groups($groupUri)->destroy();
+Apollo::flare()->stations()->groups()->invalidateCache();
 ```
 
-### Miniaturas de media
-
-Para solicitar la miniatura de un recurso de media, usa `MediaResource::thumbnail()`.
+## Pulse
 
 ```php
-$response = Apollo::proteus()->media()->thumbnail($mediaId);
+$groups = Apollo::pulse()->groups()->index($filters);
+$catalog = Apollo::pulse()->groups()->catalog()->index($filters);
+Apollo::pulse()->groups()->stationCache()->invalidate($groupUris);
 ```
 
-Esta llamada aprovecha el mismo endpoint de descarga y solicita el formato
-`thumb` mediante `ext=thumb`.
-
-La URL generada tiene forma `https://lightpath.example.com/m/{token}`. El token
-opaco es la unica credencial y quien tenga la URL puede consumirla hasta
-`url_expires_at`.
-
-### Uso en jobs y contextos sin usuario
-
-Cuando necesites hacer llamadas desde un job, un comando o cualquier contexto donde no haya sesion de usuario activa, usa `asApplication()`. Esto fuerza a todas las operaciones del modulo a usar autenticacion de aplicacion (sin `X-User-Token`) en lugar de autenticacion de usuario:
+## Ignis
 
 ```php
-// En un job — sin sesion HTTP, sin token de usuario
-$proteus = Apollo::proteus()->asApplication();
+$campaigns = Apollo::ignis()
+    ->externalGroups($externalGroupId)
+    ->campaigns()
+    ->index();
 
-$proteus->media()->index(['type' => 'audio']);
-$proteus->directories()->show($directoryId);
+$campaign = Apollo::ignis()
+    ->externalGroups($externalGroupId)
+    ->campaigns($campaignId)
+    ->show();
 ```
 
-Tambien puedes inyectar el entrypoint principal:
+Ignis devuelve el envelope completo de Caronte; el SDK no lo desempaqueta ni crea DTOs de campaña.
 
-```php
-use Ometra\Apollo\Sdk\Apollo;
+## Páginas de error
 
-public function __invoke(Apollo $apollo): array
-{
-    return $apollo->proteus()->media()->index(['type' => 'image']);
-}
-```
-
-Pulse expone `groups()->index()` sobre el endpoint `ignis/groups`.
-
-## Exposicion de grupos Ignis (inbound, opt-in)
-
-Apollo es solo outbound por defecto. Cuando lo habilitas, el SDK registra una ruta inbound `GET /{prefix}/groups` en la app host para que clientes externos (incluido Pulse) puedan descubrir los grupos de la app. No agrega llamadas HTTP hacia Ignis.
-
-### Habilitar la ruta
-
-La ruta esta deshabilitada por defecto. Habilitala con una variable de entorno:
+Apollo registra vistas fallback para `401`, `403`, `404`, `419`, `429`, `500` y `503`. Las vistas de la aplicación host conservan prioridad.
 
 ```env
-APOLLO_IGNIS_GROUPS_ENABLED=true
+APOLLO_ERROR_PAGES_ENABLED=false
 ```
 
-O publica la configuracion y edita `config/apollo.php`:
-
-```php
-'ignis_groups' => [
-    'enabled' => true,
-    'route_prefix' => 'api/ignis',
-    'middleware' => ['caronte.application:tenant_required'],
-],
+```bash
+php artisan vendor:publish --tag=apollo-error-pages
 ```
 
-Con `enabled=false` (por defecto) no se registra ninguna ruta y `GET /api/ignis/groups` devuelve `404`.
+## Componentes compartidos e integración inbound
 
-### Proveer la implementacion del contrato
+Los componentes `AppMenu` y `DirectoryTree` se publican con `apollo-app-menu` y `apollo-directory-tree`. Consulta [docs/ui-components.md](docs/ui-components.md).
 
-Para exponer grupos reales, crea una clase que implemente `Ometra\Apollo\Sdk\Contracts\IgnisGroupContract`:
+La ruta inbound opcional de grupos Ignis se habilita con `APOLLO_IGNIS_GROUPS_ENABLED=true`. La aplicación host debe implementar `Ometra\Apollo\Sdk\Contracts\IgnisGroupContract`; su configuración vive en `config/apollo.php`.
 
-```php
-namespace App\Services;
+## Contrato y migración
 
-use Ometra\Apollo\Sdk\Contracts\IgnisGroupContract;
-use Ometra\Apollo\Sdk\DTO\ExternalGroupDTO;
+- [Contrato HTTP y API pública](docs/api-contract.md)
+- [Migración breaking a v5](BREAKING_CHANGES.md)
+- [Auditoría de integraciones](docs/integration-audit.md)
 
-final class HostGroupProvider implements IgnisGroupContract
-{
-    public function getGroups(): array
-    {
-        return [
-            ExternalGroupDTO::fromArray([
-                'name' => 'Mi grupo',
-                'external_id' => 'grupo-1',
-                'media_type' => ['video', 'audio'],
-                'play_modifiers' => ['frequency' => 2],
-            ]),
-        ];
-    }
-}
-```
-
-Registra esa clase en un service provider de la app host:
-
-```php
-use App\Services\HostGroupProvider;
-use Ometra\Apollo\Sdk\Contracts\IgnisGroupContract;
-
-$this->app->bind(IgnisGroupContract::class, HostGroupProvider::class);
-```
-
-Si `APOLLO_IGNIS_GROUPS_ENABLED=true` y la app host no registra el contrato, el SDK falla al arrancar para no exponer datos dummy por accidente.
-
-### Prefijo de ruta y middleware
-
-El prefijo por defecto es `api/ignis` (la ruta queda en `GET /api/ignis/groups`). Cambialo con `route_prefix`:
-
-```php
-'ignis_groups' => [
-    'enabled' => true,
-    'route_prefix' => 'api/custom/ignis', // GET /api/custom/ignis/groups
-],
-```
-
-La ruta esta protegida por el middleware `caronte.application:tenant_required`. Las peticiones sin contexto de tenant valido son rechazadas por Caronte (401/403) antes de llegar al controlador. Puedes overridear la pila de middleware con la clave `middleware`.
-
-## API
-
-El contrato completo esta en [docs/api-contract.md](docs/api-contract.md).
-
-## Pruebas
+## Validación
 
 ```bash
 composer test
+composer lint
+composer analyse
 ```
-
-La suite valida identidad Apollo, configuracion modular, autenticacion Caronte, rutas Proteus, ausencia de API flat y limpieza legacy.

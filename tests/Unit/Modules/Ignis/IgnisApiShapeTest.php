@@ -7,8 +7,9 @@ use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Facade;
 use Ometra\Apollo\Sdk\Core\Config\ModuleConfigResolver;
 use Ometra\Apollo\Sdk\Modules\Ignis\IgnisModule;
-use Ometra\Apollo\Sdk\Modules\Ignis\Resources\CampaignsResource;
-use Ometra\Apollo\Sdk\Modules\Ignis\Resources\ContentHitsResource;
+use Ometra\Apollo\Sdk\Modules\Ignis\Resources\CampaignCollectionResource;
+use Ometra\Apollo\Sdk\Modules\Ignis\Resources\CampaignResource;
+use Ometra\Apollo\Sdk\Modules\Ignis\Resources\ExternalGroupResource;
 use PHPUnit\Framework\TestCase;
 
 final class IgnisApiShapeTest extends TestCase
@@ -40,11 +41,16 @@ final class IgnisApiShapeTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_ignis_module_exposes_resources(): void
+    public function test_ignis_module_exposes_bound_external_group_resources(): void
     {
         $module = new IgnisModule(new ModuleConfigResolver);
 
-        self::assertInstanceOf(CampaignsResource::class, $module->campaigns());
-        self::assertInstanceOf(ContentHitsResource::class, $module->contentHits());
+        $group = $module->externalGroups('group-1');
+        self::assertInstanceOf(ExternalGroupResource::class, $group);
+        self::assertInstanceOf(CampaignCollectionResource::class, $group->campaigns());
+        self::assertInstanceOf(CampaignResource::class, $group->campaigns(11));
+        self::assertFalse(method_exists(IgnisModule::class, 'campaigns'));
+        self::assertFalse(method_exists(IgnisModule::class, 'contentHits'));
+        self::assertFalse(method_exists(IgnisModule::class, 'config'));
     }
 }
