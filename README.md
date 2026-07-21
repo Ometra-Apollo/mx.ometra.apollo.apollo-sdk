@@ -2,6 +2,8 @@
 
 SDK modular para Laravel/PHP que consume Proteus, Pulse, Flare e Ignis con la autenticación compartida de Caronte.
 
+Requiere PHP 8.4 o posterior.
+
 ## Instalación
 
 ```bash

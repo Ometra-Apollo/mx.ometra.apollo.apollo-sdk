@@ -29,6 +29,7 @@ class ApolloHttpClient extends CaronteHttpClient
         if ($this->asApplication) {
             return $this->applicationRequest($method, $endpoint, $payload, $query);
         }
+
         return parent::userRequest($method, $endpoint, $payload, $query);
     }
 
