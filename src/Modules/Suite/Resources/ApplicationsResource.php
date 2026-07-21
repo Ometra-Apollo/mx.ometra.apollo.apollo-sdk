@@ -10,7 +10,6 @@ final class ApplicationsResource
 {
     public function __construct(private readonly ApolloHttpClient $client) {}
 
-
     public function user(): mixed
     {
         return $this->client->userRequest('GET', 'applications/user');

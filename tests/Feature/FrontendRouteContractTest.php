@@ -29,7 +29,7 @@ final class FrontendRouteContractTest extends TestCase
         self::assertStringNotContainsString('function buildAppUrl', $config);
         self::assertIsString($utils);
         self::assertSame(1, substr_count($utils, 'function buildAppUrl'));
-        self::assertStringContainsString("/_apollo/suite/applications/user", $utils);
+        self::assertStringContainsString('/_apollo/suite/applications/user', $utils);
         self::assertIsString($index);
         self::assertStringContainsString("export { buildAppUrl } from './appMenu.utils'", $index);
     }

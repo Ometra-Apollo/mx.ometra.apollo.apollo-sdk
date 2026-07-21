@@ -27,6 +27,7 @@ verbs. No compatibility aliases are included.
 - Return the full Caronte envelope from every JSON operation.
 - Let Proteus resolve application directory grants from Caronte tenant and
   application context.
+- Require PHP 8.4 or newer and validate the SDK on PHP 8.4 and 8.5 in CI.
 
 ### Removed
 

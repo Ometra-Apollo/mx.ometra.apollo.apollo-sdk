@@ -2,6 +2,7 @@
 
 Paquete: `ometra/apollo-sdk`
 Configuración: `config/apollo.php`
+Runtime: PHP 8.4 o posterior
 
 Apollo SDK v5 organiza la API por colecciones, recursos ligados y subrecursos de dominio. Es una actualización breaking sin aliases.
 

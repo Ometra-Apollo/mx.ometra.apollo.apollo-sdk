@@ -38,6 +38,18 @@ final class PackageIdentityTest extends TestCase
         self::assertArrayNotHasKey('guzzlehttp/guzzle', $composer['require']);
     }
 
+    public function test_package_and_ci_require_php_84_or_newer(): void
+    {
+        $composer = $this->readComposer();
+        $workflow = file_get_contents(__DIR__.'/../../.github/workflows/ci.yml');
+
+        self::assertSame('^8.4', $composer['require']['php']);
+        self::assertIsString($workflow);
+        self::assertStringContainsString('php: ["8.4", "8.5"]', $workflow);
+        self::assertStringNotContainsString('"8.2"', $workflow);
+        self::assertStringNotContainsString('"8.3"', $workflow);
+    }
+
     /**
      * @return array<string, mixed>
      */
