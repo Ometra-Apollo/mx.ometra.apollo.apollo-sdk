@@ -4,26 +4,26 @@ import type { RefObject } from 'react';
 
 import { useDropdownCtx } from '@/Components/ui/Dropdown/context';
 
-import { APP_META, type AppName } from './appMenu.config';
+import { getAppMeta, type SuiteApplication } from './appMenu.config';
 import { buildAppUrl } from './appMenu.utils';
 
 type AppMenuTriggerProps = {
-    app: AppName | null;
+    app: SuiteApplication | null;
     className?: string;
 };
 
 export function AppMenuTrigger({ app, className = '' }: AppMenuTriggerProps) {
-    const { open, setOpen, disabled, triggerRef } = useDropdownCtx<AppName>();
+    const { open, setOpen, disabled, triggerRef } = useDropdownCtx<string>();
 
     if (!app) return null;
 
-    const meta = APP_META[app];
+    const meta = getAppMeta(app.name);
     const Icon = meta.icon;
 
     const handleHomeClick = () => {
         if (disabled) return;
 
-        window.location.href = buildAppUrl(meta.url);
+        window.location.href = buildAppUrl(app.url);
     };
 
     return (
@@ -32,7 +32,7 @@ export function AppMenuTrigger({ app, className = '' }: AppMenuTriggerProps) {
                 type="button"
                 onClick={handleHomeClick}
                 disabled={disabled}
-                aria-label={`Ir al inicio de ${app}`}
+                aria-label={`Ir al inicio de ${app.name}`}
                 className={cn('-mt-3 ml-2 flex shrink-0 items-center justify-center', disabled ? 'cursor-not-allowed' : 'cursor-pointer')}
             >
                 <Icon aria-hidden="true" width={33} height={44} className="shrink-0 transition-transform hover:scale-105" />
@@ -50,7 +50,7 @@ export function AppMenuTrigger({ app, className = '' }: AppMenuTriggerProps) {
                     disabled ? 'cursor-not-allowed' : 'cursor-pointer',
                 )}
             >
-                <span className="truncate text-left text-2xl">{app}</span>
+                <span className="truncate text-left text-2xl">{app.name}</span>
 
                 <ChevronDown
                     width={16}

@@ -1,13 +1,18 @@
-import { ApolloIcon, ArrowRightLeftIcon, FlareIcon, HomeIcon, IgnisIcon, NewWindowIcon, ProteusIcon, SonusIcon as PulseIcon } from '@/Components';
+import { ArrowRightLeftIcon, HomeIcon, NewWindowIcon } from '@/Components';
 import type { ComponentType, ReactNode, SVGProps } from 'react';
+import { AerisIcon, ApolloIcon, FlareIcon, IgnisIcon, ProteusIcon, PulseIcon } from './appMenu.icons';
 
-export const APP_NAMES = ['Proteus', 'Flare', 'Ignis', 'Pulse', 'Apollo'] as const;
-
-export type AppName = (typeof APP_NAMES)[number];
+export type AppName = string;
 
 export type AppIcon = ComponentType<SVGProps<SVGSVGElement>>;
 
 export type AppAction = 'switch' | 'newWindow' | 'home';
+
+export type SuiteApplication = {
+    cn: string;
+    name: AppName;
+    url: string;
+};
 
 export type AppMeta = {
     icon: AppIcon;
@@ -15,8 +20,16 @@ export type AppMeta = {
     hoverKey: 'proteus' | 'flare' | 'ignis' | 'pulse' | 'apollo';
     iconColor: string;
     actions: AppAction[];
-    url: string;
 };
+
+function FallbackAppIcon(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+            <rect x="6" y="6" width="32" height="32" rx="16" fill="currentColor" opacity="0.15" />
+            <path d="M16 16h5v5h-5zm7 0h5v5h-5zm-7 7h5v5h-5zm7 0h5v5h-5z" fill="currentColor" />
+        </svg>
+    );
+}
 
 export const ACTION_ICON: Record<AppAction, ReactNode> = {
     switch: <ArrowRightLeftIcon width={24} height={24} />,
@@ -24,16 +37,41 @@ export const ACTION_ICON: Record<AppAction, ReactNode> = {
     home: <HomeIcon width={24} height={24} />,
 };
 
-export const APPS_ORDER: AppName[] = [...APP_NAMES];
+export const DEFAULT_APPS_ORDER = [
+    'Aeris',
+    'Proteus',
+    'Flare',
+    'Ignis',
+    'Pulse',
+    'Apollo',
+] as const;
 
-export const APP_META: Record<AppName, AppMeta> = {
+export const APP_NAMES = DEFAULT_APPS_ORDER;
+
+export const APPS_ORDER: AppName[] = [...DEFAULT_APPS_ORDER];
+
+const DEFAULT_APP_META: AppMeta = {
+    icon: FallbackAppIcon,
+    a11y: 'APP',
+    hoverKey: 'apollo',
+    iconColor: 'text-black',
+    actions: ['newWindow'],
+};
+
+export const APP_META: Record<string, AppMeta> = {
+    Aeris: {
+        icon: AerisIcon,
+        a11y: 'AERIS',
+        hoverKey: 'apollo',
+        iconColor: 'text-[#826717]',
+        actions: ['newWindow'],
+    },
     Proteus: {
         icon: ProteusIcon,
         a11y: 'PROTEUS',
         hoverKey: 'proteus',
         iconColor: 'text-foreground',
         actions: ['newWindow'],
-        url: 'proteus.apollo.ometra.mx',
     },
     Flare: {
         icon: FlareIcon,
@@ -41,7 +79,6 @@ export const APP_META: Record<AppName, AppMeta> = {
         hoverKey: 'flare',
         iconColor: 'text-[#540863]',
         actions: ['newWindow'],
-        url: 'flare.apollo.ometra.mx',
     },
     Ignis: {
         icon: IgnisIcon,
@@ -49,7 +86,6 @@ export const APP_META: Record<AppName, AppMeta> = {
         hoverKey: 'ignis',
         iconColor: 'text-[#B2620C]',
         actions: ['newWindow'],
-        url: 'ignis.apollo.ometra.mx',
     },
     Pulse: {
         icon: PulseIcon,
@@ -57,7 +93,6 @@ export const APP_META: Record<AppName, AppMeta> = {
         hoverKey: 'pulse',
         iconColor: 'text-[#4A7E8C]',
         actions: ['newWindow'],
-        url: 'pulse.apollo.ometra.mx',
     },
     Apollo: {
         icon: ApolloIcon,
@@ -65,6 +100,12 @@ export const APP_META: Record<AppName, AppMeta> = {
         hoverKey: 'apollo',
         iconColor: 'text-black',
         actions: ['home'],
-        url: 'apollo.ometra.mx',
     },
 };
+
+export function getAppMeta(appName: AppName): AppMeta {
+    return APP_META[appName] ?? {
+        ...DEFAULT_APP_META,
+        a11y: appName.toUpperCase(),
+    };
+}

@@ -6,6 +6,9 @@ $env = static fn (string $key, ?string $default = null): ?string => $_ENV[$key] 
 
 return [
     'modules' => [
+        'suite' => [
+            'base_url' => $env('APOLLO_BASE_URL') ?? (($appUrl = $env('APP_URL')) ? rtrim($appUrl, '/').'/api' : null),
+        ],
         'proteus' => [
             'base_url' => $env('PROTEUS_BASE_URL'),
         ],
