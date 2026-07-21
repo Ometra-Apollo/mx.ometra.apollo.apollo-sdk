@@ -13,6 +13,7 @@ use Ometra\Apollo\Sdk\Modules\Flare\FlareModule;
 use Ometra\Apollo\Sdk\Modules\Ignis\IgnisModule;
 use Ometra\Apollo\Sdk\Modules\Proteus\ProteusModule;
 use Ometra\Apollo\Sdk\Modules\Pulse\PulseModule;
+use Ometra\Apollo\Sdk\Modules\Suite\SuiteModule;
 use RuntimeException;
 
 final class ApolloServiceProvider extends ServiceProvider
@@ -30,6 +31,7 @@ final class ApolloServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(self::CONFIG_PATH, 'apollo');
 
         $this->app->singleton(ModuleConfigResolver::class);
+        $this->app->singleton(SuiteModule::class);
         $this->app->singleton(ProteusModule::class);
         $this->app->singleton(PulseModule::class);
         $this->app->singleton(FlareModule::class);
@@ -37,6 +39,7 @@ final class ApolloServiceProvider extends ServiceProvider
 
         $this->app->singleton(Apollo::class, function ($app): Apollo {
             return new Apollo(
+                $app->make(SuiteModule::class),
                 $app->make(ProteusModule::class),
                 $app->make(PulseModule::class),
                 $app->make(FlareModule::class),

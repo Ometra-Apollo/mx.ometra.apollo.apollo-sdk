@@ -10,8 +10,10 @@ use Ometra\Apollo\Sdk\Modules\Flare\FlareModule;
 use Ometra\Apollo\Sdk\Modules\Ignis\IgnisModule;
 use Ometra\Apollo\Sdk\Modules\Proteus\ProteusModule;
 use Ometra\Apollo\Sdk\Modules\Pulse\PulseModule;
+use Ometra\Apollo\Sdk\Modules\Suite\SuiteModule;
 
 /**
+ * @method static SuiteModule suite()
  * @method static ProteusModule proteus()
  * @method static PulseModule pulse()
  * @method static FlareModule flare()

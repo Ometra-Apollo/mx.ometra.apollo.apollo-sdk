@@ -11,6 +11,7 @@ use Ometra\Apollo\Sdk\Modules\Flare\FlareModule;
 use Ometra\Apollo\Sdk\Modules\Ignis\IgnisModule;
 use Ometra\Apollo\Sdk\Modules\Proteus\ProteusModule;
 use Ometra\Apollo\Sdk\Modules\Pulse\PulseModule;
+use Ometra\Apollo\Sdk\Modules\Suite\SuiteModule;
 use PHPUnit\Framework\TestCase;
 
 final class ModuleResolutionTest extends TestCase
@@ -27,6 +28,7 @@ final class ModuleResolutionTest extends TestCase
         $app->instance('config', new Repository([
             'apollo' => [
                 'modules' => [
+                    'suite' => ['base_url' => 'https://apollo.test'],
                     'proteus' => ['base_url' => 'https://proteus.test'],
                     'pulse' => ['base_url' => 'https://pulse.test'],
                     'flare' => ['base_url' => 'https://flare.test'],
@@ -49,12 +51,14 @@ final class ModuleResolutionTest extends TestCase
     {
         $resolver = new ModuleConfigResolver;
         $apollo = new Apollo(
+            new SuiteModule($resolver),
             new ProteusModule($resolver),
             new PulseModule($resolver),
             new FlareModule($resolver),
             new IgnisModule($resolver),
         );
 
+        self::assertInstanceOf(SuiteModule::class, $apollo->suite());
         self::assertInstanceOf(ProteusModule::class, $apollo->proteus());
         self::assertInstanceOf(PulseModule::class, $apollo->pulse());
         self::assertInstanceOf(FlareModule::class, $apollo->flare());

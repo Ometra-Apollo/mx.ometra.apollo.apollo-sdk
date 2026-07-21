@@ -2,23 +2,23 @@ import { Link } from '@inertiajs/react';
 
 import { cn } from '@/lib/utils';
 
-import { APP_META, type AppIcon, type AppName } from './appMenu.config';
+import { getAppMeta, type SuiteApplication } from './appMenu.config';
 import { buildAppUrl } from './appMenu.utils';
 
 type AppMenuRowProps = {
-    Icon: AppIcon;
-    name: AppName;
+    app: SuiteApplication;
     selected?: boolean;
     clickable?: boolean;
 };
 
 export function AppMenuRow({
-    Icon,
-    name,
+    app,
     selected,
     clickable = true,
 }: AppMenuRowProps) {
-    const url = buildAppUrl(APP_META[name].url);
+    const meta = getAppMeta(app.name);
+    const Icon = meta.icon;
+    const url = buildAppUrl(app.url);
 
     const handleClick = (e: React.MouseEvent) => {
         if (!clickable) return;
@@ -46,7 +46,7 @@ export function AppMenuRow({
                     selected ? 'ml-9 text-2xl font-medium' : 'text-lg',
                 )}
             >
-                {name}
+                {app.name}
             </span>
         </>
     );

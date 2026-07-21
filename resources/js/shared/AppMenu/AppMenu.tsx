@@ -1,20 +1,24 @@
 import { usePage } from '@inertiajs/react';
-import { useMemo, type SetStateAction } from 'react';
+import { useEffect, useMemo, useState, type SetStateAction } from 'react';
 
 import { DropdownContent, DropdownOption, DropdownRoot } from '@/Components';
 
 import { AppMenuActions } from './AppMenuActions';
 import { AppMenuRow } from './AppMenuRow';
 import { AppMenuTrigger } from './AppMenuTrigger';
-import { APP_META, APPS_ORDER, type AppName } from './appMenu.config';
+import { getAppMeta, type AppName, type SuiteApplication } from './appMenu.config';
 import {
+    APP_MENU_USER_APPLICATIONS_ENDPOINT,
     buildAppUrl,
+    findApplicationByName,
     getAppFromHostname,
     getAppFromUrlSegment,
     getFirstSegment,
+    normalizeApplicationsResponse,
+    sortApplications,
 } from './appMenu.utils';
 
-const HOVER_CLASS: Record<(typeof APP_META)[AppName]['hoverKey'], string> = {
+const HOVER_CLASS: Record<ReturnType<typeof getAppMeta>['hoverKey'], string> = {
     proteus: 'hover:bg-proteus-hover',
     flare: 'hover:bg-flare-hover',
     ignis: 'hover:bg-ignis-hover',
@@ -22,32 +26,31 @@ const HOVER_CLASS: Record<(typeof APP_META)[AppName]['hoverKey'], string> = {
     apollo: 'hover:bg-apollo-hover',
 };
 
-function makeAppOption(name: AppName): DropdownOption<AppName> {
-    const meta = APP_META[name];
+function makeAppOption(application: SuiteApplication): DropdownOption<AppName> {
+    const meta = getAppMeta(application.name);
 
     return {
-        value: name,
+        value: application.name,
         a11yText: meta.a11y,
-        render: <AppMenuRow Icon={meta.icon} name={name} />,
+        render: <AppMenuRow app={application} />,
         renderSelected: (
             <AppMenuRow
-                Icon={meta.icon}
-                name={name}
+                app={application}
                 selected
                 clickable={false}
             />
         ),
         itemClassName: HOVER_CLASS[meta.hoverKey],
         selectable: false,
-        actions: (
-            <AppMenuActions app={name} color={meta.iconColor} url={meta.url} />
-        ),
+        actions: <AppMenuActions app={application} />,
     };
 }
 
 export default function AppMenu() {
     const { url } = usePage();
-    const app = useMemo<AppName | null>(() => {
+    const [applications, setApplications] = useState<SuiteApplication[]>([]);
+
+    const currentAppName = useMemo<AppName | null>(() => {
         const hostname = typeof window === 'undefined' ? null : window.location.hostname;
         const appFromHostname = getAppFromHostname(hostname);
         if (appFromHostname) return appFromHostname;
@@ -56,14 +59,57 @@ export default function AppMenu() {
         return getAppFromUrlSegment(segment);
     }, [url]);
 
-    const options = useMemo(() => APPS_ORDER.map(makeAppOption), []);
+    useEffect(() => {
+        const controller = new AbortController();
+
+        fetch(APP_MENU_USER_APPLICATIONS_ENDPOINT, {
+            signal: controller.signal,
+            credentials: 'same-origin',
+            headers: { Accept: 'application/json' },
+        })
+            .then(async (response) => {
+                if (!response.ok) {
+                    throw new Error(`No se pudieron cargar las aplicaciones (${response.status}).`);
+                }
+
+                return response.json();
+            })
+            .then((payload) => {
+                if (!controller.signal.aborted) {
+                    setApplications(sortApplications(normalizeApplicationsResponse(payload)));
+                }
+            })
+            .catch(() => {
+                if (!controller.signal.aborted) {
+                    setApplications([]);
+                }
+            });
+
+        return () => controller.abort();
+    }, []);
+
+    const currentApp = useMemo<SuiteApplication | null>(() => {
+        const resolvedApp = findApplicationByName(applications, currentAppName);
+
+        if (resolvedApp) return resolvedApp;
+        if (!currentAppName) return null;
+
+        return {
+            cn: currentAppName.toLowerCase(),
+            name: currentAppName,
+            url: `${currentAppName.toLowerCase()}.apollo.ometra.mx`,
+        };
+    }, [applications, currentAppName]);
+
+    const options = useMemo(() => applications.map(makeAppOption), [applications]);
 
     const handleAppChange = (nextValue: SetStateAction<AppName | null>) => {
-        const nextApp =
-            typeof nextValue === 'function' ? nextValue(app) : nextValue;
+        const nextAppName =
+            typeof nextValue === 'function' ? nextValue(currentAppName) : nextValue;
+        const nextApp = findApplicationByName(applications, nextAppName);
 
         if (nextApp) {
-            window.location.href = buildAppUrl(APP_META[nextApp].url);
+            window.location.href = buildAppUrl(nextApp.url);
         }
     };
 
@@ -71,10 +117,10 @@ export default function AppMenu() {
         <div className="relative">
             <DropdownRoot
                 options={options}
-                value={app}
+                value={currentApp?.name ?? null}
                 onValueChange={handleAppChange}
             >
-                <AppMenuTrigger app={app} />
+                <AppMenuTrigger app={currentApp} />
                 <DropdownContent />
             </DropdownRoot>
         </div>
