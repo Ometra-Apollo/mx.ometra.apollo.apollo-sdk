@@ -11,11 +11,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [v5.0.0] - 2026-07-20
 
-### Added
+Breaking release that reorganizes Apollo around bound resources and domain
+verbs. No compatibility aliases are included.
 
-- Nothing added.
+### Changed
+
+- Bind instance IDs at resource selection time for media, directories,
+  playlists, station groups, external groups, campaigns and grants.
+- Standardize collection actions as `index` and `store`, instance deletion as
+  `destroy`, and grant workflows as `request`, `extend` and `revoke`.
+- Nest media metadata, LightPath requests, playlist items, station groups,
+  Pulse catalogs/cache and Ignis campaigns under their owning resources.
+- Return the full Caronte envelope from every JSON operation.
+- Let Proteus resolve application directory grants from Caronte tenant and
+  application context.
+
+### Removed
+
+- Explicit user-token parameters and token-specific method variants.
+- Media creation helpers, presets, content hits and wrappers without active
+  production consumers.
+- Public module configuration accessors and Ignis campaign DTO conversion.
+- Directory grant permission updates and explicit directory-grant parameters
+  from media operations.
+
+### Migration
+
+- Require `ometra/apollo-sdk ^5.0.0`.
+- See `BREAKING_CHANGES.md` and `docs/api-contract.md`.
 
 ## [v4.3.0] - 2026-07-19
 

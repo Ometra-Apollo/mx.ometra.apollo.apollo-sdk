@@ -9,123 +9,51 @@ use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
 
 final class MediaResource
 {
-    public function __construct(private readonly ApolloHttpClient $client)
+    public function __construct(
+        private readonly ApolloHttpClient $client,
+        private readonly string $mediaId,
+    ) {}
+
+    public function show(): array
     {
-        //
+        return $this->client->userRequest('GET', 'media/'.$this->mediaId);
     }
 
-    /** @param array<string, mixed> $data */
-    public function index(array $data = []): array
+    public function destroy(): array
     {
-        return $this->client->userRequest('GET', 'media', query: $data);
+        return $this->client->userRequest('DELETE', 'media/'.$this->mediaId);
     }
 
-    public function create(): array
-    {
-        return $this->client->userRequest('GET', 'media/create');
-    }
-
-    public function tags(): array
-    {
-        return $this->client->userRequest('GET', 'media/tags');
-    }
-
-    public function show(string $id_media, array $query = []): array
-    {
-        return $this->client->userRequest('GET', 'media/'.$id_media, query: $query);
-    }
-
-    /** @param array<string, mixed> $query */
-    public function showWithUserToken(string $id_media, string $user_token, array $query = []): array
-    {
-        return $this->client->applicationRequest(
-            'GET',
-            'media/'.$id_media,
-            query: $query,
-            userToken: $user_token,
-        );
-    }
-
-    /** @param array<string, mixed> $data */
-    public function upload(array $data): array
-    {
-        return $this->client->userRequest('POST', 'media', payload: $data);
-    }
-
-    public function delete(string $id_media): ?array
-    {
-        return $this->client->userRequest('DELETE', 'media/'.$id_media);
-    }
-
-    public function availableFormats(string $id_media): array
-    {
-        return $this->client->userRequest('GET', 'media/'.$id_media.'/available-formats');
-    }
-
-    /** @param array<string, mixed> $data */
-    public function setDefaultFormat(string $id_media, array $data): array
-    {
-        return $this->client->userRequest('POST', 'media/'.$id_media.'/available-formats', payload: $data);
-    }
-
-    public function transformationOptions(string $id_media): array
-    {
-        return $this->client->userRequest('GET', 'media/'.$id_media.'/request-transformations');
-    }
-
-    /** @param array<string, mixed> $data */
-    public function requestTransformations(string $id_media, array $data): array
-    {
-        return $this->client->userRequest('POST', 'media/'.$id_media.'/request-transformations', payload: $data);
-    }
-
-    /** @param array<string, mixed> $data */
-    public function setMetadata(string $id_media, array $data): array
-    {
-        return $this->client->userRequest('POST', 'media/'.$id_media.'/set-metadata', payload: $data);
-    }
-
-    public function setVisibility(string $id_media, bool $visibility): array
-    {
-        return $this->client->userRequest('POST', 'media/'.$id_media.'/set-visibility', payload: ['visibility' => $visibility]);
-    }
-
-    /** @param array<string, mixed> $data */
-    public function storeTags(string $id_media, array $data): array
-    {
-        return $this->client->userRequest('POST', 'media/'.$id_media.'/tags/store', payload: $data);
-    }
-
-    public function download(string $id_media, ?string $ext = null): Response
+    public function download(?string $extension = null): Response
     {
         return $this->client->userRawRequest(
             'GET',
-            'media/'.$id_media.'/download',
-            query: array_filter(['ext' => $ext]),
+            'media/'.$this->mediaId.'/download',
+            query: array_filter(['ext' => $extension]),
         );
     }
 
-    public function thumbnail(string $id_media): Response
+    public function thumbnail(): Response
     {
         return $this->client->userRawRequest(
             'GET',
-            'media/'.$id_media.'/download',
+            'media/'.$this->mediaId.'/download',
             query: ['ext' => 'thumb'],
         );
     }
 
-    public function saveLocal(string $id_media, string $ext): Response
+    /**
+     * @return ($key is null ? MediaMetadataCollectionResource : MediaMetadataResource)
+     */
+    public function metadata(?string $key = null): MediaMetadataCollectionResource|MediaMetadataResource
     {
-        return $this->download($id_media, $ext);
+        return $key === null
+            ? new MediaMetadataCollectionResource($this->client, $this->mediaId)
+            : new MediaMetadataResource($this->client, $this->mediaId, $key);
     }
 
-    /** @param array<string, mixed> $options */
-    public function lightPathUrl(string $id_media, array $options = []): array
+    public function lightPath(): LightPathRequestResource
     {
-        return $this->client->userRequest(
-            'POST',
-            'media/'.$id_media.'/lightpath-url',
-            payload: $options,
-        );
+        return new LightPathRequestResource($this->client, $this->mediaId);
     }
 }

@@ -143,25 +143,6 @@ final class ApolloHttpClientTest extends TestCase
             && $request->hasHeader('X-Tenant-Id', 'tenant-42'));
     }
 
-    public function test_application_request_can_include_explicit_user_token_when_provided(): void
-    {
-        $client = new ApolloHttpClient('https://proteus.test/api');
-
-        $response = $client->applicationRequest(
-            'POST',
-            'categories',
-            ['name' => 'Images'],
-            userToken: 'delegated-user-token'
-        );
-
-        self::assertSame(['accepted' => true], $response['data']);
-        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://proteus.test/api/categories'
-            && ! $request->hasHeader('X-Application-Token')
-            && $request->hasHeader('X-Group-Token')
-            && $request->hasHeader('X-User-Token', 'delegated-user-token')
-            && $request->hasHeader('X-Tenant-Id', 'tenant-42'));
-    }
-
     public function test_user_request_with_as_application_flag_omits_user_token_and_uses_group_authentication(): void
     {
         $client = new ApolloHttpClient('https://proteus.test/api', asApplication: true);
@@ -179,10 +160,11 @@ final class ApolloHttpClientTest extends TestCase
     public function test_light_path_management_uses_application_context_when_requested(): void
     {
         $resource = new LightPathResource(
-            new ApolloHttpClient('https://proteus.test/api', asApplication: true)
+            new ApolloHttpClient('https://proteus.test/api', asApplication: true),
+            'grant-uuid',
         );
 
-        $resource->extendGrant('grant-uuid', 3600);
+        $resource->extend(3600);
 
         Http::assertSent(fn (Request $request): bool => $request->url() === 'https://proteus.test/api/lightpath/grants/grant-uuid/extend'
             && $request->method() === 'PATCH'

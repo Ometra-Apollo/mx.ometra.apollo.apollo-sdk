@@ -18,14 +18,6 @@ final class PulseModule
 {
     public function __construct(private readonly ModuleConfigResolver $configResolver) {}
 
-    /**
-     * @return array{base_url: string}
-     */
-    public function config(): array
-    {
-        return $this->configResolver->resolve('pulse');
-    }
-
     public function groups(): GroupsResource
     {
         return new GroupsResource($this->client());
@@ -33,6 +25,6 @@ final class PulseModule
 
     private function client(): ApolloHttpClient
     {
-        return new ApolloHttpClient($this->config()['base_url']);
+        return new ApolloHttpClient($this->configResolver->resolve('pulse')['base_url']);
     }
 }

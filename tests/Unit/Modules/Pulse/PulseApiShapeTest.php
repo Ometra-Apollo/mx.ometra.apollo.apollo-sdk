@@ -44,5 +44,6 @@ final class PulseApiShapeTest extends TestCase
         $module = new PulseModule(new ModuleConfigResolver);
 
         self::assertInstanceOf(GroupsResource::class, $module->groups());
+        self::assertFalse(method_exists(PulseModule::class, 'config'));
     }
 }

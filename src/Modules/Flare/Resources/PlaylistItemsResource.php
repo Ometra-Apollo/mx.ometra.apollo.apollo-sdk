@@ -6,20 +6,15 @@ namespace Ometra\Apollo\Sdk\Modules\Flare\Resources;
 
 use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
 
-final class PlaylistsResource
+final class PlaylistItemsResource
 {
     public function __construct(
         private readonly ApolloHttpClient $client,
         private readonly string $playlistId,
     ) {}
 
-    public function show(): array
+    public function index(): array
     {
-        return $this->client->userRequest('GET', 'playlists/'.$this->playlistId);
-    }
-
-    public function items(): PlaylistItemsResource
-    {
-        return new PlaylistItemsResource($this->client, $this->playlistId);
+        return $this->client->userRequest('GET', 'playlists/'.$this->playlistId.'/items');
     }
 }

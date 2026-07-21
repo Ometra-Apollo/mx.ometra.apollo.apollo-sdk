@@ -6,40 +6,25 @@ namespace Ometra\Apollo\Sdk\Modules\Ignis;
 
 use Ometra\Apollo\Sdk\Core\Config\ModuleConfigResolver;
 use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
-use Ometra\Apollo\Sdk\Modules\Ignis\Resources\CampaignsResource;
-use Ometra\Apollo\Sdk\Modules\Ignis\Resources\ContentHitsResource;
+use Ometra\Apollo\Sdk\Modules\Ignis\Resources\ExternalGroupResource;
 
 /**
  * Ignis module entrypoint.
  *
  * Exposed resources:
- * - campaigns()
- * - contentHits()
+ * - externalGroups()
  */
 final class IgnisModule
 {
     public function __construct(private readonly ModuleConfigResolver $configResolver) {}
 
-    /**
-     * @return array{base_url: string}
-     */
-    public function config(): array
+    public function externalGroups(string $externalGroupId): ExternalGroupResource
     {
-        return $this->configResolver->resolve('ignis');
-    }
-
-    public function campaigns(): CampaignsResource
-    {
-        return new CampaignsResource($this->client());
-    }
-
-    public function contentHits(): ContentHitsResource
-    {
-        return new ContentHitsResource($this->client());
+        return new ExternalGroupResource($this->client(), $externalGroupId);
     }
 
     private function client(): ApolloHttpClient
     {
-        return new ApolloHttpClient($this->config()['base_url']);
+        return new ApolloHttpClient($this->configResolver->resolve('ignis')['base_url']);
     }
 }

@@ -8,25 +8,25 @@ use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
 
 final class LightPathResource
 {
-    public function __construct(private readonly ApolloHttpClient $client)
-    {
-        //
-    }
+    public function __construct(
+        private readonly ApolloHttpClient $client,
+        private readonly string $lightPathGrantId,
+    ) {}
 
-    public function extendGrant(string $id_lightpath_grant, int $url_ttl_seconds): array
+    public function extend(int $ttlSeconds): array
     {
         return $this->client->userRequest(
             'PATCH',
-            'lightpath/grants/'.$id_lightpath_grant.'/extend',
-            payload: ['url_ttl_seconds' => $url_ttl_seconds],
+            'lightpath/grants/'.$this->lightPathGrantId.'/extend',
+            payload: ['url_ttl_seconds' => $ttlSeconds],
         );
     }
 
-    public function deleteGrant(string $id_lightpath_grant): ?array
+    public function revoke(): array
     {
         return $this->client->userRequest(
             'DELETE',
-            'lightpath/grants/'.$id_lightpath_grant,
+            'lightpath/grants/'.$this->lightPathGrantId,
         );
     }
 }

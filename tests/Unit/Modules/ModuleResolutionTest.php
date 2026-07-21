@@ -61,24 +61,6 @@ final class ModuleResolutionTest extends TestCase
         self::assertInstanceOf(IgnisModule::class, $apollo->ignis());
     }
 
-    public function test_each_module_resolves_its_own_exact_base_url_config(): void
-    {
-        $resolver = new ModuleConfigResolver;
-
-        self::assertSame([
-            'base_url' => 'https://proteus.test',
-        ], (new ProteusModule($resolver))->config());
-        self::assertSame([
-            'base_url' => 'https://pulse.test',
-        ], (new PulseModule($resolver))->config());
-        self::assertSame([
-            'base_url' => 'https://flare.test',
-        ], (new FlareModule($resolver))->config());
-        self::assertSame([
-            'base_url' => 'https://ignis.test',
-        ], (new IgnisModule($resolver))->config());
-    }
-
     public function test_apollo_entrypoint_does_not_expose_flat_resource_methods(): void
     {
         $methods = get_class_methods(Apollo::class);
@@ -86,5 +68,9 @@ final class ModuleResolutionTest extends TestCase
         self::assertNotContains('media', $methods);
         self::assertNotContains('mediaIndex', $methods);
         self::assertNotContains('__call', $methods);
+
+        foreach ([ProteusModule::class, PulseModule::class, FlareModule::class, IgnisModule::class] as $module) {
+            self::assertFalse(method_exists($module, 'config'));
+        }
     }
 }

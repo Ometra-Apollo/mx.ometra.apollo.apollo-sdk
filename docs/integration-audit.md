@@ -1,45 +1,38 @@
-# Apollo SDK integration audit
+# Auditoría de integraciones Apollo SDK v5
 
-Reviewed on 2026-07-19 against the active routes and PHP consumers in the
-Apollo suite. The detailed verb, URI, payload, authentication, and response
-contract for every public resource method remains in `api-contract.md`.
+Revisión: 2026-07-20. Paquete: `ometra/apollo-sdk`. Configuración compartida: `config/apollo.php`.
 
-## Consumer matrix
+Variables requeridas:
 
-| Consumer | SDK modules used | Authentication contexts | Result |
-| --- | --- | --- | --- |
-| Aeris | Proteus media and directories | User by default; application for explicit background flows | Valid |
-| Flare | Proteus media, metadata, directories and LightPath; Pulse groups | User for web actions; application for hooks, jobs, imports and group sync | Valid after import normalization |
-| Ignis | Proteus media, directories and categories; Pulse groups | User for web actions; application for Pulse group synchronization | Valid after removing manual Pulse transport |
-| Proteus | None | N/A | Service provider only; no SDK calls found |
-| Pulse | Flare stations and playlists; Ignis campaigns; Proteus LightPath | Application for device, cache and cross-service operations | Valid after response normalization |
+- `PROTEUS_BASE_URL`
+- `PULSE_BASE_URL`
+- `FLARE_BASE_URL`
+- `IGNIS_BASE_URL`
 
-Ember, Lume, and aeris-client do not consume the PHP package and are outside
-this audit. Ember has its own Python Pulse client and must not be migrated to a
-PHP-only SDK.
+Ejemplo de colección:
 
-## Verified rules
+```php
+Apollo::proteus()->media()->index($filters);
+```
 
-- Resource methods use the routes recorded in `api-contract.md`; route tests
-  cover the HTTP verb, relative URI, query, and payload.
-- `asApplication()` is required for jobs, hooks, console imports, device API
-  delivery, cache invalidation, and other sessionless work.
-- Interactive Laravel requests use the user context unless the target resource
-  is application-only by contract.
-- Tenant and Caronte authentication headers are constructed by
-  `ApolloHttpClient`; consumers must not duplicate them.
-- Proteus resources return the Caronte response envelope. Ignis campaign
-  methods intentionally return normalized, unwrapped DTO arrays.
+## Consumidores
 
-## Direct HTTP exceptions and legacy debt
+| Repositorio | Módulos | Migración v5 |
+| --- | --- | --- |
+| Aeris | Proteus media y LightPath | Recursos media ligados; upload con `store`; LightPath con `request` |
+| Flare | Proteus media, metadata, directorios y LightPath; Pulse groups | Subrecursos ligados; grants con verbos de dominio; backfill eliminado |
+| Ignis | Proteus media, directorios y categorías | Recursos ligados; URL base leída desde configuración |
+| Proteus | Transporte y componentes compartidos de Apollo | Resolución automática de grants para media y eliminación de actualización de permisos |
+| Pulse | Flare playlists/station groups; Ignis campaigns; Proteus LightPath | Recursos ligados y lectura explícita de `data` del envelope Ignis |
 
-- Direct calls to Caronte and third-party providers remain outside Apollo SDK.
-- Aeris retains its isolated `IgnisClient` only for legacy diagnostic commands.
-  Its group-content, configuration, analytics, and health URLs are not present
-  in the current Ignis application routes, and production application flows do
-  not call them. Do not add new consumers; remove the commands in the next
-  application-breaking cleanup or replace them after Ignis defines supported
-  endpoints.
-- Flare's backfill command uses the SDK's delegated-user-token methods for
-  directory grants and media lookup; it no longer constructs Apollo headers or
-  URLs directly.
+## Reglas verificadas
+
+- Caronte es el único propietario de tokens, tenant y contexto de usuario.
+- Los procesos sin sesión seleccionan `asApplication()`.
+- Proteus resuelve el directory application grant por tenant, aplicación y cobertura del media.
+- Ningún consumidor pasa un grant a `thumbnail()` o a `lightPath()->request()`.
+- Las llamadas JSON conservan el envelope; sólo descargas y miniaturas reciben `Response`.
+- Los consumidores usan camelCase; snake_case queda limitado a payloads HTTP y datos persistidos propios.
+- No existe configuración pública por módulo.
+
+El contrato de rutas está en [api-contract.md](api-contract.md) y la guía breaking en [../BREAKING_CHANGES.md](../BREAKING_CHANGES.md).
