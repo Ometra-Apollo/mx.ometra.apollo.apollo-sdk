@@ -35,12 +35,12 @@ final class MediaResource
         );
     }
 
-    public function thumbnail(): Response
+    public function preview(): Response
     {
         return $this->client->userRawRequest(
             'GET',
             'media/'.$this->mediaId.'/download',
-            query: ['ext' => 'thumb'],
+            query: ['ext' => 'preview'],
         );
     }
 
