@@ -111,8 +111,8 @@ El último método convierte `$groupUris` al campo HTTP `uri_groups`.
 
 | API PHP | HTTP | URI |
 | --- | --- | --- |
-| `externalGroups($externalGroupId)->campaigns()->index()` | GET | `/api/external-groups/{externalGroupId}/campaigns` |
-| `externalGroups($externalGroupId)->campaigns($campaignId)->show()` | GET | `/api/external-groups/{externalGroupId}/campaigns/{campaignId}` |
+| `groups($groupId)->campaigns()->index()` | GET | `/api/groups/{groupId}/campaigns` |
+| `groups($groupId)->campaigns($campaignId)->show()` | GET | `/api/groups/{groupId}/campaigns/{campaignId}` |
 
 Ambas operaciones devuelven el envelope de Caronte sin DTOs ni desempaquetado especial.
 

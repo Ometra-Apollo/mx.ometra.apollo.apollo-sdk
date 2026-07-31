@@ -75,8 +75,8 @@ Apollo::flare()->stations()->groups($groupUri)->show();
 Apollo::pulse()->groups()->catalog()->index($filters);
 Apollo::pulse()->groups()->stationCache()->invalidate($groupUris);
 
-Apollo::ignis()->externalGroups($externalGroupId)->campaigns()->index();
-Apollo::ignis()->externalGroups($externalGroupId)->campaigns($campaignId)->show();
+Apollo::ignis()->groups($groupId)->campaigns()->index();
+Apollo::ignis()->groups($groupId)->campaigns($campaignId)->show();
 ```
 
 Las campañas Ignis devuelven el envelope Caronte completo. El consumidor debe leer `['data']` cuando necesita solamente el contenido.

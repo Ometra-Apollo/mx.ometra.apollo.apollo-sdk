@@ -124,7 +124,7 @@ final class ApolloHttpClientTest extends TestCase
 
         $client = new ApolloHttpClient('https://proteus.test/api');
 
-        $this->expectException(\Throwable::class);
+        $this->expectException(Throwable::class);
 
         $client->userRequest('GET', 'media');
     }

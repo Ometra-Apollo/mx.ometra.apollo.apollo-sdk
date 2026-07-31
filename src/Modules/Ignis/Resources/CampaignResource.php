@@ -10,7 +10,7 @@ final class CampaignResource
 {
     public function __construct(
         private readonly ApolloHttpClient $client,
-        private readonly string $externalGroupId,
+        private readonly string $groupId,
         private readonly int $campaignId,
     ) {}
 
@@ -19,7 +19,7 @@ final class CampaignResource
     {
         return $this->client->applicationRequest(
             'GET',
-            'external-groups/'.$this->externalGroupId.'/campaigns/'.$this->campaignId,
+            'groups/'.$this->groupId.'/campaigns/'.$this->campaignId,
         );
     }
 }

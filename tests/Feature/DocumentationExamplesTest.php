@@ -65,7 +65,7 @@ final class DocumentationExamplesTest extends TestCase
                 'lightPath($grantId)->extend(',
                 'applicationGrants(',
                 'metadata()->values(',
-                'externalGroups($externalGroupId)',
+                'groups($groupId)',
             ] as $fragment) {
                 self::assertStringContainsString($fragment, $contents, $path.' must document '.$fragment);
             }

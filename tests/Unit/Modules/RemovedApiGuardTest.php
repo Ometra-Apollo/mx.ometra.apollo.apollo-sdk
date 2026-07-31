@@ -24,7 +24,7 @@ final class RemovedApiGuardTest extends TestCase
             ProteusModule::class => ['config', 'metadata', 'presets'],
             FlareModule::class => ['config'],
             PulseModule::class => ['config'],
-            IgnisModule::class => ['config', 'campaigns', 'contentHits'],
+            IgnisModule::class => ['config', 'campaigns', 'contentHits', 'externalGroups'],
         ];
 
         foreach ($removed as $class => $methods) {
@@ -62,6 +62,7 @@ final class RemovedApiGuardTest extends TestCase
             'Ometra\\Apollo\\Sdk\\Modules\\Proteus\\Resources\\PresetsResource',
             'Ometra\\Apollo\\Sdk\\Modules\\Ignis\\Resources\\CampaignsResource',
             'Ometra\\Apollo\\Sdk\\Modules\\Ignis\\Resources\\ContentHitsResource',
+            'Ometra\\Apollo\\Sdk\\Modules\\Ignis\\Resources\\ExternalGroupResource',
             'Ometra\\Apollo\\Sdk\\DTO\\IgnisCampaignDTO',
             'Ometra\\Apollo\\Sdk\\DTO\\IgnisCampaignDetailDTO',
             'Ometra\\Apollo\\Sdk\\DTO\\IgnisCampaignContentDTO',

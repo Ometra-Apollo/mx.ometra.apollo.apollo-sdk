@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.0.0] - 2026-07-31
+
+Breaking release that aligns Ignis group resources with the shared Apollo
+`groups` terminology. No compatibility aliases are included.
+
+### Changed
+
+- Rename the Ignis campaign group entrypoint from `externalGroups()` to `groups()`.
+- Send Ignis campaign requests to `/api/groups/{groupId}/campaigns`.
+
+### Removed
+
+- Remove `ExternalGroupResource` and the legacy `/api/external-groups` SDK contract.
+
 ## [5.1.1] - 2026-07-20
 
 ### Changed

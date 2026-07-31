@@ -1,22 +1,17 @@
-# Apollo SDK v5.0.0
+# Apollo SDK 6.0.0
 
 Paquete: `ometra/apollo-sdk`
 Configuración: `config/apollo.php`
 Runtime: PHP 8.4 o posterior
 
-Apollo SDK v5 organiza la API por colecciones, recursos ligados y subrecursos de dominio. Es una actualización breaking sin aliases.
+Apollo SDK 6 unifica el contrato de grupos de Ignis con el resto de Apollo. Es una actualización breaking sin aliases de compatibilidad.
 
-## Principales cambios
+## Cambios principales
 
-- Media y directorios se seleccionan con `media($id)` y `directories($id)`.
-- Upload usa `store`; las eliminaciones usan `destroy`.
-- LightPath usa `request`, `extend` y `revoke`.
-- Directory application grants usan `request` y `revoke` sin tokens explícitos.
-- Metadata vive debajo de media; la consulta global conservada es `media()->metadata()->values($key)`.
-- Proteus resuelve automáticamente grants de aplicación para media.
-- Flare, Pulse e Ignis usan subrecursos ligados coherentes.
-- Las campañas Ignis devuelven el envelope Caronte y ya no crean DTOs.
-- Se eliminaron APIs sin consumidores productivos y la configuración pública por módulo.
+- `Apollo::ignis()->externalGroups($id)` cambia a `Apollo::ignis()->groups($id)`.
+- Las campañas de grupo usan `/api/groups/{groupId}/campaigns`.
+- `ExternalGroupResource` se reemplaza por `GroupResource`.
+- El método y endpoint anteriores fueron eliminados.
 
 ## Configuración requerida
 
@@ -31,15 +26,19 @@ IGNIS_BASE_URL=https://ignis.example.com/api
 
 ```php
 $items = Apollo::proteus()->media()->index($filters);
-$media = Apollo::proteus()->media($mediaId)->show();
 
-$lightPath = Apollo::proteus()
-    ->media($mediaId)
-    ->lightPath()
-    ->request(extension: 'mp4', ttlSeconds: 3600);
+$campaigns = Apollo::ignis()
+    ->groups($groupId)
+    ->campaigns()
+    ->index();
+
+$campaign = Apollo::ignis()
+    ->groups($groupId)
+    ->campaigns($campaignId)
+    ->show();
 ```
 
-Consulta [BREAKING_CHANGES.md](BREAKING_CHANGES.md) para migración y [docs/api-contract.md](docs/api-contract.md) para el contrato completo.
+Consulta [BREAKING_CHANGES.md](BREAKING_CHANGES.md) para la migración y [docs/api-contract.md](docs/api-contract.md) para el contrato completo.
 
 ## Validación
 
