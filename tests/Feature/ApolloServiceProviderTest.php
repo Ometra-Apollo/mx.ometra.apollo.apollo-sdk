@@ -6,15 +6,18 @@ use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
+use Ometra\Apollo\Sdk\Apollo;
+use Ometra\Apollo\Sdk\Contracts\IgnisGroupContract;
+use Ometra\Apollo\Sdk\Providers\ApolloServiceProvider;
 use PHPUnit\Framework\TestCase;
 
 final class ApolloServiceProviderTest extends TestCase
 {
     public function test_apollo_classes_exist_and_provider_is_discoverable(): void
     {
-        self::assertTrue(class_exists(\Ometra\Apollo\Sdk\Apollo::class));
-        self::assertTrue(class_exists(\Ometra\Apollo\Sdk\Providers\ApolloServiceProvider::class));
-        self::assertTrue(class_exists(\Ometra\Apollo\Sdk\Facades\Apollo::class));
+        self::assertTrue(class_exists(Apollo::class));
+        self::assertTrue(class_exists(ApolloServiceProvider::class));
+        self::assertTrue(class_exists(Ometra\Apollo\Sdk\Facades\Apollo::class));
     }
 
     public function test_apollo_config_uses_exact_module_base_url_keys(): void
@@ -60,7 +63,7 @@ final class ApolloServiceProviderTest extends TestCase
         $app->instance('config', $config);
         Container::setInstance($app);
 
-        $provider = new \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider($app);
+        $provider = new ApolloServiceProvider($app);
         $provider->boot();
 
         $paths = $config->get('view.paths');
@@ -87,7 +90,7 @@ final class ApolloServiceProviderTest extends TestCase
         $app->instance('config', $config);
         Container::setInstance($app);
 
-        $provider = new \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider($app);
+        $provider = new ApolloServiceProvider($app);
         $provider->boot();
 
         self::assertSame(['/host/resources/views'], $config->get('view.paths'));
@@ -108,11 +111,11 @@ final class ApolloServiceProviderTest extends TestCase
         ]));
         Container::setInstance($app);
 
-        $provider = new \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider($app);
+        $provider = new ApolloServiceProvider($app);
         $provider->boot();
 
         $paths = ServiceProvider::pathsToPublish(
-            \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider::class,
+            ApolloServiceProvider::class,
             'apollo-error-pages',
         );
         $viewsPath = (string) realpath(dirname(__DIR__, 2).'/resources/views');
@@ -137,11 +140,11 @@ final class ApolloServiceProviderTest extends TestCase
         ]));
         Container::setInstance($app);
 
-        $provider = new \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider($app);
+        $provider = new ApolloServiceProvider($app);
         $provider->boot();
 
         $paths = ServiceProvider::pathsToPublish(
-            \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider::class,
+            ApolloServiceProvider::class,
             'apollo-app-menu',
         );
         $appMenuPath = (string) realpath(dirname(__DIR__, 2).'/resources/js/shared/AppMenu');
@@ -166,11 +169,11 @@ final class ApolloServiceProviderTest extends TestCase
         ]));
         Container::setInstance($app);
 
-        $provider = new \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider($app);
+        $provider = new ApolloServiceProvider($app);
         $provider->boot();
 
         $paths = ServiceProvider::pathsToPublish(
-            \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider::class,
+            ApolloServiceProvider::class,
             'apollo-directory-tree',
         );
         $directoryTreePath = (string) realpath(dirname(__DIR__, 2).'/resources/js/shared/DirectoryTree');
@@ -200,10 +203,10 @@ final class ApolloServiceProviderTest extends TestCase
 
         $app->instance('config', new Repository(['apollo' => require __DIR__.'/../../config/apollo.php']));
 
-        $provider = new \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider($app);
+        $provider = new ApolloServiceProvider($app);
         $provider->register();
 
-        self::assertInstanceOf(\Ometra\Apollo\Sdk\Apollo::class, \Ometra\Apollo\Sdk\Facades\Apollo::getFacadeRoot());
+        self::assertInstanceOf(Apollo::class, Ometra\Apollo\Sdk\Facades\Apollo::getFacadeRoot());
 
         Facade::clearResolvedInstances();
         Facade::setFacadeApplication(null);
@@ -221,12 +224,12 @@ final class ApolloServiceProviderTest extends TestCase
             'view' => ['paths' => []],
         ]));
 
-        $provider = new \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider($app);
+        $provider = new ApolloServiceProvider($app);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
             'APOLLO_IGNIS_GROUPS_ENABLED=true requires a host binding for '
-            .\Ometra\Apollo\Sdk\Contracts\IgnisGroupContract::class
+            .IgnisGroupContract::class
         );
 
         try {
@@ -241,19 +244,19 @@ final class ApolloServiceProviderTest extends TestCase
         $app = new Container;
         Container::setInstance($app);
         $app->instance('config', new Repository(['apollo' => require __DIR__.'/../../config/apollo.php']));
-        $hostGroups = new class implements \Ometra\Apollo\Sdk\Contracts\IgnisGroupContract
+        $hostGroups = new class implements IgnisGroupContract
         {
             public function getGroups(): array
             {
                 return [];
             }
         };
-        $app->instance(\Ometra\Apollo\Sdk\Contracts\IgnisGroupContract::class, $hostGroups);
+        $app->instance(IgnisGroupContract::class, $hostGroups);
 
-        $provider = new \Ometra\Apollo\Sdk\Providers\ApolloServiceProvider($app);
+        $provider = new ApolloServiceProvider($app);
         $provider->register();
 
-        self::assertSame($hostGroups, $app->make(\Ometra\Apollo\Sdk\Contracts\IgnisGroupContract::class));
+        self::assertSame($hostGroups, $app->make(IgnisGroupContract::class));
 
         Container::setInstance(null);
     }

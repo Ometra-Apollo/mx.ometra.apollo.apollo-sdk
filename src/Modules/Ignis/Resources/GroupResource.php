@@ -6,11 +6,11 @@ namespace Ometra\Apollo\Sdk\Modules\Ignis\Resources;
 
 use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
 
-final class ExternalGroupResource
+final class GroupResource
 {
     public function __construct(
         private readonly ApolloHttpClient $client,
-        private readonly string $externalGroupId,
+        private readonly string $groupId,
     ) {}
 
     /**
@@ -19,7 +19,7 @@ final class ExternalGroupResource
     public function campaigns(?int $campaignId = null): CampaignCollectionResource|CampaignResource
     {
         return $campaignId === null
-            ? new CampaignCollectionResource($this->client, $this->externalGroupId)
-            : new CampaignResource($this->client, $this->externalGroupId, $campaignId);
+            ? new CampaignCollectionResource($this->client, $this->groupId)
+            : new CampaignResource($this->client, $this->groupId, $campaignId);
     }
 }

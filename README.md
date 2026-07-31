@@ -7,7 +7,7 @@ Requiere PHP 8.4 o posterior.
 ## Instalación
 
 ```bash
-composer require ometra/apollo-sdk:^5.0
+composer require ometra/apollo-sdk:^6.0
 php artisan vendor:publish --tag=apollo-config
 ```
 
@@ -154,12 +154,12 @@ Apollo::pulse()->groups()->stationCache()->invalidate($groupUris);
 
 ```php
 $campaigns = Apollo::ignis()
-    ->externalGroups($externalGroupId)
+    ->groups($groupId)
     ->campaigns()
     ->index();
 
 $campaign = Apollo::ignis()
-    ->externalGroups($externalGroupId)
+    ->groups($groupId)
     ->campaigns($campaignId)
     ->show();
 ```

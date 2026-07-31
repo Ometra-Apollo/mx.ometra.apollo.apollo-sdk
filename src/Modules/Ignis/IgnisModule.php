@@ -6,21 +6,21 @@ namespace Ometra\Apollo\Sdk\Modules\Ignis;
 
 use Ometra\Apollo\Sdk\Core\Config\ModuleConfigResolver;
 use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
-use Ometra\Apollo\Sdk\Modules\Ignis\Resources\ExternalGroupResource;
+use Ometra\Apollo\Sdk\Modules\Ignis\Resources\GroupResource;
 
 /**
  * Ignis module entrypoint.
  *
  * Exposed resources:
- * - externalGroups()
+ * - groups()
  */
 final class IgnisModule
 {
     public function __construct(private readonly ModuleConfigResolver $configResolver) {}
 
-    public function externalGroups(string $externalGroupId): ExternalGroupResource
+    public function groups(string $groupId): GroupResource
     {
-        return new ExternalGroupResource($this->client(), $externalGroupId);
+        return new GroupResource($this->client(), $groupId);
     }
 
     private function client(): ApolloHttpClient

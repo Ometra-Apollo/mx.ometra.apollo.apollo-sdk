@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Ometra\Apollo\Sdk\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Ometra\Apollo\Sdk\Contracts\IgnisGroupContract;
 use Ometra\Apollo\Sdk\DTO\ExternalGroupDTO;
 
 final class IgnisGroupController
 {
     /**
-     * @return \Illuminate\Http\JsonResponse Raw JSON array of {@see ExternalGroupDTO::toArray()} shapes.
+     * @return JsonResponse Raw JSON array of {@see ExternalGroupDTO::toArray()} shapes.
      */
     public function index(IgnisGroupContract $groups)
     {

@@ -15,7 +15,7 @@ final class IgnisResourceRoutesTest extends TestCase
         $client = new RecordingApolloHttpClient(['campaigns' => []]);
         $response = (new CampaignCollectionResource($client, 'group-1'))->index();
 
-        self::assertSame('external-groups/group-1/campaigns', $client->lastRequest['endpoint']);
+        self::assertSame('groups/group-1/campaigns', $client->lastRequest['endpoint']);
         self::assertSame([
             'status' => 200,
             'message' => 'ok',
@@ -29,7 +29,7 @@ final class IgnisResourceRoutesTest extends TestCase
         $client = new RecordingApolloHttpClient(['id_campaign' => 11]);
         $response = (new CampaignResource($client, 'group-1', 11))->show();
 
-        self::assertSame('external-groups/group-1/campaigns/11', $client->lastRequest['endpoint']);
+        self::assertSame('groups/group-1/campaigns/11', $client->lastRequest['endpoint']);
         self::assertSame([
             'status' => 200,
             'message' => 'ok',

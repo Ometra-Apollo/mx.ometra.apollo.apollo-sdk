@@ -47,8 +47,8 @@ final class ProteusResourceRoutesTest extends TestCase
         $media->download('jpg');
         $this->assertRequest($client, 'user', 'GET', 'media/media-1/download', query: ['ext' => 'jpg'], raw: true);
 
-        $media->thumbnail();
-        $this->assertRequest($client, 'user', 'GET', 'media/media-1/download', query: ['ext' => 'thumb'], raw: true);
+        $media->preview();
+        $this->assertRequest($client, 'user', 'GET', 'media/media-1/download', query: ['ext' => 'preview'], raw: true);
     }
 
     public function test_nested_metadata_routes(): void
