@@ -18,14 +18,16 @@ final class DirectoryApplicationGrantRequestResource
     public function request(
         string $clientReference,
         DirectoryApplicationPermission $permission,
+        ?string $targetApplicationId = null,
     ): array {
         return $this->client->userRequest(
             'POST',
             'directories/'.$this->directoryId.'/application-grants',
-            payload: [
+            payload: array_filter([
                 'client_reference' => $clientReference,
                 'permission' => $permission->value,
-            ],
+                'target_application_id' => $targetApplicationId,
+            ], static fn (mixed $value): bool => $value !== null),
         );
     }
 }

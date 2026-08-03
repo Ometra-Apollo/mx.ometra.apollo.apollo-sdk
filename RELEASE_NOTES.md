@@ -1,17 +1,17 @@
-# Apollo SDK 6.0.0
+# Apollo SDK 6.1.0
 
 Paquete: `ometra/apollo-sdk`
 Configuración: `config/apollo.php`
 Runtime: PHP 8.4 o posterior
 
-Apollo SDK 6 unifica el contrato de grupos de Ignis con el resto de Apollo. Es una actualización breaking sin aliases de compatibilidad.
+Apollo SDK 6.1 agrega operaciones delegadas de Proteus sin cambios incompatibles.
 
 ## Cambios principales
 
-- `Apollo::ignis()->externalGroups($id)` cambia a `Apollo::ignis()->groups($id)`.
-- Las campañas de grupo usan `/api/groups/{groupId}/campaigns`.
-- `ExternalGroupResource` se reemplaza por `GroupResource`.
-- El método y endpoint anteriores fueron eliminados.
+- Las solicitudes de grants de aplicaciones de directorio pueden indicar una
+  aplicación destino mediante `targetApplicationId`.
+- `MediaCollectionResource::storeWithDirectoryGrant()` permite subir archivos
+  usando un grant delegado de una aplicación de directorio.
 
 ## Configuración requerida
 
@@ -27,18 +27,20 @@ IGNIS_BASE_URL=https://ignis.example.com/api
 ```php
 $items = Apollo::proteus()->media()->index($filters);
 
-$campaigns = Apollo::ignis()
-    ->groups($groupId)
-    ->campaigns()
-    ->index();
+$grant = Apollo::proteus()
+    ->directories($directoryId)
+    ->applicationGrants()
+    ->request($clientReference, $permission, $targetApplicationId);
 
-$campaign = Apollo::ignis()
-    ->groups($groupId)
-    ->campaigns($campaignId)
-    ->show();
+$media = Apollo::proteus()->media()->storeWithDirectoryGrant(
+    $file,
+    $directoryId,
+    $directoryApplicationGrantId,
+    $metadata,
+);
 ```
 
-Consulta [BREAKING_CHANGES.md](BREAKING_CHANGES.md) para la migración y [docs/api-contract.md](docs/api-contract.md) para el contrato completo.
+Consulta [docs/api-contract.md](docs/api-contract.md) para el contrato completo.
 
 ## Validación
 
