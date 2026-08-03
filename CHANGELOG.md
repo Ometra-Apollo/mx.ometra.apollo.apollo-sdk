@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.1.0] - 2026-08-03
+
+### Added
+
+- Allow directory application grant requests to target a specific application.
+- Add `MediaCollectionResource::storeWithDirectoryGrant()` for uploading media
+  with a delegated directory application grant.
+
 ## [6.0.0] - 2026-07-31
 
 Breaking release that aligns Ignis group resources with the shared Apollo

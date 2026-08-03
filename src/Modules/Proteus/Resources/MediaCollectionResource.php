@@ -29,7 +29,10 @@ final class MediaCollectionResource
         return $this->client->userRequest('POST', 'media', payload: $data);
     }
 
-    /** @return array<array-key, mixed> */
+    /**
+     * @param  array<string, mixed>  $metadata
+     * @return array<array-key, mixed>
+     */
     public function storeWithDirectoryGrant(
         UploadedFile $file,
         string $directoryId,
