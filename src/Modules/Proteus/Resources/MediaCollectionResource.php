@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ometra\Apollo\Sdk\Modules\Proteus\Resources;
 
+use Illuminate\Http\UploadedFile;
 use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
 
 final class MediaCollectionResource
@@ -26,6 +27,21 @@ final class MediaCollectionResource
     public function store(array $data): array
     {
         return $this->client->userRequest('POST', 'media', payload: $data);
+    }
+
+    /** @return array<array-key, mixed> */
+    public function storeWithDirectoryGrant(
+        UploadedFile $file,
+        string $directoryId,
+        string $directoryApplicationGrantId,
+        array $metadata = [],
+    ): array {
+        return $this->client->userRequest('POST', 'media', payload: [
+            'media' => [$file],
+            'id_directory' => $directoryId,
+            'id_directory_application_grant' => $directoryApplicationGrantId,
+            'metadata' => $metadata,
+        ]);
     }
 
     public function metadata(): MediaMetadataValuesResource

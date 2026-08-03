@@ -118,6 +118,14 @@ final class ProteusResourceRoutesTest extends TestCase
             'permission' => 'read',
         ]);
 
+        (new DirectoryApplicationGrantRequestResource($client, 'dir-1'))->request(
+            'ignis:evidence:1', DirectoryApplicationPermission::WRITE, 'mx.ometra.apollo.lume',
+        );
+        $this->assertRequest($client, 'user', 'POST', 'directories/dir-1/application-grants', payload: [
+            'client_reference' => 'ignis:evidence:1', 'permission' => 'write',
+            'target_application_id' => 'mx.ometra.apollo.lume',
+        ]);
+
         (new DirectoryApplicationGrantResource($client, 'grant-1'))->revoke();
         $this->assertRequest($client, 'application', 'DELETE', 'directories/application-grants/grant-1');
     }
