@@ -6,7 +6,7 @@ namespace Ometra\Apollo\Sdk\Modules\Ignis\Resources;
 
 use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
 
-final class CampaignResource
+final class CampaignPlaylogsResource
 {
     public function __construct(
         private readonly ApolloHttpClient $client,
@@ -14,17 +14,13 @@ final class CampaignResource
         private readonly int $campaignId,
     ) {}
 
-    /** @return array<array-key, mixed> */
-    public function show(): array
+    /** @param array<int, array<string, mixed>> $playlogs */
+    public function store(array $playlogs): array
     {
         return $this->client->applicationRequest(
-            'GET',
-            'groups/'.$this->groupId.'/campaigns/'.$this->campaignId,
+            'POST',
+            'groups/'.$this->groupId.'/campaigns/'.$this->campaignId.'/playlogs',
+            ['playlogs' => $playlogs],
         );
-    }
-
-    public function playlogs(): CampaignPlaylogsResource
-    {
-        return new CampaignPlaylogsResource($this->client, $this->groupId, $this->campaignId);
     }
 }

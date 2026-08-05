@@ -22,6 +22,10 @@ final class IgnisResourceRoutesTest extends TestCase
             'data' => ['campaigns' => []],
             'errors' => [],
         ], $response);
+
+        (new CampaignResource($client, 'group-1', 11))->playlogs()->store([['event_id' => 'event-1']]);
+        self::assertSame('groups/group-1/campaigns/11/playlogs', $client->lastRequest['endpoint']);
+        self::assertSame('application', $client->lastRequest['auth']);
     }
 
     public function test_bound_campaign_uses_expected_endpoint(): void

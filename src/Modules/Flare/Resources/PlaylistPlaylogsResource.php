@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Ometra\Apollo\Sdk\Modules\Flare\Resources;
+
+use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
+
+final class PlaylistPlaylogsResource
+{
+    public function __construct(private readonly ApolloHttpClient $client, private readonly string $playlistId) {}
+
+    /** @param array<int, array<string, mixed>> $playlogs */
+    public function store(array $playlogs): array
+    {
+        return $this->client->applicationRequest('POST', 'playlists/'.$this->playlistId.'/playlogs', ['playlogs' => $playlogs]);
+    }
+}
