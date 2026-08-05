@@ -27,4 +27,9 @@ final class CampaignResource
     {
         return new CampaignPlaylogsResource($this->client, $this->groupId, $this->campaignId);
     }
+
+    public function contents(): CampaignContentsResource
+    {
+        return new CampaignContentsResource($this->client, $this->groupId, $this->campaignId);
+    }
 }
