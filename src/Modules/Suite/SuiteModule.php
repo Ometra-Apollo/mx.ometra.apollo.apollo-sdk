@@ -7,6 +7,7 @@ namespace Ometra\Apollo\Sdk\Modules\Suite;
 use Ometra\Apollo\Sdk\Core\Config\ModuleConfigResolver;
 use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
 use Ometra\Apollo\Sdk\Modules\Suite\Resources\ApplicationsResource;
+use Ometra\Apollo\Sdk\Modules\Suite\Resources\ClientsResource;
 
 final class SuiteModule
 {
@@ -25,6 +26,11 @@ final class SuiteModule
     public function applications(): ApplicationsResource
     {
         return new ApplicationsResource($this->client());
+    }
+
+    public function clients(): ClientsResource
+    {
+        return new ClientsResource($this->client());
     }
 
     private function client(): ApolloHttpClient
