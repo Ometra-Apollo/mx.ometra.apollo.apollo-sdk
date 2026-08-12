@@ -11,6 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.5.0] - 2026-08-12
+
+### Added
+
+- Add `Apollo::suite()->clients()` for CRUD operations on clients.
+- Add `ClientsResource::contacts()` to access contacts nested under a client.
+- Add `ContactsResource` for managing client contacts with full CRUD support
+  (index, show, create, update, delete).
+- Add `ClientUsersResource` for managing client users with full CRUD support
+  (index, show, create, update, delete).
+- Document Suite client management API contract, endpoints, and authentication requirements.
 ## [6.3.0] - 2026-08-05
 
 ### Added
