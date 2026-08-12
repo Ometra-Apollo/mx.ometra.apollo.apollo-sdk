@@ -23,4 +23,9 @@ final class PlaylistsResource
     {
         return new PlaylistItemsResource($this->client, $this->playlistId);
     }
+
+    public function playlogs(): PlaylistPlaylogsResource
+    {
+        return new PlaylistPlaylogsResource($this->client, $this->playlistId);
+    }
 }

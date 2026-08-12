@@ -22,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `ClientUsersResource` for managing client users with full CRUD support
   (index, show, create, update, delete).
 - Document Suite client management API contract, endpoints, and authentication requirements.
+## [6.3.0] - 2026-08-05
+
+### Added
+
+- Add application-authenticated playlist playlog delivery to Flare.
+- Add application-authenticated campaign playlog delivery to Ignis.
 
 ## [6.1.0] - 2026-08-03
 

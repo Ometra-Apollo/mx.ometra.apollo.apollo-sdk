@@ -24,6 +24,11 @@ final class FlareStationsRoutesTest extends TestCase
         self::assertInstanceOf(PlaylistItemsResource::class, $items);
         $items->index();
         self::assertSame('playlists/playlist-1/items', $client->lastRequest['endpoint']);
+
+        $playlist->playlogs()->store([['event_id' => 'event-1']]);
+        self::assertSame('playlists/playlist-1/playlogs', $client->lastRequest['endpoint']);
+        self::assertSame('application', $client->lastRequest['auth']);
+        self::assertSame(['playlogs' => [['event_id' => 'event-1']]], $client->lastRequest['payload']);
     }
 
     public function test_station_group_routes(): void
