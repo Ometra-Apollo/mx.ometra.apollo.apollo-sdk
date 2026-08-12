@@ -39,4 +39,9 @@ final class ClientsResource
     {
         return new ContactsResource($this->client, $id_client);
     }
+
+    public function users(string $id_client): ClientUsersResource
+    {
+        return new ClientUsersResource($this->client, $id_client);
+    }
 }
