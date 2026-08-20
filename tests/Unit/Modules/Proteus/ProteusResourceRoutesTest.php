@@ -85,10 +85,10 @@ final class ProteusResourceRoutesTest extends TestCase
 
         $grant = new LightPathResource($client, 'grant-1');
         $grant->extend(7200);
-        $this->assertRequest($client, 'user', 'PATCH', 'lightpath/grants/grant-1/extend', payload: ['url_ttl_seconds' => 7200]);
+        $this->assertRequest($client, 'application', 'PATCH', 'lightpath/grants/grant-1/extend', payload: ['url_ttl_seconds' => 7200]);
 
         $grant->revoke();
-        $this->assertRequest($client, 'user', 'DELETE', 'lightpath/grants/grant-1');
+        $this->assertRequest($client, 'application', 'DELETE', 'lightpath/grants/grant-1');
     }
 
     public function test_directory_and_application_grant_routes(): void
