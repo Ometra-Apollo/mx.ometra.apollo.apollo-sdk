@@ -1,0 +1,36 @@
+{
+  "$schema": ".ometra/schema/repository-profile.schema.json",
+  "repository": "mx.ometra.apollo.apollo-sdk",
+  "standardsVersion": "5.0.4",
+  "governance": {
+    "adoptionStage": "enforce",
+    "stableBranch": "main",
+    "integrationBranch": "dev",
+    "standardsRepository": "Ometra-Core/Engeneering-Standards",
+    "standardsRef": "v5.0.4"
+  },
+  "stacks": [
+    "php-laravel",
+    "documentation"
+  ],
+  "runtimes": {
+    "php": "8.4"
+  },
+  "commands": {
+    "formatCheck": "composer run lint",
+    "lint": "composer run analyse",
+    "test": "composer run test"
+  },
+  "documentation": {
+    "manifest": "tools/docs/manifest.yml",
+    "sourceLocale": "es",
+    "locales": [
+      "es",
+      "en"
+    ]
+  },
+  "owners": [
+    "@ometra-engineering"
+  ],
+  "exceptions": []
+}

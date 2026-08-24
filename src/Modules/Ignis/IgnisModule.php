@@ -22,7 +22,7 @@ final class IgnisModule
 
     public function __construct(private readonly ModuleConfigResolver $configResolver) {}
 
-     public function asApplication(): static
+    public function asApplication(): static
     {
         $clone = clone $this;
         $clone->asApplication = true;

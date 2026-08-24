@@ -17,8 +17,8 @@ final class PlaylistLightPathResource
     /**
      * Initializes the lightpath resource for a playlist
      *
-     * @param ApolloHttpClient $client Apollo HTTP client
-     * @param string $playlistId The playlist ID
+     * @param  ApolloHttpClient  $client  Apollo HTTP client
+     * @param  string  $playlistId  The playlist ID
      */
     public function __construct(
         private readonly ApolloHttpClient $client,
@@ -31,8 +31,7 @@ final class PlaylistLightPathResource
      * Performs a POST request to the refresh-lightpath endpoint
      * to update the lightpath of the specified item.
      *
-     * @param string $mediaId The ID of the media item to refresh
-     *
+     * @param  string  $mediaId  The ID of the media item to refresh
      * @return array<array-key, mixed> Server response with the refreshed lightpath
      */
     public function refresh(string $mediaId): array
