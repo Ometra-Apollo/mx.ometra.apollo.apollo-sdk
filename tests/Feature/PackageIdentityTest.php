@@ -38,6 +38,17 @@ final class PackageIdentityTest extends TestCase
         self::assertArrayNotHasKey('guzzlehttp/guzzle', $composer['require']);
     }
 
+    public function test_package_exposes_the_apollo_session_configuration_wrapper_and_preset(): void
+    {
+        $composer = $this->readComposer();
+        $validator = 'bin/validate-apollo-session-config';
+
+        self::assertSame('^8.7.0', $composer['require']['ometra/caronte-sdk']);
+        self::assertContains($validator, $composer['bin']);
+        self::assertFileExists(__DIR__.'/../../'.$validator);
+        self::assertFileExists(__DIR__.'/../../config/group-session-config.json');
+    }
+
     public function test_package_and_ci_require_php_84_or_newer(): void
     {
         $composer = $this->readComposer();

@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.9.0] - 2026-08-24
+
+### Added
+
+- Add the `validate-apollo-session-config` Composer wrapper and its preconfigured Apollo shared-session definition.
+
 ## [6.5.0] - 2026-08-12
 
 ### Added

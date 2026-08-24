@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "group": "apollo-shared-session",
+  "applications": [
+    {"name": "aeris", "path": "mx.ometra.apollo.aeris", "env_files": [".env.d/04-session.env", ".env.d/09-caronte.env", ".env.d/01-app.env"]},
+    {"name": "flare", "path": "mx.ometra.apollo.flare", "env_files": [".env.d/04-session.env", ".env.d/09-caronte.env", ".env.d/01-app.env"]},
+    {"name": "ignis", "path": "mx.ometra.apollo.ignis", "env_files": [".env.d/04-session.env", ".env.d/09-caronte.env", ".env.d/01-app.env"]},
+    {"name": "lume", "path": "mx.ometra.apollo.lume", "env_files": [".env.d/04-session.env", ".env.d/09-caronte.env", ".env.d/01-app.env"]},
+    {"name": "proteus", "path": "mx.ometra.apollo.proteus", "env_files": [".env.d/04-session.env", ".env.d/09-caronte.env", ".env.d/01-app.env"]},
+    {"name": "pulse", "path": "mx.ometra.apollo.pulse", "env_files": [".env.d/04-session.env", ".env.d/09-caronte.env", ".env.d/01-app.env"]}
+  ],
+  "rules": [
+    {"type": "equals", "key": "SESSION_DRIVER", "value": "redis", "required": true},
+    {"type": "equals", "key": "SESSION_CONNECTION", "value": "session", "required": true},
+    {"type": "equals", "key": "SESSION_STORE", "value": "session", "required": true},
+    {"type": "equals", "key": "SESSION_DOMAIN", "value": ".apollo.ometra.mx", "required": true},
+    {"type": "equals", "key": "SESSION_SECURE_COOKIE", "value": "true", "required": true},
+    {"type": "equals", "key": "SESSION_ENCRYPT", "value": "true", "required": true},
+    {"type": "equals", "key": "SESSION_COOKIE", "value": "apollo-session", "required": true},
+    {"type": "equals", "key": "CARONTE_SESSION_KEY", "value": "apollo-session", "required": true},
+    {"type": "equals", "key": "CARONTE_TOKEN_CLOCK_SKEW_SECONDS", "value": "60", "required": true},
+    {"type": "equals", "key": "CARONTE_TOKEN_REFRESH_LEEWAY_SECONDS", "value": "60", "required": true},
+    {"type": "same", "key": "APP_KEY", "required": false, "sensitive": true}
+  ]
+}
