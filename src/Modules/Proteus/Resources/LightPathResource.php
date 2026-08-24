@@ -16,7 +16,7 @@ final class LightPathResource
     /** @return array<array-key, mixed> */
     public function extend(int $ttlSeconds): array
     {
-        return $this->client->userRequest(
+        return $this->client->applicationRequest(
             'PATCH',
             'lightpath/grants/'.$this->lightPathGrantId.'/extend',
             payload: ['url_ttl_seconds' => $ttlSeconds],
@@ -26,7 +26,7 @@ final class LightPathResource
     /** @return array<array-key, mixed> */
     public function revoke(): array
     {
-        return $this->client->userRequest(
+        return $this->client->applicationRequest(
             'DELETE',
             'lightpath/grants/'.$this->lightPathGrantId,
         );
