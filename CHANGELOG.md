@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.10.0] - 2026-08-27
+
+### Changed
+
+- Support Illuminate 12 and 13 while retaining backward compatibility with Laravel 12 consumers.
+- Require Caronte SDK 8.8 or newer for the shared Laravel 13-compatible authentication contract.
+
 ## [6.9.0] - 2026-08-24
 
 ### Added
