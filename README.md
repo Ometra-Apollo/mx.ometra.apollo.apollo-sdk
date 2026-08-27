@@ -197,3 +197,27 @@ composer test
 composer lint
 composer analyse
 ```
+
+### Configuración de sesión compartida
+
+Apollo SDK incluye la definición compartida de Aeris, Flare, Ignis, Lume, Proteus y Pulse. Su wrapper usa el validador
+genérico proporcionado por Caronte SDK, detecta el workspace padre y evita argumentos repetitivos:
+
+```bash
+vendor/bin/validate-apollo-session-config
+```
+
+Puede indicarse el workspace cuando no pueda detectarse desde el directorio actual:
+
+```bash
+vendor/bin/validate-apollo-session-config --workspace /srv/Ometra-Apollo
+```
+
+Los proyectos consumidores también exponen el alias:
+
+```bash
+composer apollo:session:validate
+```
+
+La definición está en `config/group-session-config.json`. Apollo SDK solo posee ese preset y el wrapper; el parser,
+reglas, seguridad y códigos de salida pertenecen a Caronte SDK.

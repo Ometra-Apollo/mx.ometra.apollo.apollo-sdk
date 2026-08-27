@@ -1,0 +1,6 @@
+[submodule ".ometra/engineering-standards"]
+	path = .ometra/engineering-standards
+	url = https://github.com/Ometra-Core/Engeneering-Standards.git
+[submodule ".ometra/deploy-tools"]
+	path = .ometra/deploy-tools
+	url = https://github.com/Ometra-Core/Deploy-Tools.git

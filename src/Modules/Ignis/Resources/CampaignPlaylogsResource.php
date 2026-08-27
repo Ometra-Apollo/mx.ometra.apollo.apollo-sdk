@@ -14,7 +14,10 @@ final class CampaignPlaylogsResource
         private readonly int $campaignId,
     ) {}
 
-    /** @param array<int, array<string, mixed>> $playlogs */
+    /**
+     * @param  array<int, array<string, mixed>>  $playlogs
+     * @return array<array-key, mixed>
+     */
     public function store(array $playlogs): array
     {
         return $this->client->applicationRequest(

@@ -10,7 +10,10 @@ final class PlaylistPlaylogsResource
 {
     public function __construct(private readonly ApolloHttpClient $client, private readonly string $playlistId) {}
 
-    /** @param array<int, array<string, mixed>> $playlogs */
+    /**
+     * @param  array<int, array<string, mixed>>  $playlogs
+     * @return array<array-key, mixed>
+     */
     public function store(array $playlogs): array
     {
         return $this->client->applicationRequest('POST', 'playlists/'.$this->playlistId.'/playlogs', ['playlogs' => $playlogs]);

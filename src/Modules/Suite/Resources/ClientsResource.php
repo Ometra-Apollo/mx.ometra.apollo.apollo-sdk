@@ -20,11 +20,13 @@ final class ClientsResource
         return $this->client->userRequest('GET', "clients/{$id_client}");
     }
 
+    /** @param array<string, mixed> $data */
     public function create(array $data): mixed
     {
         return $this->client->userRequest('POST', 'clients', $data);
     }
 
+    /** @param array<string, mixed> $data */
     public function update(string $id_client, array $data): mixed
     {
         return $this->client->userRequest('PUT', "clients/{$id_client}", $data);

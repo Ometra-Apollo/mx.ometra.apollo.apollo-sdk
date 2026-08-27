@@ -38,14 +38,28 @@ final class PackageIdentityTest extends TestCase
         self::assertArrayNotHasKey('guzzlehttp/guzzle', $composer['require']);
     }
 
+    public function test_package_exposes_the_apollo_session_configuration_wrapper_and_preset(): void
+    {
+        $composer = $this->readComposer();
+        $validator = 'bin/validate-apollo-session-config';
+
+        self::assertSame('^8.8.0', $composer['require']['ometra/caronte-sdk']);
+        self::assertSame('^12.0 || ^13.0', $composer['require']['illuminate/http']);
+        self::assertSame('^12.0 || ^13.0', $composer['require']['illuminate/routing']);
+        self::assertSame('^12.0 || ^13.0', $composer['require']['illuminate/support']);
+        self::assertContains($validator, $composer['bin']);
+        self::assertFileExists(__DIR__.'/../../'.$validator);
+        self::assertFileExists(__DIR__.'/../../config/group-session-config.json');
+    }
+
     public function test_package_and_ci_require_php_84_or_newer(): void
     {
         $composer = $this->readComposer();
-        $workflow = file_get_contents(__DIR__.'/../../.github/workflows/ci.yml');
+        $workflow = file_get_contents(__DIR__.'/../../.github/workflows/quality-gate.yml');
 
         self::assertSame('^8.4', $composer['require']['php']);
         self::assertIsString($workflow);
-        self::assertStringContainsString('php: ["8.4", "8.5"]', $workflow);
+        self::assertStringContainsString("php-version: '8.4'", $workflow);
         self::assertStringNotContainsString('"8.2"', $workflow);
         self::assertStringNotContainsString('"8.3"', $workflow);
     }

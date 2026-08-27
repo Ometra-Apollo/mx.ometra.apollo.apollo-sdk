@@ -17,8 +17,8 @@ final class PlaylistItemsResource
     /**
      * Initializes the playlist items resource
      *
-     * @param ApolloHttpClient $client Apollo HTTP client
-     * @param string $playlistId The playlist ID
+     * @param  ApolloHttpClient  $client  Apollo HTTP client
+     * @param  string  $playlistId  The playlist ID
      */
     public function __construct(
         private readonly ApolloHttpClient $client,

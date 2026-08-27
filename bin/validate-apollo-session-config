@@ -1,0 +1,79 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Ometra\Caronte\Support\GroupSessionConfigException;
+use Ometra\Caronte\Support\GroupSessionConfigValidator;
+
+$autoloadCandidates = array_filter([
+    getenv('APOLLO_CARONTE_AUTOLOAD') ?: null,
+    __DIR__.'/../vendor/autoload.php',
+    __DIR__.'/../../../autoload.php',
+]);
+
+foreach ($autoloadCandidates as $autoload) {
+    if (is_file($autoload)) {
+        require $autoload;
+        if (class_exists(GroupSessionConfigValidator::class)) {
+            break;
+        }
+    }
+}
+
+if (! class_exists(GroupSessionConfigValidator::class)) {
+    fwrite(STDERR, "ERROR: Caronte SDK does not provide the group session validator.\n");
+    exit(2);
+}
+
+try {
+    $options = getopt('', ['workspace:', 'help']);
+    if (isset($options['help'])) {
+        fwrite(STDOUT, "Usage: validate-apollo-session-config [--workspace <directory>]\n");
+        exit(0);
+    }
+
+    $workspace = $options['workspace'] ?? getenv('APOLLO_WORKSPACE') ?: null;
+    if ($workspace !== null && ! is_string($workspace)) {
+        throw new GroupSessionConfigException('The --workspace option must be provided once.');
+    }
+
+    if ($workspace === null) {
+        $current = getcwd();
+        if ($current === false) {
+            throw new GroupSessionConfigException('The current working directory cannot be resolved.');
+        }
+
+        if (is_dir($current.'/mx.ometra.apollo.aeris')) {
+            $workspace = $current;
+        } elseif (str_starts_with(basename($current), 'mx.ometra.apollo.')) {
+            $workspace = dirname($current);
+        } else {
+            throw new GroupSessionConfigException('Apollo workspace cannot be detected; use --workspace.');
+        }
+    }
+
+    $result = (new GroupSessionConfigValidator)->validate(
+        __DIR__.'/../config/group-session-config.json',
+        $workspace,
+    );
+
+    if (! $result->isValid()) {
+        foreach ($result->violations as $violation) {
+            fwrite(STDERR, 'ERROR: '.$violation."\n");
+        }
+        exit(1);
+    }
+
+    fwrite(STDOUT, sprintf(
+        "Apollo shared-session configuration is consistent across %d applications.\n",
+        $result->applicationCount,
+    ));
+    exit(0);
+} catch (GroupSessionConfigException $exception) {
+    fwrite(STDERR, 'ERROR: '.$exception->getMessage()."\n");
+    exit(2);
+} catch (Throwable $exception) {
+    fwrite(STDERR, 'ERROR: Unexpected validator failure ('.$exception::class.").\n");
+    exit(2);
+}
