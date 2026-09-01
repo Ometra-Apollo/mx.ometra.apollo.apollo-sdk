@@ -16,6 +16,7 @@ final class LightPathResource
     /** @return array<array-key, mixed> */
     public function extend(int $ttlSeconds): array
     {
+        // Deprecated: delivery lifecycle belongs to Proteus; retained only for the rollback window.
         return $this->client->applicationRequest(
             'PATCH',
             'lightpath/grants/'.$this->lightPathGrantId.'/extend',
@@ -26,6 +27,7 @@ final class LightPathResource
     /** @return array<array-key, mixed> */
     public function revoke(): array
     {
+        // Deprecated: use LightPathDeliveryResource::retire().
         return $this->client->applicationRequest(
             'DELETE',
             'lightpath/grants/'.$this->lightPathGrantId,

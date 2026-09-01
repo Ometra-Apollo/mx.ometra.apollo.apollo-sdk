@@ -8,6 +8,7 @@ use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoriesCollectionResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoryApplicationGrantRequestResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoryApplicationGrantResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoryResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\LightPathDeliveriesResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\LightPathRequestResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\LightPathResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MediaCollectionResource;
@@ -89,6 +90,32 @@ final class ProteusResourceRoutesTest extends TestCase
 
         $grant->revoke();
         $this->assertRequest($client, 'application', 'DELETE', 'lightpath/grants/grant-1');
+    }
+
+    public function test_light_path_delivery_routes_use_application_authentication(): void
+    {
+        $client = new RecordingApolloHttpClient;
+        $deliveries = new LightPathDeliveriesResource($client);
+        $payload = [
+            'consumer_type' => 'playlist',
+            'consumer_key' => '151:item-1:playback',
+            'media_id' => '019fb00b-649e-7275-9b1a-4331e665dcb2',
+            'format' => 'mp4',
+            'ttl_seconds' => 86400,
+        ];
+
+        $deliveries->register($payload);
+        $this->assertRequest($client, 'application', 'POST', 'lightpath/deliveries', payload: $payload);
+
+        $batch = [['delivery_id' => 'delivery-1', 'force_refresh' => true]];
+        $deliveries->resolveBatch($batch);
+        $this->assertRequest($client, 'application', 'POST', 'lightpath/deliveries/resolve-batch', payload: ['deliveries' => $batch]);
+
+        $deliveries->delivery('delivery/1')->refresh(3600);
+        $this->assertRequest($client, 'application', 'POST', 'lightpath/deliveries/delivery%2F1/refresh', payload: ['ttl_seconds' => 3600]);
+
+        $deliveries->delivery('delivery/1')->retire();
+        $this->assertRequest($client, 'application', 'DELETE', 'lightpath/deliveries/delivery%2F1');
     }
 
     public function test_directory_and_application_grant_routes(): void
