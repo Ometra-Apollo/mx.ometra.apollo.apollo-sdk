@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+REPOSITORY_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+TOOL="${REPOSITORY_ROOT}/.ometra/deploy-tools/bin/prepare-release"
+
+if [[ ! -x "${TOOL}" ]]; then
+  echo "Deploy Tools is not initialized. Run: git submodule update --init --recursive" >&2
+  exit 69
+fi
+
+exec "${TOOL}" "$@"

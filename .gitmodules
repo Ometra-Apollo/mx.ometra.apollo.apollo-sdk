@@ -4,3 +4,6 @@
 [submodule ".ometra/deploy-tools"]
 	path = .ometra/deploy-tools
 	url = https://github.com/Ometra-Core/Deploy-Tools.git
+[submodule ".ometra/ai-tools"]
+	path = .ometra/ai-tools
+	url = https://github.com/Ometra-Core/AI-Tools.git
