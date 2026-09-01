@@ -10,6 +10,7 @@ final class LightPathDeliveryResource
 {
     public function __construct(private readonly ApolloHttpClient $client, private readonly string $deliveryId) {}
 
+    /** @return array<array-key, mixed> */
     public function refresh(?int $ttlSeconds = null): array
     {
         return $this->client->applicationRequest(
@@ -19,6 +20,7 @@ final class LightPathDeliveryResource
         );
     }
 
+    /** @return array<array-key, mixed> */
     public function retire(): array
     {
         return $this->client->applicationRequest('DELETE', 'lightpath/deliveries/'.rawurlencode($this->deliveryId));
