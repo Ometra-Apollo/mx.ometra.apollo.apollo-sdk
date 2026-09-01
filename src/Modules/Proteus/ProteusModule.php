@@ -9,6 +9,7 @@ use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\CategoriesResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoriesCollectionResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\DirectoryResource;
+use Ometra\Apollo\Sdk\Modules\Proteus\Resources\LightPathDeliveriesResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\LightPathResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MediaCollectionResource;
 use Ometra\Apollo\Sdk\Modules\Proteus\Resources\MediaResource;
@@ -46,6 +47,11 @@ final class ProteusModule
     public function lightPath(string $lightPathGrantId): LightPathResource
     {
         return new LightPathResource($this->client(), $lightPathGrantId);
+    }
+
+    public function lightPathDeliveries(): LightPathDeliveriesResource
+    {
+        return new LightPathDeliveriesResource($this->client());
     }
 
     public function categories(): CategoriesResource
