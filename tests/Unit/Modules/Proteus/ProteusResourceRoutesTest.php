@@ -114,6 +114,10 @@ final class ProteusResourceRoutesTest extends TestCase
         $deliveries->delivery('delivery/1')->refresh(3600);
         $this->assertRequest($client, 'application', 'POST', 'lightpath/deliveries/delivery%2F1/refresh', payload: ['ttl_seconds' => 3600]);
 
+        $failure = ['version' => 4, 'error_code' => 'grant_expired', 'source' => 'pulse'];
+        $deliveries->delivery('delivery/1')->reportFailure($failure);
+        $this->assertRequest($client, 'application', 'POST', 'lightpath/deliveries/delivery%2F1/failures', payload: $failure);
+
         $deliveries->delivery('delivery/1')->retire();
         $this->assertRequest($client, 'application', 'DELETE', 'lightpath/deliveries/delivery%2F1');
     }
