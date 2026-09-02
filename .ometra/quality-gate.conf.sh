@@ -7,6 +7,6 @@ quality_gate_composer() {
 }
 quality_gate_quality() {
   composer run lint
-  composer run analyse
+  php -d memory_limit=512M vendor/bin/phpstan analyse --no-progress
   composer run test
 }

@@ -52,16 +52,16 @@ final class PackageIdentityTest extends TestCase
         self::assertFileExists(__DIR__.'/../../config/group-session-config.json');
     }
 
-    public function test_package_and_ci_require_php_84_or_newer(): void
+    public function test_package_and_repository_profile_require_php_84_or_newer(): void
     {
         $composer = $this->readComposer();
-        $workflow = file_get_contents(__DIR__.'/../../.github/workflows/quality-gate.yml');
+        $profileRaw = file_get_contents(__DIR__.'/../../ometra.repository.json');
 
         self::assertSame('^8.4', $composer['require']['php']);
-        self::assertIsString($workflow);
-        self::assertStringContainsString("php-version: '8.4'", $workflow);
-        self::assertStringNotContainsString('"8.2"', $workflow);
-        self::assertStringNotContainsString('"8.3"', $workflow);
+        self::assertIsString($profileRaw);
+        $profile = json_decode($profileRaw, true, flags: JSON_THROW_ON_ERROR);
+        self::assertIsArray($profile);
+        self::assertSame('8.4', $profile['runtimes']['php'] ?? null);
     }
 
     /**
