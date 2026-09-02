@@ -8,6 +8,7 @@ use Ometra\Apollo\Sdk\Core\Config\ModuleConfigResolver;
 use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
 use Ometra\Apollo\Sdk\Modules\Suite\Resources\ApplicationsResource;
 use Ometra\Apollo\Sdk\Modules\Suite\Resources\ClientsResource;
+use Ometra\Apollo\Sdk\Modules\Suite\Resources\GroupsResource;
 
 final class SuiteModule
 {
@@ -31,6 +32,11 @@ final class SuiteModule
     public function clients(): ClientsResource
     {
         return new ClientsResource($this->client());
+    }
+
+    public function groups(): GroupsResource
+    {
+        return new GroupsResource($this->client());
     }
 
     private function client(): ApolloHttpClient
