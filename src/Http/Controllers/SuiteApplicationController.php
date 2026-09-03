@@ -11,6 +11,6 @@ final class SuiteApplicationController
 {
     public function userApplications(): JsonResponse
     {
-        return response()->json(Apollo::suite()->applications()->user());
+        return response()->json(Apollo::suite()->users()->applications()->index());
     }
 }
