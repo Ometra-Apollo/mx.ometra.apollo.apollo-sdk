@@ -16,7 +16,18 @@ final class SuiteModule
 {
     private ?ApolloHttpClient $client = null;
 
+    private bool $asApplication = false;
+
     public function __construct(private readonly ModuleConfigResolver $configResolver) {}
+
+    public function asApplication(): static
+    {
+        $clone = clone $this;
+        $clone->asApplication = true;
+        $clone->client = null;
+
+        return $clone;
+    }
 
     /**
      * @return array{base_url: string}
@@ -24,6 +35,11 @@ final class SuiteModule
     public function config(): array
     {
         return $this->configResolver->resolve('suite');
+    }
+
+    public function applications(): ApplicationsResource
+    {
+        return new ApplicationsResource($this->client());
     }
 
     public function users(): UsersResources
@@ -49,7 +65,10 @@ final class SuiteModule
     private function client(): ApolloHttpClient
     {
         if ($this->client === null) {
-            $this->client = new ApolloHttpClient($this->config()['base_url']);
+            $this->client = new ApolloHttpClient(
+                $this->configResolver->resolve('suite')['base_url'],
+                $this->asApplication,
+            );
         }
 
         return $this->client;
