@@ -15,8 +15,13 @@ final class UsersResources
     {
         return new ApplicationsResource($this->client);
     }
-    public function ensure(): mixed
+    /**
+     * Ensure a user exists.
+     *
+     * @param array<string, mixed> $data{users:array<string, Record<{name:string, email:string}>>}
+     */
+    public function ensure(array $data): mixed
     {
-        return $this->client->userRequest('GET', 'users/ensure');
+        return $this->client->userRequest('POST', 'users/ensure', $data);
     }
 }
