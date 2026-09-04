@@ -6,7 +6,7 @@ use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Facade;
 use Ometra\Apollo\Sdk\Core\Config\ModuleConfigResolver;
-use Ometra\Apollo\Sdk\Modules\Suite\Resources\ApplicationsResource;
+use Ometra\Apollo\Sdk\Modules\Suite\Resources\NotificationsResources;
 use Ometra\Apollo\Sdk\Modules\Suite\SuiteModule;
 use PHPUnit\Framework\TestCase;
 
@@ -39,10 +39,10 @@ final class SuiteApiShapeTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_suite_module_exposes_applications_resource(): void
+    public function test_suite_module_exposes_notifications_resource(): void
     {
         $module = new SuiteModule(new ModuleConfigResolver);
 
-        self::assertInstanceOf(ApplicationsResource::class, $module->applications());
+        self::assertInstanceOf(NotificationsResources::class, $module->notifications());
     }
 }

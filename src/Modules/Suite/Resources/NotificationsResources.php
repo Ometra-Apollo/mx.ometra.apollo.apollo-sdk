@@ -37,12 +37,17 @@ final class NotificationsResources
         $this->client->userRequest('POST', "notifications/read-all");
     }
 
-     public function index(?int $limit = null): array
+    /**
+     * Retrieve notifications using the supplied query parameters.
+     *
+     * @param array{filter?: mixed, unread?: mixed, items_per_page?: mixed, page?: mixed} $query
+     */
+    public function index(array $query = []): array
     {
         return $this->client->userRequest(
             'GET',
             'notifications',
-            $limit === null ? [] : ['limit' => $limit],
+            query: $query,
         );
     }
 }
