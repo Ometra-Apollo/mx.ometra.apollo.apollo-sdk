@@ -44,4 +44,9 @@ final class GroupsResource
         return $this->client->userRequest('DELETE', "groups/{$id_group}");
     }
 
+    public function byUser(string $uri_user): mixed
+    {
+        return $this->client->userRequest('GET', "groups/by-user/{$uri_user}");
+    }
+
 }
