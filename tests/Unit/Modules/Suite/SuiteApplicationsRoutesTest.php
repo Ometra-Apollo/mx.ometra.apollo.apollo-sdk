@@ -9,17 +9,17 @@ require_once __DIR__.'/../Proteus/RecordingApolloHttpClient.php';
 
 final class SuiteApplicationsRoutesTest extends TestCase
 {
-    public function test_user_uses_expected_endpoint_and_user_auth(): void
+    public function test_index_uses_expected_endpoint_and_user_auth(): void
     {
         $client = new RecordingApolloHttpClient;
         $resource = new ApplicationsResource($client);
 
-        $resource->user();
+        $resource->index();
 
         self::assertSame([
             'auth' => 'user',
             'method' => 'GET',
-            'endpoint' => 'applications/user',
+            'endpoint' => 'users/applications',
             'payload' => [],
             'query' => [],
             'raw' => false,

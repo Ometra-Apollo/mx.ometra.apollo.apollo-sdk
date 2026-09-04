@@ -10,9 +10,13 @@ final class GroupsResource
 {
     public function __construct(private readonly ApolloHttpClient $client) {}
 
-    public function index(?string $search): mixed
+    /** @param array<int, string> $ids */
+    public function index(?string $search = null, array $exclude = []): mixed
     {
-        return $this->client->userRequest('GET', 'groups', ['search' => $search]);
+        return $this->client->userRequest('GET', 'groups', [
+            'search' => $search,
+            'exclude' => $exclude,
+        ]);
     }
 
     public function effective(?string $search): mixed
