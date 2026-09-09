@@ -14,19 +14,4 @@ final class ApplicationsResource
     {
         return $this->client->userRequest('GET', 'users/applications');
     }
-
-    public function recoverPassword(string $email): mixed
-    {
-        return $this->client->userRequest('POST', 'caronte/auth/password/recover', ['email' => $email]);
-    }
-
-    public function passwordRecoverTokenValidation(string $token): mixed
-    {
-        return $this->client->userRequest('GET', "caronte/auth/password/recover/{$token}");
-    }
-
-    public function passwordRecover(string $token, array $data): mixed
-    {
-        return $this->client->userRequest('POST', "caronte/auth/password/recover/{$token}", $data);
-    }
 }
