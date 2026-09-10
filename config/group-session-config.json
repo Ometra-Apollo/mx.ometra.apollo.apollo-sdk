@@ -2,6 +2,7 @@
   "version": 1,
   "group": "apollo-shared-session",
   "applications": [
+    {"name": "lumina", "path": "mx.ometra.apollo.lumina", "env_files": [".env.d/04-session.env", ".env.d/09-caronte.env", ".env.d/01-app.env"]},
     {"name": "aeris", "path": "mx.ometra.apollo.aeris", "env_files": [".env.d/04-session.env", ".env.d/09-caronte.env", ".env.d/01-app.env"]},
     {"name": "flare", "path": "mx.ometra.apollo.flare", "env_files": [".env.d/04-session.env", ".env.d/09-caronte.env", ".env.d/01-app.env"]},
     {"name": "ignis", "path": "mx.ometra.apollo.ignis", "env_files": [".env.d/04-session.env", ".env.d/09-caronte.env", ".env.d/01-app.env"]},
@@ -20,6 +21,6 @@
     {"type": "equals", "key": "CARONTE_SESSION_KEY", "value": "apollo-session", "required": true},
     {"type": "equals", "key": "CARONTE_TOKEN_CLOCK_SKEW_SECONDS", "value": "60", "required": true},
     {"type": "equals", "key": "CARONTE_TOKEN_REFRESH_LEEWAY_SECONDS", "value": "60", "required": true},
-    {"type": "same", "key": "APP_KEY", "required": false, "sensitive": true}
+    {"type": "same", "key": "APP_KEY", "required": true, "sensitive": true}
   ]
 }

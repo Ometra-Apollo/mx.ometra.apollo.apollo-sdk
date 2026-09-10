@@ -43,13 +43,15 @@ final class PackageIdentityTest extends TestCase
         $composer = $this->readComposer();
         $validator = 'bin/validate-apollo-session-config';
 
-        self::assertSame('^8.8.0', $composer['require']['ometra/caronte-sdk']);
+        self::assertSame('^8.9.0', $composer['require']['ometra/caronte-sdk']);
         self::assertSame('^12.0 || ^13.0', $composer['require']['illuminate/http']);
         self::assertSame('^12.0 || ^13.0', $composer['require']['illuminate/routing']);
         self::assertSame('^12.0 || ^13.0', $composer['require']['illuminate/support']);
         self::assertContains($validator, $composer['bin']);
         self::assertFileExists(__DIR__.'/../../'.$validator);
         self::assertFileExists(__DIR__.'/../../config/group-session-config.json');
+        $preset = json_decode((string) file_get_contents(__DIR__.'/../../config/group-session-config.json'), true, flags: JSON_THROW_ON_ERROR);
+        self::assertCount(7, $preset['applications']);
     }
 
     public function test_package_and_repository_profile_require_php_84_or_newer(): void

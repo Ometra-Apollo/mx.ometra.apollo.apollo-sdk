@@ -27,9 +27,9 @@ if (! class_exists(GroupSessionConfigValidator::class)) {
 }
 
 try {
-    $options = getopt('', ['workspace:', 'help']);
+    $options = getopt('', ['workspace:', 'environment:', 'help']);
     if (isset($options['help'])) {
-        fwrite(STDOUT, "Usage: validate-apollo-session-config [--workspace <directory>]\n");
+        fwrite(STDOUT, "Usage: validate-apollo-session-config [--workspace <directory>] [--environment dev|staging|prod]\n");
         exit(0);
     }
 
@@ -53,10 +53,43 @@ try {
         }
     }
 
-    $result = (new GroupSessionConfigValidator)->validate(
-        __DIR__.'/../config/group-session-config.json',
-        $workspace,
-    );
+    $environment = $options['environment'] ?? 'prod';
+    if (! is_string($environment) || ! in_array($environment, ['dev', 'staging', 'prod'], true)) {
+        throw new GroupSessionConfigException('The environment must be dev, staging or prod.');
+    }
+    $presetPath = __DIR__.'/../config/group-session-config.json';
+    $temporaryPreset = null;
+    if ($environment !== 'prod') {
+        $preset = json_decode((string) file_get_contents($presetPath), true, flags: JSON_THROW_ON_ERROR);
+        $suffix = $environment === 'dev' ? 'dev' : 'staging';
+        foreach ($preset['applications'] as &$application) {
+            $application['env_files'] = ['.env.d/04-session.env', '.env.d/09-caronte.env', '.env.d/01-app.env'];
+            if ($environment === 'dev') {
+                array_push($application['env_files'], '.env.d/01-app.env.dev', '.env.d/04-session.env.dev', '.env.d/09-caronte.env.dev');
+            }
+            $application['env_files'][] = ".env.d/99-suite.env.{$suffix}";
+        }
+        unset($application);
+        $cookie = $environment.'-apollo-session';
+        foreach ($preset['rules'] as &$rule) {
+            if (in_array($rule['key'], ['SESSION_COOKIE', 'CARONTE_SESSION_KEY'], true)) {
+                $rule['value'] = $cookie;
+            }
+        }
+        unset($rule);
+        $temporaryPreset = tempnam(sys_get_temp_dir(), 'apollo-session-preset-');
+        if ($temporaryPreset === false || file_put_contents($temporaryPreset, json_encode($preset, JSON_THROW_ON_ERROR)) === false) {
+            throw new GroupSessionConfigException('Unable to prepare the environment preset.');
+        }
+        $presetPath = $temporaryPreset;
+    }
+    try {
+        $result = (new GroupSessionConfigValidator)->validate($presetPath, $workspace);
+    } finally {
+        if ($temporaryPreset !== null) {
+            @unlink($temporaryPreset);
+        }
+    }
 
     if (! $result->isValid()) {
         foreach ($result->violations as $violation) {

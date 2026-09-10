@@ -24,10 +24,10 @@ final class ApolloSessionConfigCommandTest extends TestCase
             'CARONTE_TOKEN_REFRESH_LEEWAY_SECONDS=60',
         ]).PHP_EOL;
 
-        foreach (['aeris', 'flare', 'ignis', 'lume', 'proteus', 'pulse'] as $application) {
+        foreach (['lumina', 'aeris', 'flare', 'ignis', 'lume', 'proteus', 'pulse'] as $application) {
             $environmentDirectory = $workspace.'/mx.ometra.apollo.'.$application.'/.env.d';
             mkdir($environmentDirectory, 0777, true);
-            file_put_contents($environmentDirectory.'/01-app.env', "APP_ENV=production\n");
+            file_put_contents($environmentDirectory.'/01-app.env', "APP_ENV=production\nAPP_KEY=base64:shared\n");
             file_put_contents($environmentDirectory.'/04-session.env', $session);
             file_put_contents($environmentDirectory.'/09-caronte.env', $caronte);
         }
@@ -60,7 +60,7 @@ final class ApolloSessionConfigCommandTest extends TestCase
 
         self::assertSame(0, $exit, is_string($stderr) ? $stderr : 'Unable to read stderr.');
         self::assertIsString($stdout);
-        self::assertStringContainsString('Apollo shared-session configuration is consistent across 6 applications', $stdout);
+        self::assertStringContainsString('Apollo shared-session configuration is consistent across 7 applications', $stdout);
         self::assertSame('', $stderr);
     }
 
