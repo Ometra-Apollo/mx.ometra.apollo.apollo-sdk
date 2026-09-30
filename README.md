@@ -189,6 +189,7 @@ La ruta inbound opcional de grupos Ignis se habilita con `APOLLO_IGNIS_GROUPS_EN
 - [Contrato HTTP y API pública](docs/api-contract.md)
 - [Migración breaking a v5](BREAKING_CHANGES.md)
 - [Auditoría de integraciones](docs/integration-audit.md)
+- [Estrategia y matriz de pruebas](docs/testing.md)
 
 ## Validación
 
@@ -197,6 +198,10 @@ composer test
 composer lint
 composer analyse
 ```
+
+Instala primero las versiones fijadas en `composer.lock` con `composer install`.
+Una carpeta `vendor/` antigua puede producir fallos incompatibles con el
+manifiesto actual; comprueba la versión instalada con `composer show ometra/caronte-sdk`.
 
 ### Configuración de sesión compartida
 

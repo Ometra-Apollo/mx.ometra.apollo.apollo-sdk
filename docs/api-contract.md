@@ -1,6 +1,10 @@
-# Contrato público de Apollo SDK v5
+# Contrato público vigente de Apollo SDK
 
 Paquete: `ometra/apollo-sdk`. Configuración: `config/apollo.php`.
+
+La API modular se introdujo en v5 y sigue siendo la superficie descrita para
+la instalación actual. Para cambios históricos de v5, véase
+[`BREAKING_CHANGES.md`](../BREAKING_CHANGES.md).
 
 ## Convenciones
 

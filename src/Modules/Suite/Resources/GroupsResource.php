@@ -21,7 +21,7 @@ final class GroupsResource
 
     public function effective(?string $search): mixed
     {
-        return $this->client->userRequest('GET', "groups/effective", ['search' => $search]);
+        return $this->client->userRequest('GET', 'groups/effective', ['search' => $search]);
     }
 
     public function show(string $id_group): mixed
@@ -29,6 +29,7 @@ final class GroupsResource
         return $this->client->userRequest('GET', "groups/{$id_group}");
     }
 
+    /** @param array<string, mixed> $data */
     public function create(array $data): mixed
     {
         return $this->client->userRequest('POST', 'groups', $data);
@@ -39,6 +40,7 @@ final class GroupsResource
     {
         return $this->client->userRequest('PUT', "groups/{$id_group}", $data);
     }
+
     public function delete(string $id_group): mixed
     {
         return $this->client->userRequest('DELETE', "groups/{$id_group}");
@@ -48,5 +50,4 @@ final class GroupsResource
     {
         return $this->client->userRequest('GET', "groups/by-user/{$uri_user}");
     }
-
 }

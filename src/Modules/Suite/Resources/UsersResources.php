@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ometra\Apollo\Sdk\Modules\Suite\Resources;
 
 use Ometra\Apollo\Sdk\Core\Http\ApolloHttpClient;
-use Ometra\Apollo\Sdk\Modules\Suite\Resources\ApplicationsResource;
 
 final class UsersResources
 {
@@ -15,10 +14,11 @@ final class UsersResources
     {
         return new ApplicationsResource($this->client);
     }
+
     /**
      * Ensure a user exists.
      *
-     * @param array<string, mixed> $data{users:array<string, Record<{name:string, email:string}>>}
+     * @param  array<string, mixed>  $data
      */
     public function ensure(array $data): mixed
     {

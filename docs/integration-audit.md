@@ -1,6 +1,10 @@
-# Auditoría de integraciones Apollo SDK v5
+# Auditoría histórica de integraciones Apollo SDK v5
 
 Revisión: 2026-07-20. Paquete: `ometra/apollo-sdk`. Configuración compartida: `config/apollo.php`.
+
+Este documento registra la revisión de la migración v5. La superficie pública
+vigente se documenta en [api-contract.md](api-contract.md); la cobertura y los
+límites de las pruebas actuales, en [testing.md](testing.md).
 
 ## Alcance de la revisión
 
